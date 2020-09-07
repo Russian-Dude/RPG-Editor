@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="RPG-E_jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../RPG-E/out/artifacts/RPG_E_jar/RPG-E_jar.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
