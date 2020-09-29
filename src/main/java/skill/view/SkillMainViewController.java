@@ -105,7 +105,7 @@ public class SkillMainViewController {
     @FXML
     private void loadElementsAdder() throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("ElementsAdder.fxml"));
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/ElementsAdder.fxml"));
         Pane elementsAdder = loader.load();
         elementsFx.getChildren().add(elementsFx.getChildren().size() - 1, elementsAdder);
         elementsMapFx.put(elementsAdder, this);

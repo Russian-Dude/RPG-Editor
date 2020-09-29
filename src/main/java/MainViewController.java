@@ -1,3 +1,4 @@
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -22,10 +23,11 @@ public class MainViewController {
     private void showSkill() throws IOException {
         Tab defaultTab = new Tab();
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(Main.class.getResource("skill/view/SkillMainView.fxml"));
+        loader.setLocation(Main.class.getResource("/fxml/skill/view/SkillMainView.fxml"));
         TabPane defaultSkill = loader.load();
         defaultTab.setContent(defaultSkill);
         defaultTab.setText("Default Skill");
         skillsTabPane.getTabs().add(0, defaultTab);
+        skillsTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
     }
 }
