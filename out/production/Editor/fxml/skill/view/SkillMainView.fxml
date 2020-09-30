@@ -225,7 +225,7 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label alignment="CENTER" text="Time" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                    <Label alignment="CENTER" text="Flee" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
                                     <Label alignment="CENTER" text="Gold" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                                     <Label text="Expirience" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                                     <Label text="Critical" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
@@ -249,7 +249,7 @@
                                     <Label text="Maximum&#10;Stamina" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
                                     <Label text="Phisic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
                                     <Label text="Magic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="CENTER" />
-                                    <TextField fx:id="timeFx" GridPane.columnIndex="1" />
+                                    <TextField fx:id="fleeFx" GridPane.columnIndex="1" />
                                     <TextField fx:id="goldFx" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <TextField fx:id="expFx" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                     <TextField fx:id="critFx" GridPane.columnIndex="1" GridPane.rowIndex="3" />

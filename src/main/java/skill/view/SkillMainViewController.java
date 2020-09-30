@@ -236,35 +236,35 @@ public class SkillMainViewController {
         }
 
         // buff fields:
-        loadBuffFieldIfPossible(skillData,"MELEEATKMIN", Dmg.Melee.MeleeMin.class, meleeMinDmgFx);
-        loadBuffFieldIfPossible(skillData,"MELEEATKMAX", Dmg.Melee.MeleeMax.class, meleeMaxDmgFx);
-        loadBuffFieldIfPossible(skillData,"RANGEATKMIN", Dmg.Range.RangeMin.class, rangeMinDmgFx);
-        loadBuffFieldIfPossible(skillData,"RANGEATKMAX", Dmg.Range.RangeMax.class, rangeMaxDmgFx);
-        loadBuffFieldIfPossible(skillData,"MAGICATKMIN", Dmg.Magic.MagicMin.class, magicMinDmgFx);
-        loadBuffFieldIfPossible(skillData,"MAGICATKMAX", Dmg.Magic.MagicMax.class, magicMaxDmgFx);
-        loadBuffFieldIfPossible(skillData,"EXP", Lvl.Exp.class, expFx);
-        loadBuffFieldIfPossible(skillData,"INT", Int.class, intFx);
-        loadBuffFieldIfPossible(skillData,"DEX", Dex.class, dexFx);
-        loadBuffFieldIfPossible(skillData,"STR", Str.class, strFx);
-        loadBuffFieldIfPossible(skillData,"AGI", Agi.class, agiFx);
-        loadBuffFieldIfPossible(skillData,"VIT", Vit.class, vitFx);
-        loadBuffFieldIfPossible(skillData,"LUCK", Luck.class, luckFx);
-        loadBuffFieldIfPossible(skillData,"CRIT", Crit.class, critFx);
-        loadBuffFieldIfPossible(skillData,"PARRY", Parry.class, parryFx);
-        loadBuffFieldIfPossible(skillData,"DEF", Def.class, defFx);
-        loadBuffFieldIfPossible(skillData,"HIT", Hit.class, hitFx);
-        loadBuffFieldIfPossible(skillData,"BLOCK", Block.class, blockFx);
-        loadBuffFieldIfPossible(skillData,"HPMAX", Hp.Max.class, hpMaxFx);
-        loadBuffFieldIfPossible(skillData,"HPREST", Hp.Recovery.class, hpRestFx);
-        loadBuffFieldIfPossible(skillData,"CONC", Concentration.class, concentrationFx);
-        loadBuffFieldIfPossible(skillData,"LKYDODGE", Flee.LuckyDodgeChance.class, luckyDodgeFx);
-        loadBuffFieldIfPossible(skillData,"FLEE", Flee.class, fleeFx);
-        loadBuffFieldIfPossible(skillData,"STM", Stm.class, stmFx);
-        loadBuffFieldIfPossible(skillData,"STMATK", Stm.PerHit.class, stmByHitFx);
-        loadBuffFieldIfPossible(skillData,"STMREST", Stm.Recovery.class, stmRecoveryFx);
-        loadBuffFieldIfPossible(skillData,"STMMAX", Stm.Max.class, stmMaxFx);
-        loadBuffFieldIfPossible(skillData,"PRES", PhysicResistance.class, physicResistanceFx);
-        loadBuffFieldIfPossible(skillData,"MRES", MagicResistance.class, magicResistanceFx);
+        loadBuffFieldIfPossible(skillData, "MELEEATKMIN", Dmg.Melee.MeleeMin.class, meleeMinDmgFx);
+        loadBuffFieldIfPossible(skillData, "MELEEATKMAX", Dmg.Melee.MeleeMax.class, meleeMaxDmgFx);
+        loadBuffFieldIfPossible(skillData, "RANGEATKMIN", Dmg.Range.RangeMin.class, rangeMinDmgFx);
+        loadBuffFieldIfPossible(skillData, "RANGEATKMAX", Dmg.Range.RangeMax.class, rangeMaxDmgFx);
+        loadBuffFieldIfPossible(skillData, "MAGICATKMIN", Dmg.Magic.MagicMin.class, magicMinDmgFx);
+        loadBuffFieldIfPossible(skillData, "MAGICATKMAX", Dmg.Magic.MagicMax.class, magicMaxDmgFx);
+        loadBuffFieldIfPossible(skillData, "EXP", Lvl.Exp.class, expFx);
+        loadBuffFieldIfPossible(skillData, "INT", Int.class, intFx);
+        loadBuffFieldIfPossible(skillData, "DEX", Dex.class, dexFx);
+        loadBuffFieldIfPossible(skillData, "STR", Str.class, strFx);
+        loadBuffFieldIfPossible(skillData, "AGI", Agi.class, agiFx);
+        loadBuffFieldIfPossible(skillData, "VIT", Vit.class, vitFx);
+        loadBuffFieldIfPossible(skillData, "LUCK", Luck.class, luckFx);
+        loadBuffFieldIfPossible(skillData, "CRIT", Crit.class, critFx);
+        loadBuffFieldIfPossible(skillData, "PARRY", Parry.class, parryFx);
+        loadBuffFieldIfPossible(skillData, "DEF", Def.class, defFx);
+        loadBuffFieldIfPossible(skillData, "HIT", Hit.class, hitFx);
+        loadBuffFieldIfPossible(skillData, "BLOCK", Block.class, blockFx);
+        loadBuffFieldIfPossible(skillData, "HPMAX", Hp.Max.class, hpMaxFx);
+        loadBuffFieldIfPossible(skillData, "HPREST", Hp.Recovery.class, hpRestFx);
+        loadBuffFieldIfPossible(skillData, "CONC", Concentration.class, concentrationFx);
+        loadBuffFieldIfPossible(skillData, "LKYDODGE", Flee.LuckyDodgeChance.class, luckyDodgeFx);
+        loadBuffFieldIfPossible(skillData, "FLEE", Flee.class, fleeFx);
+        loadBuffFieldIfPossible(skillData, "STM", Stm.class, stmFx);
+        loadBuffFieldIfPossible(skillData, "STMATK", Stm.PerHit.class, stmByHitFx);
+        loadBuffFieldIfPossible(skillData, "STMREST", Stm.Recovery.class, stmRecoveryFx);
+        loadBuffFieldIfPossible(skillData, "STMMAX", Stm.Max.class, stmMaxFx);
+        loadBuffFieldIfPossible(skillData, "PRES", PhysicResistance.class, physicResistanceFx);
+        loadBuffFieldIfPossible(skillData, "MRES", MagicResistance.class, magicResistanceFx);
     }
 
     private void loadBuffFieldIfPossible(SkillData data, String fieldParsedName, Class<? extends Stat> statClass, TextField fieldFx) {
@@ -281,10 +281,9 @@ public class SkillMainViewController {
                         || field.startsWith(name + "-(")
                         || field.startsWith(name + "*(")
                         || field.startsWith(name + "/(")) {
-            return field.substring(0, field.length() - 1).substring(name.length()).replaceFirst("\\(", "");
-        }
-        else {
-            return field;
+            return field.substring(0, field.length() - 1).substring(name.length()).replaceFirst("\\(", "").toUpperCase();
+        } else {
+            return field.toUpperCase();
         }
     }
 
@@ -295,9 +294,9 @@ public class SkillMainViewController {
                         || field.startsWith("/")
                         || field.startsWith("*")
         )
-            return name + field.substring(0, 1) + "(" + field.substring(1) + ")";
+            return (name + field.substring(0, 1) + "(" + field.substring(1) + ")").toUpperCase();
         else
-            return field;
+            return field.toUpperCase();
     }
 
     private void saveSkill() {
@@ -399,7 +398,71 @@ public class SkillMainViewController {
             messages.add("Field DURATION IN MINUTES contains non numeric characters or negative");
         if (!forcedCancelAmountFx.getText().replaceAll(" ", "").isEmpty() && !skillParser.testParse(forcedCancelAmountFx.getText().toUpperCase()))
             messages.add("Equation in the FORCED CANCEL AFTER field can not be parsed");
+        // stat buffs:
+        if (!isBuffFieldCorrect(skillParser, "MELEEATKMIN", meleeMinDmgFx))
+            messages.add("Equation in the MELEE MIN DAMAGE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "MELEEATKMAX", meleeMaxDmgFx))
+            messages.add("Equation in the MELEE MAX DAMAGE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "RANGEATKMIN", rangeMinDmgFx))
+            messages.add("Equation in the RANGE MIN DAMAGE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "RANGEATKMAX", rangeMaxDmgFx))
+            messages.add("Equation in the RANGE MAX DAMAGE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "MAGICATKMIN", magicMinDmgFx))
+            messages.add("Equation in the MAGIC MIN DAMAGE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "MAGICATKMAX", magicMaxDmgFx))
+            messages.add("Equation in the MAGIC MAX DAMAGE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "FLEE", fleeFx))
+            messages.add("Equation in the FLEE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "EXP", expFx))
+            messages.add("Equation in the EXPERIENCE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "INT", intFx))
+            messages.add("Equation in the INTELLIGENCE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "DEX", dexFx))
+            messages.add("Equation in the DEXTERITY field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "STR", strFx))
+            messages.add("Equation in the STRENGTH field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "AGI", agiFx))
+            messages.add("Equation in the AGILITY field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "VIT", vitFx))
+            messages.add("Equation in the VITALITY field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "LUCK", luckFx))
+            messages.add("Equation in the LUCK field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "CRIT", critFx))
+            messages.add("Equation in the CRITICAL CHANCE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "PARRY", parryFx))
+            messages.add("Equation in the PARRY field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "DEF", defFx))
+            messages.add("Equation in the DEFENCE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "HIT", hitFx))
+            messages.add("Equation in the HIT field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "BLOCK", blockFx))
+            messages.add("Equation in the BLOCK field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "HPMAX", hpMaxFx))
+            messages.add("Equation in the MAXIMUM HEALTH field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "HPREST", hpRestFx))
+            messages.add("Equation in the HP RESTORATION field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "CONC", concentrationFx))
+            messages.add("Equation in the CONCENTRATION field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "LKYDODGE", luckyDodgeFx))
+            messages.add("Equation in the LUCKY DODGE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "STM", stmFx))
+            messages.add("Equation in the CURRENT STAMINA field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "STMATK", stmByHitFx))
+            messages.add("Equation in the STAMINA BY HIT field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "STMREST", stmRecoveryFx))
+            messages.add("Equation in the STAMINA RECOVERY field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "STMMAX", stmMaxFx))
+            messages.add("Equation in the MAXIMUM STAMINA field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "PRES", physicResistanceFx))
+            messages.add("Equation in the PHYSIC RESISTANCE field can not be parsed");
+        if (!isBuffFieldCorrect(skillParser, "MRES", magicResistanceFx))
+            messages.add("Equation in the MAGIC RESISTANCE field can not be parsed");
+
         return messages;
+    }
+
+    private boolean isBuffFieldCorrect(SkillParser parser, String parsedName, TextField textField) {
+        return textField.getText().replaceAll(" ", "").isEmpty() || parser.testParse(extendBuffField(parsedName, textField.getText()));
     }
 
     private void showUnableToSaveMessage(ArrayList<String> reasons) {
