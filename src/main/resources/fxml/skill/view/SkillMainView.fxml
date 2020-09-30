@@ -23,7 +23,7 @@
       <content>
             <BorderPane>
                <left>
-                  <ScrollPane BorderPane.alignment="CENTER">
+                  <ScrollPane pannable="true" BorderPane.alignment="CENTER">
                      <content>
                         <GridPane prefHeight="738.0" prefWidth="261.0">
                           <columnConstraints>
@@ -148,81 +148,141 @@
                <right>
                   <ScrollPane BorderPane.alignment="CENTER">
                      <content>
-                        <GridPane alignment="CENTER_LEFT" prefHeight="766.0" prefWidth="469.0" vgap="2.0">
-                          <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="10.0" prefWidth="84.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.0" minWidth="10.0" prefWidth="139.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="106.0" minWidth="10.0" prefWidth="94.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="142.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                        <VBox alignment="TOP_CENTER">
                            <children>
-                              <Label alignment="CENTER" text="Time" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                              <Label alignment="CENTER" text="Gold" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                              <Label text="Expirience" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                              <Label text="Critical" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-                              <Label text="Attack" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                              <Label text="Defence" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
-                              <Label text="Hit" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
-                              <Label text="Block" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
-                              <Label text="Maximum&#10;HP" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
-                              <Label text="HP&#10;Restoration" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
-                              <Label text="Concentration" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
-                              <Label text="Lucky&#10;Dodge" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="CENTER" />
-                              <Label text="Intelligence" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-                              <Label text="Dexterity" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                              <Label text="Strenght" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                              <Label text="Agility" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-                              <Label text="Vitality" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                              <Label text="Luck" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
-                              <Label text="Stamina&#10;by hit" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
-                              <Label text="Stamina&#10;recovery" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
-                              <Label text="Current&#10;Stamina" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
-                              <Label text="Maximum&#10;Stamina" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
-                              <Label text="Phisic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
-                              <Label text="Magic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="CENTER" />
-                              <TextField GridPane.columnIndex="1" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                              <TextField GridPane.columnIndex="3" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="6" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="7" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="8" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="9" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="10" />
-                              <TextField GridPane.columnIndex="3" GridPane.rowIndex="11" />
+                              <Label contentDisplay="CENTER" text="Buff Damage" textAlignment="CENTER">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Label>
+                              <GridPane alignment="CENTER">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="147.0" minWidth="10.0" prefWidth="81.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="251.0" minWidth="10.0" prefWidth="191.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="213.0" minWidth="10.0" prefWidth="184.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <padding>
+                                    <Insets bottom="10.0" right="10.0" />
+                                 </padding>
+                                 <children>
+                                    <Label text="Min" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                    <Label text="Max" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                    <Label text="Melee" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                                    <Label text="Range" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                                    <Label text="Magic" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                                    <TextField fx:id="meleeMinDmgFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets right="2.0" />
+                                       </GridPane.margin></TextField>
+                                    <TextField fx:id="meleeMaxDmgFx" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                       <GridPane.margin>
+                                          <Insets left="2.0" />
+                                       </GridPane.margin></TextField>
+                                    <TextField fx:id="rangeMinDmgFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets right="2.0" />
+                                       </GridPane.margin></TextField>
+                                    <TextField fx:id="rangeMaxDmgFx" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="2.0" />
+                                       </GridPane.margin></TextField>
+                                    <TextField fx:id="magicMinDmgFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <GridPane.margin>
+                                          <Insets right="2.0" />
+                                       </GridPane.margin></TextField>
+                                    <TextField fx:id="magicMaxDmgFx" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                       <GridPane.margin>
+                                          <Insets left="2.0" />
+                                       </GridPane.margin></TextField>
+                                 </children>
+                              </GridPane>
+                              <Label text="Buff Stats" />
+                              <GridPane alignment="CENTER_LEFT" prefHeight="600.0" prefWidth="469.0" vgap="2.0">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="113.0" minWidth="10.0" prefWidth="84.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.0" minWidth="10.0" prefWidth="139.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="106.0" minWidth="10.0" prefWidth="94.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="142.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label fx:id="fleeFx" alignment="CENTER" text="Flee" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                    <Label alignment="CENTER" text="Gold" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                                    <Label text="Expirience" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                                    <Label text="Critical" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                                    <Label text="Parry" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                                    <Label text="Defence" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                                    <Label text="Hit" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                                    <Label text="Block" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+                                    <Label text="Maximum&#10;HP" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
+                                    <Label text="HP&#10;Restoration" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                                    <Label text="Concentration" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
+                                    <Label text="Lucky&#10;Dodge" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="CENTER" />
+                                    <Label text="Intelligence" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                    <Label text="Dexterity" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                                    <Label text="Strenght" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                                    <Label text="Agility" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                                    <Label text="Vitality" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                                    <Label text="Luck" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                                    <Label text="Stamina&#10;by hit" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                                    <Label text="Stamina&#10;recovery" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+                                    <Label text="Current&#10;Stamina" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
+                                    <Label text="Maximum&#10;Stamina" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                                    <Label text="Phisic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
+                                    <Label text="Magic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="CENTER" />
+                                    <TextField fx:id="timeFx" GridPane.columnIndex="1" />
+                                    <TextField fx:id="goldFx" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <TextField fx:id="expFx" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <TextField fx:id="critFx" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <TextField fx:id="parryFx" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <TextField fx:id="defFx" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <TextField fx:id="hitFx" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                    <TextField fx:id="blockFx" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                    <TextField fx:id="hpMaxFx" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                    <TextField fx:id="hpRestFx" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                    <TextField fx:id="concentrationFx" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                    <TextField fx:id="luckyDodgeFx" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                    <TextField fx:id="intFx" GridPane.columnIndex="3" />
+                                    <TextField fx:id="dexFx" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <TextField fx:id="strFx" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                    <TextField fx:id="agiFx" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                    <TextField fx:id="vitFx" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                    <TextField fx:id="luckFx" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                    <TextField fx:id="stmByHitFx" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                                    <TextField fx:id="stmRecoveryFx" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+                                    <TextField fx:id="stmFx" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+                                    <TextField fx:id="stmMaxFx" GridPane.columnIndex="3" GridPane.rowIndex="9" />
+                                    <TextField fx:id="physicResistanceFx" GridPane.columnIndex="3" GridPane.rowIndex="10" />
+                                    <TextField fx:id="magicResistanceFx" GridPane.columnIndex="3" GridPane.rowIndex="11" />
+                                 </children>
+                                 <padding>
+                                    <Insets right="10.0" />
+                                 </padding>
+                                 <opaqueInsets>
+                                    <Insets />
+                                 </opaqueInsets>
+                              </GridPane>
                            </children>
-                           <padding>
-                              <Insets right="10.0" />
-                           </padding>
-                        </GridPane>
+                        </VBox>
                      </content>
                   </ScrollPane>
                </right>

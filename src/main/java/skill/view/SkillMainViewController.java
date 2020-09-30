@@ -18,6 +18,10 @@ import ru.rdude.rpg.game.logic.enums.SkillType;
 import ru.rdude.rpg.game.logic.gameStates.Battle;
 import ru.rdude.rpg.game.logic.gameStates.Camp;
 import ru.rdude.rpg.game.logic.gameStates.Map;
+import ru.rdude.rpg.game.logic.stats.Stat;
+import ru.rdude.rpg.game.logic.stats.Stats;
+import ru.rdude.rpg.game.logic.stats.primary.*;
+import ru.rdude.rpg.game.logic.stats.secondary.*;
 import ru.rdude.rpg.game.utils.Functions;
 
 import java.io.IOException;
@@ -80,6 +84,71 @@ public class SkillMainViewController {
     @FXML
     private ComboBox<String> onDuplicatingFx;
 
+    // buffs:
+
+    @FXML
+    private TextField meleeMinDmgFx;
+    @FXML
+    private TextField meleeMaxDmgFx;
+    @FXML
+    private TextField rangeMinDmgFx;
+    @FXML
+    private TextField rangeMaxDmgFx;
+    @FXML
+    private TextField magicMinDmgFx;
+    @FXML
+    private TextField magicMaxDmgFx;
+    @FXML
+    private TextField timeFx;
+    @FXML
+    private TextField goldFx;
+    @FXML
+    private TextField fleeFx;
+    @FXML
+    private TextField expFx;
+    @FXML
+    private TextField intFx;
+    @FXML
+    private TextField dexFx;
+    @FXML
+    private TextField strFx;
+    @FXML
+    private TextField agiFx;
+    @FXML
+    private TextField vitFx;
+    @FXML
+    private TextField luckFx;
+    @FXML
+    private TextField critFx;
+    @FXML
+    private TextField parryFx;
+    @FXML
+    private TextField defFx;
+    @FXML
+    private TextField hitFx;
+    @FXML
+    private TextField blockFx;
+    @FXML
+    private TextField hpMaxFx;
+    @FXML
+    private TextField hpRestFx;
+    @FXML
+    private TextField concentrationFx;
+    @FXML
+    private TextField luckyDodgeFx;
+    @FXML
+    private TextField stmFx;
+    @FXML
+    private TextField stmByHitFx;
+    @FXML
+    private TextField stmRecoveryFx;
+    @FXML
+    private TextField stmMaxFx;
+    @FXML
+    private TextField physicResistanceFx;
+    @FXML
+    private TextField magicResistanceFx;
+
 
     @FXML
     public void initialize() throws IOException {
@@ -111,7 +180,7 @@ public class SkillMainViewController {
         elementsMapFx.put(elementsAdder, this);
     }
 
-    public static void removeElementsAdder (Pane elementsAdder) {
+    public static void removeElementsAdder(Pane elementsAdder) {
         elementsMapFx.get(elementsAdder).elementsFx.getChildren().remove(elementsAdder);
         elementsMapFx.remove(elementsAdder);
     }
@@ -129,10 +198,12 @@ public class SkillMainViewController {
         typeFx.setValue(skillData.getAttackType().name());
         if (skillData.getNameInEditor().equals(skillData.getName())) {
             nameInEditorFx.setPromptText(skillData.getName());
+        } else {
+            nameInEditorFx.setText(skillData.getNameInEditor());
         }
-        else { nameInEditorFx.setText(skillData.getNameInEditor()); }
         if (skillData.getStaminaReq() != 0) requiredStaminaFx.setText(String.valueOf(skillData.getStaminaReq()));
-        if (skillData.getConcentrationReq() != 0) requiredConcentrationFx.setText(String.valueOf(skillData.getConcentrationReq()));
+        if (skillData.getConcentrationReq() != 0)
+            requiredConcentrationFx.setText(String.valueOf(skillData.getConcentrationReq()));
         if (!skillData.getDamage().isEmpty()) damageFx.setText(skillData.getDamage());
         effectFx.setValue(skillData.getEffect().name());
         canBeBlockedFx.setSelected(skillData.isCanBeBlocked());
@@ -150,22 +221,83 @@ public class SkillMainViewController {
             forcedCancelAmountFx.setText(skillData.getDamageReceived());
             forcedCancelReceivedOrDeal.setValue("Received");
             forcedCancelHitsOrDamage.setValue("Damage");
-        }
-        else if (skillData.getDamageMade() != null) {
+        } else if (skillData.getDamageMade() != null) {
             forcedCancelAmountFx.setText(skillData.getDamageMade());
             forcedCancelReceivedOrDeal.setValue("Deal");
             forcedCancelHitsOrDamage.setValue("Damage");
-        }
-        else if (skillData.getHitsReceived() != null) {
+        } else if (skillData.getHitsReceived() != null) {
             forcedCancelAmountFx.setText(skillData.getHitsReceived());
             forcedCancelReceivedOrDeal.setValue("Received");
             forcedCancelHitsOrDamage.setValue("Hits");
-        }
-        else if (skillData.getHitsMade() != null) {
+        } else if (skillData.getHitsMade() != null) {
             forcedCancelAmountFx.setText(skillData.getHitsMade());
             forcedCancelReceivedOrDeal.setValue("Deal");
             forcedCancelHitsOrDamage.setValue("Hits");
         }
+
+        // buff fields:
+        loadBuffFieldIfPossible(skillData,"MELEEATKMIN", Dmg.Melee.MeleeMin.class, meleeMinDmgFx);
+        loadBuffFieldIfPossible(skillData,"MELEEATKMAX", Dmg.Melee.MeleeMax.class, meleeMaxDmgFx);
+        loadBuffFieldIfPossible(skillData,"RANGEATKMIN", Dmg.Range.RangeMin.class, rangeMinDmgFx);
+        loadBuffFieldIfPossible(skillData,"RANGEATKMAX", Dmg.Range.RangeMax.class, rangeMaxDmgFx);
+        loadBuffFieldIfPossible(skillData,"MAGICATKMIN", Dmg.Magic.MagicMin.class, magicMinDmgFx);
+        loadBuffFieldIfPossible(skillData,"MAGICATKMAX", Dmg.Magic.MagicMax.class, magicMaxDmgFx);
+        loadBuffFieldIfPossible(skillData,"EXP", Lvl.Exp.class, expFx);
+        loadBuffFieldIfPossible(skillData,"INT", Int.class, intFx);
+        loadBuffFieldIfPossible(skillData,"DEX", Dex.class, dexFx);
+        loadBuffFieldIfPossible(skillData,"STR", Str.class, strFx);
+        loadBuffFieldIfPossible(skillData,"AGI", Agi.class, agiFx);
+        loadBuffFieldIfPossible(skillData,"VIT", Vit.class, vitFx);
+        loadBuffFieldIfPossible(skillData,"LUCK", Luck.class, luckFx);
+        loadBuffFieldIfPossible(skillData,"CRIT", Crit.class, critFx);
+        loadBuffFieldIfPossible(skillData,"PARRY", Parry.class, parryFx);
+        loadBuffFieldIfPossible(skillData,"DEF", Def.class, defFx);
+        loadBuffFieldIfPossible(skillData,"HIT", Hit.class, hitFx);
+        loadBuffFieldIfPossible(skillData,"BLOCK", Block.class, blockFx);
+        loadBuffFieldIfPossible(skillData,"HPMAX", Hp.Max.class, hpMaxFx);
+        loadBuffFieldIfPossible(skillData,"HPREST", Hp.Recovery.class, hpRestFx);
+        loadBuffFieldIfPossible(skillData,"CONC", Concentration.class, concentrationFx);
+        loadBuffFieldIfPossible(skillData,"LKYDODGE", Flee.LuckyDodgeChance.class, luckyDodgeFx);
+        loadBuffFieldIfPossible(skillData,"FLEE", Flee.class, fleeFx);
+        loadBuffFieldIfPossible(skillData,"STM", Stm.class, stmFx);
+        loadBuffFieldIfPossible(skillData,"STMATK", Stm.PerHit.class, stmByHitFx);
+        loadBuffFieldIfPossible(skillData,"STMREST", Stm.Recovery.class, stmRecoveryFx);
+        loadBuffFieldIfPossible(skillData,"STMMAX", Stm.Max.class, stmMaxFx);
+        loadBuffFieldIfPossible(skillData,"PRES", PhysicResistance.class, physicResistanceFx);
+        loadBuffFieldIfPossible(skillData,"MRES", MagicResistance.class, magicResistanceFx);
+    }
+
+    private void loadBuffFieldIfPossible(SkillData data, String fieldParsedName, Class<? extends Stat> statClass, TextField fieldFx) {
+        if (data.getStats().containsKey(statClass)) {
+            String equation = data.getStats().get(statClass);
+            fieldFx.setText(shortBuffField(fieldParsedName, equation));
+        }
+    }
+
+
+    private String shortBuffField(String name, String field) {
+        if (
+                field.startsWith(name + "+(")
+                        || field.startsWith(name + "-(")
+                        || field.startsWith(name + "*(")
+                        || field.startsWith(name + "/(")) {
+            return field.substring(0, field.length() - 1).substring(name.length()).replaceFirst("\\(", "");
+        }
+        else {
+            return field;
+        }
+    }
+
+    private String extendBuffField(String name, String field) {
+        if (
+                field.startsWith("+")
+                        || field.startsWith("-")
+                        || field.startsWith("/")
+                        || field.startsWith("*")
+        )
+            return name + field.substring(0, 1) + "(" + field.substring(1) + ")";
+        else
+            return field;
     }
 
     private void saveSkill() {
@@ -198,12 +330,52 @@ public class SkillMainViewController {
                 skill.setHitsReceived(forcedCancelAmountFx.getText());
             else if (forcedCancelReceivedOrDeal.getValue().equals("Deal"))
                 skill.setHitsMade(forcedCancelAmountFx.getText());
-        }
-        else if (forcedCancelHitsOrDamage.getValue().equals("Damage")) {
+        } else if (forcedCancelHitsOrDamage.getValue().equals("Damage")) {
             if (forcedCancelReceivedOrDeal.getValue().equals("Receive"))
                 skill.setDamageReceived(forcedCancelAmountFx.getText());
             else if (forcedCancelReceivedOrDeal.getValue().equals("Deal"))
                 skill.setDamageMade(forcedCancelAmountFx.getText());
+        }
+
+        // buff fields:
+        if (skill.getStats() == null) {
+            skill.setStats(new HashMap<>());
+        }
+        saveBuffField("MELEEATKMIN", meleeMinDmgFx, Dmg.Melee.MeleeMin.class);
+        saveBuffField("MELEEATKMAX", meleeMaxDmgFx, Dmg.Melee.MeleeMax.class);
+        saveBuffField("RANGEATKMIN", rangeMinDmgFx, Dmg.Range.RangeMin.class);
+        saveBuffField("RANGEATKMAX", rangeMaxDmgFx, Dmg.Range.RangeMax.class);
+        saveBuffField("MAGICATKMIN", magicMinDmgFx, Dmg.Magic.MagicMin.class);
+        saveBuffField("MAGICATKMAX", magicMaxDmgFx, Dmg.Magic.MagicMax.class);
+        saveBuffField("FLEE", fleeFx, Flee.class);
+        saveBuffField("EXP", expFx, Lvl.Exp.class);
+        saveBuffField("INT", intFx, Int.class);
+        saveBuffField("DEX", dexFx, Dex.class);
+        saveBuffField("STR", strFx, Str.class);
+        saveBuffField("AGI", agiFx, Agi.class);
+        saveBuffField("VIT", vitFx, Vit.class);
+        saveBuffField("LUCK", luckFx, Luck.class);
+        saveBuffField("CRIT", critFx, Crit.class);
+        saveBuffField("PARRY", parryFx, Parry.class);
+        saveBuffField("DEF", defFx, Def.class);
+        saveBuffField("HIT", hitFx, Hit.class);
+        saveBuffField("BLOCK", blockFx, Block.class);
+        saveBuffField("HPMAX", hpMaxFx, Hp.Max.class);
+        saveBuffField("HPREST", hpRestFx, Hp.Recovery.class);
+        saveBuffField("CONC", concentrationFx, Concentration.class);
+        saveBuffField("LKYDODGE", luckyDodgeFx, Flee.LuckyDodgeChance.class);
+        saveBuffField("STM", stmFx, Stm.class);
+        saveBuffField("STMATK", stmByHitFx, Stm.PerHit.class);
+        saveBuffField("STMREST", stmRecoveryFx, Stm.Recovery.class);
+        saveBuffField("STMMAX", stmMaxFx, Stm.Max.class);
+        saveBuffField("PRES", physicResistanceFx, PhysicResistance.class);
+        saveBuffField("MRES", magicResistanceFx, MagicResistance.class);
+    }
+
+    private void saveBuffField(String fieldParsedName, TextField fieldFx, Class<? extends Stat> statClass) {
+        String textField = fieldFx.getText().replaceAll(" ", "");
+        if (!textField.isEmpty()) {
+            skill.getStats().put(statClass, extendBuffField(fieldParsedName, textField));
         }
     }
 
@@ -213,7 +385,8 @@ public class SkillMainViewController {
         ArrayList<String> messages = new ArrayList<>();
         if (nameFx.getText().replaceAll(" ", "").isEmpty()) messages.add("Field NAME is empty");
         else if (nameFx.getText().length() > 16) messages.add("Too many symbols in NAME field. Maximum is 16");
-        if (nameInEditorFx.getText().length() > 20) messages.add("Too many symbols in NAME IN EDITOR field. Maximum is 20");
+        if (nameInEditorFx.getText().length() > 20)
+            messages.add("Too many symbols in NAME IN EDITOR field. Maximum is 20");
         if (!requiredStaminaFx.getText().replaceAll(" ", "").isEmpty() && !requiredStaminaFx.getText().matches("-?\\d+"))
             messages.add("Field REQUIRED STAMINA contains non numeric characters");
         if (!requiredConcentrationFx.getText().replaceAll(" ", "").isEmpty() && !requiredConcentrationFx.getText().matches("-?\\d+"))
@@ -229,6 +402,7 @@ public class SkillMainViewController {
         return messages;
     }
 
-    private void showUnableToSaveMessage(ArrayList<String> reasons){}
+    private void showUnableToSaveMessage(ArrayList<String> reasons) {
+    }
 
 }
