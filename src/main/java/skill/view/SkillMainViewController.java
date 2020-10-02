@@ -12,14 +12,11 @@ import ru.rdude.rpg.game.logic.data.SkillData;
 import ru.rdude.rpg.game.logic.entities.beings.Being;
 import ru.rdude.rpg.game.logic.entities.beings.Player;
 import ru.rdude.rpg.game.logic.entities.skills.SkillParser;
-import ru.rdude.rpg.game.logic.enums.AttackType;
-import ru.rdude.rpg.game.logic.enums.SkillEffect;
-import ru.rdude.rpg.game.logic.enums.SkillType;
+import ru.rdude.rpg.game.logic.enums.*;
 import ru.rdude.rpg.game.logic.gameStates.Battle;
 import ru.rdude.rpg.game.logic.gameStates.Camp;
 import ru.rdude.rpg.game.logic.gameStates.Map;
 import ru.rdude.rpg.game.logic.stats.Stat;
-import ru.rdude.rpg.game.logic.stats.Stats;
 import ru.rdude.rpg.game.logic.stats.primary.*;
 import ru.rdude.rpg.game.logic.stats.secondary.*;
 import ru.rdude.rpg.game.utils.Functions;
@@ -28,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class SkillMainViewController {
 
@@ -35,6 +33,7 @@ public class SkillMainViewController {
     private SkillData skill;
 
     private static HashMap<Pane, SkillMainViewController> elementsMapFx = new HashMap<>();
+    private static HashMap<Pane, SkillMainViewController> beingTypesMapFx = new HashMap<>();
 
 
     @FXML
@@ -81,6 +80,8 @@ public class SkillMainViewController {
     private ComboBox<String> forcedCancelHitsOrDamage;
     @FXML
     private ComboBox<String> forcedCancelReceivedOrDeal;
+    @FXML
+    private CheckBox recalculateEveryIterationFx;
     @FXML
     private ComboBox<String> onDuplicatingFx;
 
@@ -149,6 +150,16 @@ public class SkillMainViewController {
     @FXML
     private TextField magicResistanceFx;
 
+    // transformation:
+    @FXML
+    private VBox transformationBeingTypesFx;
+    @FXML
+    private VBox transformationElementsFx;
+    @FXML
+    private ComboBox<String> transformationSizeFx;
+    @FXML
+    private RadioButton transformationOverrideFx;
+
 
     @FXML
     public void initialize() throws IOException {
@@ -165,6 +176,8 @@ public class SkillMainViewController {
         forcedCancelHitsOrDamage.setValue("Hits");
         forcedCancelReceivedOrDeal.setItems(FXCollections.observableList(Arrays.asList("Received", "Deal")));
         forcedCancelReceivedOrDeal.setValue("Received");
+        transformationSizeFx.setItems(EnumsLists.sizes);
+        transformationSizeFx.setValue("NO");
     }
 
     private void loadDefaultAdders() throws IOException {
@@ -180,9 +193,65 @@ public class SkillMainViewController {
         elementsMapFx.put(elementsAdder, this);
     }
 
+    private void loadElementsAdder(Element element) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/ElementsAdder.fxml"));
+        Pane elementsAdder = loader.load();
+        elementsFx.getChildren().add(elementsFx.getChildren().size() - 1, elementsAdder);
+        elementsMapFx.put(elementsAdder, this);
+        ElementsAdderController.controllers.get(elementsAdder).setSelectedElement(element);
+    }
+
+    @FXML
+    private void loadTransformationElementsAdder() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/TransformationElementsAdder.fxml"));
+        Pane elementsAdder = loader.load();
+        transformationElementsFx.getChildren().add(transformationElementsFx.getChildren().size() - 1, elementsAdder);
+        elementsMapFx.put(elementsAdder, this);
+    }
+
+    private void loadTransformationElementsAdder(Element element) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/TransformationElementsAdder.fxml"));
+        Pane elementsAdder = loader.load();
+        transformationElementsFx.getChildren().add(transformationElementsFx.getChildren().size() - 1, elementsAdder);
+        elementsMapFx.put(elementsAdder, this);
+        TransformationElementsAdderController.controllers.get(elementsAdder).setSelectedElement(element);
+    }
+
+    @FXML
+    private void loadBeingTypesAdder() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/BeingTypeAdder.fxml"));
+        Pane beingTypeAdder = loader.load();
+        transformationBeingTypesFx.getChildren().add(transformationBeingTypesFx.getChildren().size() - 1, beingTypeAdder);
+        beingTypesMapFx.put(beingTypeAdder, this);
+    }
+
+    private void loadBeingTypesAdder(BeingType beingType) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/BeingTypeAdder.fxml"));
+        Pane beingTypeAdder = loader.load();
+        transformationBeingTypesFx.getChildren().add(transformationBeingTypesFx.getChildren().size() - 1, beingTypeAdder);
+        beingTypesMapFx.put(beingTypeAdder, this);
+        BeingTypeAdderController.controllers.get(beingTypeAdder).setSelectedBeingType(beingType);
+    }
+
     public static void removeElementsAdder(Pane elementsAdder) {
         elementsMapFx.get(elementsAdder).elementsFx.getChildren().remove(elementsAdder);
         elementsMapFx.remove(elementsAdder);
+    }
+
+    public static void removeTransformationElementsAdder(Pane elementsAdder) {
+        System.out.println("tetetete");
+        elementsMapFx.get(elementsAdder).transformationElementsFx.getChildren().remove(elementsAdder);
+        elementsMapFx.remove(elementsAdder);
+    }
+
+    public static void removeBeingTypeAdder(Pane beingTypeAdder) {
+        beingTypesMapFx.get(beingTypeAdder).transformationBeingTypesFx.getChildren().remove(beingTypeAdder);
+        beingTypesMapFx.remove(beingTypeAdder);
     }
 
 
@@ -192,7 +261,7 @@ public class SkillMainViewController {
             nameInEditorFx.setPromptText(nameFx.getText());
     }
 
-    private void loadSkill(SkillData skillData) {
+    private void loadSkill(SkillData skillData) throws IOException {
         this.skill = skillData;
         nameFx.setText(skillData.getName());
         typeFx.setValue(skillData.getAttackType().name());
@@ -217,6 +286,10 @@ public class SkillMainViewController {
         actsEveryMinuteFx.setText(String.valueOf((int) skillData.getActsEveryMinute()));
         actsEveryTurnFx.setText(String.valueOf((int) skillData.getActsEveryTurn()));
         permanentFx.setSelected(skillData.isPermanent());
+        recalculateEveryIterationFx.setSelected(skillData.isRecalculateStatsEveryIteration());
+        for (Element element : skillData.getElements()) {
+            loadElementsAdder(element);
+        }
         if (skillData.getDamageReceived() != null) {
             forcedCancelAmountFx.setText(skillData.getDamageReceived());
             forcedCancelReceivedOrDeal.setValue("Received");
@@ -265,6 +338,16 @@ public class SkillMainViewController {
         loadBuffFieldIfPossible(skillData, "STMMAX", Stm.Max.class, stmMaxFx);
         loadBuffFieldIfPossible(skillData, "PRES", PhysicResistance.class, physicResistanceFx);
         loadBuffFieldIfPossible(skillData, "MRES", MagicResistance.class, magicResistanceFx);
+
+        // transformation:
+        for (BeingType beingType : skillData.getTransformation().getBeingTypes()) {
+            loadBeingTypesAdder(beingType);
+        }
+        for (Element element : skillData.getTransformation().getElements()) {
+            loadTransformationElementsAdder(element);
+        }
+        transformationSizeFx.setValue(skillData.getTransformation().getSize() == null ? "NO" : skillData.getTransformation().getSize().name());
+        transformationOverrideFx.setSelected(skillData.getTransformation().isOverride());
     }
 
     private void loadBuffFieldIfPossible(SkillData data, String fieldParsedName, Class<? extends Stat> statClass, TextField fieldFx) {
@@ -324,6 +407,16 @@ public class SkillMainViewController {
         skill.setDurationInMinutes(durationMinutesFx.getText());
         skill.setDurationInTurns(durationTurnsFx.getText());
         skill.setPermanent(permanentFx.isSelected());
+        skill.setRecalculateStatsEveryIteration(recalculateEveryIterationFx.isSelected());
+        skill.setActsEveryTurn(actsEveryTurnFx.getText().replaceAll(" ", "").isEmpty() ?
+                0d : Double.parseDouble(actsEveryTurnFx.getText().replaceAll(" ", "")));
+        skill.setActsEveryMinute(actsEveryMinuteFx.getText().replaceAll(" ", "").isEmpty() ?
+                0d : Double.parseDouble(actsEveryMinuteFx.getText()));
+        skill.setElements(elementsFx.getChildren().stream()
+                .filter(node -> node instanceof Pane)
+                .map(node -> ElementsAdderController.controllers.get(node).getSelectedElement())
+                .collect(Collectors.toSet()));
+
         if (forcedCancelHitsOrDamage.getValue().equals("Hits")) {
             if (forcedCancelReceivedOrDeal.getValue().equals("Receive"))
                 skill.setHitsReceived(forcedCancelAmountFx.getText());
@@ -369,6 +462,18 @@ public class SkillMainViewController {
         saveBuffField("STMMAX", stmMaxFx, Stm.Max.class);
         saveBuffField("PRES", physicResistanceFx, PhysicResistance.class);
         saveBuffField("MRES", magicResistanceFx, MagicResistance.class);
+
+        // transformation:
+        skill.getTransformation().setBeingTypes(transformationBeingTypesFx.getChildren().stream()
+                .filter(node -> node instanceof Pane)
+                .map(node -> BeingTypeAdderController.controllers.get(node).getSelectedElement())
+                .collect(Collectors.toSet()));
+        skill.getTransformation().setElements(transformationElementsFx.getChildren().stream()
+                .filter(node -> node instanceof Pane)
+                .map(node -> TransformationElementsAdderController.controllers.get(node).getSelectedElement())
+                .collect(Collectors.toSet()));
+        skill.getTransformation().setSize(transformationSizeFx.getValue().equals("NO") ? null : Size.valueOf(transformationSizeFx.getValue()));
+        skill.getTransformation().setOverride(transformationOverrideFx.isSelected());
     }
 
     private void saveBuffField(String fieldParsedName, TextField fieldFx, Class<? extends Stat> statClass) {
@@ -398,6 +503,18 @@ public class SkillMainViewController {
             messages.add("Field DURATION IN MINUTES contains non numeric characters or negative");
         if (!forcedCancelAmountFx.getText().replaceAll(" ", "").isEmpty() && !skillParser.testParse(forcedCancelAmountFx.getText().toUpperCase()))
             messages.add("Equation in the FORCED CANCEL AFTER field can not be parsed");
+        try {
+            if (!actsEveryMinuteFx.getText().replaceAll(" ", "").isEmpty())
+                Double.parseDouble(actsEveryMinuteFx.getText());
+        } catch (Exception e) {
+            messages.add("ACTS EVERY MINUTE field has not numeric characters");
+        }
+        try {
+            if (!actsEveryTurnFx.getText().replaceAll(" ", "").isEmpty())
+                Double.parseDouble(actsEveryTurnFx.getText());
+        } catch (Exception e) {
+            messages.add("ACTS EVERY TURN field has not numeric characters");
+        }
         // stat buffs:
         if (!isBuffFieldCorrect(skillParser, "MELEEATKMIN", meleeMinDmgFx))
             messages.add("Equation in the MELEE MIN DAMAGE field can not be parsed");

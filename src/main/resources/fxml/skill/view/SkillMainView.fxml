@@ -5,10 +5,12 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -98,7 +100,15 @@
                                  </children>
                               </VBox>
                               <Label text="Forced cancel&#10;after" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="15" GridPane.valignment="CENTER" />
-                              <CheckBox fx:id="permanentFx" mnemonicParsing="false" text="Permanent" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="CENTER" />
+                              <VBox alignment="CENTER_LEFT" spacing="10.0" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="CENTER">
+                                 <children>
+                                    <CheckBox fx:id="permanentFx" mnemonicParsing="false" text="Permanent" />
+                                    <CheckBox fx:id="recalculateEveryIterationFx" mnemonicParsing="false" text="Recalculate&#10;every iteration" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="5.0" />
+                                 </padding>
+                              </VBox>
                               <Label text="On duplicating" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="CENTER" />
                               <ComboBox fx:id="onDuplicatingFx" prefWidth="150.0" promptText="Add as another skill" GridPane.columnIndex="1" GridPane.rowIndex="16" />
                               <Label text="Elements" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
@@ -287,7 +297,43 @@
                   </ScrollPane>
                </right>
                <center>
-                  <Button mnemonicParsing="false" text="Button" BorderPane.alignment="CENTER" />
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Label text="Transformation:" />
+                        <Label text="Size" />
+                        <ComboBox fx:id="transformationSizeFx" prefWidth="150.0" promptText="NO" />
+                        <Label text="Being types" />
+                        <ScrollPane maxHeight="100.0" maxWidth="150.0" prefHeight="200.0" prefWidth="200.0">
+                           <content>
+                              <VBox fx:id="transformationBeingTypesFx">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#loadBeingTypesAdder" prefWidth="143.0" text="+" />
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                        <Label text="Elements" />
+                        <ScrollPane maxHeight="100.0" maxWidth="150.0" prefHeight="200.0" prefWidth="200.0">
+                           <content>
+                              <VBox fx:id="transformationElementsFx">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#loadTransformationElementsAdder" prefWidth="143.0" text="+" />
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                        <HBox alignment="TOP_CENTER" spacing="15.0">
+                           <children>
+                              <RadioButton mnemonicParsing="false" text="Add">
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="transformationOverride" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="transformationOverrideFx" mnemonicParsing="false" selected="true" text="Override" toggleGroup="$transformationOverride" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
                </center>
             </BorderPane>
       </content>

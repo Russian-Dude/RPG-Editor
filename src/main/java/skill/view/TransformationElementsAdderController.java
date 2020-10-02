@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ElementsAdderController {
+public class TransformationElementsAdderController {
 
-    public static Map<Pane, ElementsAdderController> controllers = new HashMap<>();
+    public static Map<Pane, TransformationElementsAdderController> controllers = new HashMap<>();
 
     private Element selectedElement = Element.NEUTRAL;
 
@@ -28,7 +28,7 @@ public class ElementsAdderController {
 
     @FXML
     private void remove() {
-        SkillMainViewController.removeElementsAdder(self);
+        SkillMainViewController.removeTransformationElementsAdder(self);
         controllers.remove(self);
     }
 
