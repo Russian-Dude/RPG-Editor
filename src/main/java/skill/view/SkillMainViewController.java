@@ -6,8 +6,8 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.*;
 import ru.rdude.rpg.game.logic.data.SkillData;
 import ru.rdude.rpg.game.logic.entities.beings.Being;
 import ru.rdude.rpg.game.logic.entities.beings.Player;
@@ -34,6 +34,7 @@ public class SkillMainViewController {
 
     private static HashMap<Pane, SkillMainViewController> elementsMapFx = new HashMap<>();
     private static HashMap<Pane, SkillMainViewController> beingTypesMapFx = new HashMap<>();
+    private static HashMap<Pane, SkillMainViewController> elementsCoefficientsMapFx = new HashMap<>();
 
 
     @FXML
@@ -41,13 +42,17 @@ public class SkillMainViewController {
     @FXML
     private TextField nameInEditorFx;
     @FXML
-    private ComboBox<String> typeFx;
+    private ComboBox<String> attackType;
+    @FXML
+    private ComboBox<String> skillTypeFx;
     @FXML
     private TextField requiredStaminaFx;
     @FXML
     private TextField requiredConcentrationFx;
     @FXML
     private TextField damageFx;
+    @FXML
+    private VBox damageElementCoefficientsFx;
     @FXML
     private VBox elementsFx;
     @FXML
@@ -86,7 +91,8 @@ public class SkillMainViewController {
     private ComboBox<String> onDuplicatingFx;
 
     // buffs:
-
+    @FXML
+    private ComboBox<String> buffTypeFx;
     @FXML
     private TextField meleeMinDmgFx;
     @FXML
@@ -152,6 +158,8 @@ public class SkillMainViewController {
 
     // transformation:
     @FXML
+    private TitledPane transformationTitledPaneFx;
+    @FXML
     private VBox transformationBeingTypesFx;
     @FXML
     private VBox transformationElementsFx;
@@ -168,8 +176,8 @@ public class SkillMainViewController {
     }
 
     private void loadSimpleComboBoxes() {
-        typeFx.setItems(EnumsLists.attackTypes);
-        typeFx.setValue(AttackType.MELEE.name());
+        attackType.setItems(EnumsLists.attackTypes);
+        attackType.setValue(AttackType.MELEE.name());
         effectFx.setItems(EnumsLists.skillEffects);
         effectFx.setValue(SkillEffect.NO.name());
         forcedCancelHitsOrDamage.setItems(FXCollections.observableList(Arrays.asList("Hits", "Damage")));
@@ -178,6 +186,10 @@ public class SkillMainViewController {
         forcedCancelReceivedOrDeal.setValue("Received");
         transformationSizeFx.setItems(EnumsLists.sizes);
         transformationSizeFx.setValue("NO");
+        buffTypeFx.setItems(EnumsLists.buffTypes);
+        buffTypeFx.setValue("PHYSIC");
+        skillTypeFx.setItems(EnumsLists.skillTypes);
+        skillTypeFx.setValue("NO");
     }
 
     private void loadDefaultAdders() throws IOException {
@@ -238,6 +250,24 @@ public class SkillMainViewController {
         BeingTypeAdderController.controllers.get(beingTypeAdder).setSelectedBeingType(beingType);
     }
 
+    @FXML
+    private void loadElementsCoefficientsDamageAdder() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/ElementsCoefficientsDamageAdder.fxml"));
+        Pane elementsCoefficientsDamageAdder = loader.load();
+        damageElementCoefficientsFx.getChildren().add(damageElementCoefficientsFx.getChildren().size() - 1, elementsCoefficientsDamageAdder);
+        elementsCoefficientsMapFx.put(elementsCoefficientsDamageAdder, this);
+    }
+
+    private void loadElementsCoefficientsDamageAdder(Element element, double coefficient) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/ElementsCoefficientsDamageAdder.fxml"));
+        Pane elementsCoefficientsDamageAdder = loader.load();
+        damageElementCoefficientsFx.getChildren().add(damageElementCoefficientsFx.getChildren().size() - 1, elementsCoefficientsDamageAdder);
+        elementsCoefficientsMapFx.put(elementsCoefficientsDamageAdder, this);
+        ElementsCoefficientsDamageAdderController.controllers.get(elementsCoefficientsDamageAdder).setSelectedElement(element, coefficient);
+    }
+
     public static void removeElementsAdder(Pane elementsAdder) {
         elementsMapFx.get(elementsAdder).elementsFx.getChildren().remove(elementsAdder);
         elementsMapFx.remove(elementsAdder);
@@ -254,6 +284,11 @@ public class SkillMainViewController {
         beingTypesMapFx.remove(beingTypeAdder);
     }
 
+    public static void removeElementsCoefficientsDamageAdder(Pane elementsCoefficientsAdder) {
+        elementsCoefficientsMapFx.get(elementsCoefficientsAdder).damageElementCoefficientsFx.getChildren().remove(elementsCoefficientsAdder);
+        elementsCoefficientsMapFx.remove(elementsCoefficientsAdder);
+    }
+
 
     @FXML
     private void showNameInEditorSameAsName() {
@@ -264,7 +299,8 @@ public class SkillMainViewController {
     private void loadSkill(SkillData skillData) throws IOException {
         this.skill = skillData;
         nameFx.setText(skillData.getName());
-        typeFx.setValue(skillData.getAttackType().name());
+        attackType.setValue(skillData.getAttackType().name());
+        skillTypeFx.setValue(skillData.getType().name());
         if (skillData.getNameInEditor().equals(skillData.getName())) {
             nameInEditorFx.setPromptText(skillData.getName());
         } else {
@@ -309,6 +345,7 @@ public class SkillMainViewController {
         }
 
         // buff fields:
+        buffTypeFx.setValue(skillData.getBuffType().name());
         loadBuffFieldIfPossible(skillData, "MELEEATKMIN", Dmg.Melee.MeleeMin.class, meleeMinDmgFx);
         loadBuffFieldIfPossible(skillData, "MELEEATKMAX", Dmg.Melee.MeleeMax.class, meleeMaxDmgFx);
         loadBuffFieldIfPossible(skillData, "RANGEATKMIN", Dmg.Range.RangeMin.class, rangeMinDmgFx);
@@ -390,7 +427,8 @@ public class SkillMainViewController {
             return;
         }
         skill.setName(nameFx.getText());
-        skill.setType(SkillType.valueOf(typeFx.getValue()));
+        skill.setAttackType(AttackType.valueOf(attackType.getValue()));
+        skill.setType(SkillType.valueOf(skillTypeFx.getValue()));
         skill.setNameInEditor(nameInEditorFx.getText().isEmpty() ? nameFx.getText() : nameInEditorFx.getText());
         skill.setStaminaReq(requiredStaminaFx.getText().replaceAll(" ", "").isEmpty() ?
                 0 : Integer.parseInt(requiredStaminaFx.getText().replaceAll(" ", "")));
@@ -430,6 +468,7 @@ public class SkillMainViewController {
         }
 
         // buff fields:
+        skill.setBuffType(BuffType.valueOf(buffTypeFx.getValue()));
         if (skill.getStats() == null) {
             skill.setStats(new HashMap<>());
         }
