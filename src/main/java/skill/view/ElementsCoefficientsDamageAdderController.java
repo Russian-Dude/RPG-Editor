@@ -28,6 +28,11 @@ public class ElementsCoefficientsDamageAdderController {
     public void initialize() throws IOException {
         elements.setItems(EnumsLists.elements);
         controllers.put(self, this);
+        coefficientTextField.focusedProperty().addListener(((observableValue, aBoolean, t1) -> {
+            if (!t1) {
+                setCoefficient();
+            }
+        }));
     }
 
     @FXML

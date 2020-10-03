@@ -344,6 +344,11 @@ public class SkillMainViewController {
             forcedCancelHitsOrDamage.setValue("Hits");
         }
 
+        // damage coefficients:
+        for (java.util.Map.Entry<Element, Double> coefficient : skillData.getCoefficients().atk().element().getCoefficientsMap().entrySet()) {
+            loadElementsCoefficientsDamageAdder(coefficient.getKey(), coefficient.getValue());
+        }
+
         // buff fields:
         buffTypeFx.setValue(skillData.getBuffType().name());
         loadBuffFieldIfPossible(skillData, "MELEEATKMIN", Dmg.Melee.MeleeMin.class, meleeMinDmgFx);
@@ -466,6 +471,15 @@ public class SkillMainViewController {
             else if (forcedCancelReceivedOrDeal.getValue().equals("Deal"))
                 skill.setDamageMade(forcedCancelAmountFx.getText());
         }
+
+        // damage coefficients:
+        damageElementCoefficientsFx.getChildren().stream()
+                .filter(node -> node instanceof Pane)
+                .forEach(adder -> {
+                    Element element = ElementsCoefficientsDamageAdderController.controllers.get(adder).getSelectedElement();
+                    double coefficient = ElementsCoefficientsDamageAdderController.controllers.get(adder).getCoefficient();
+                    skill.getCoefficients().atk().element().set(element, coefficient);
+                });
 
         // buff fields:
         skill.setBuffType(BuffType.valueOf(buffTypeFx.getValue()));
