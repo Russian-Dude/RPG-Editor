@@ -5,6 +5,7 @@ import enums.EnumsLists;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
@@ -36,6 +37,9 @@ public class SkillMainViewController {
     private static HashMap<Pane, SkillMainViewController> beingTypesMapFx = new HashMap<>();
     private static HashMap<Pane, SkillMainViewController> elementsCoefficientsMapFx = new HashMap<>();
 
+
+    @FXML
+    private HBox testBox;
 
     @FXML
     private TextField nameFx;
@@ -173,6 +177,7 @@ public class SkillMainViewController {
     public void initialize() throws IOException {
         loadSimpleComboBoxes();
         loadDefaultAdders();
+        testBox.getChildren().add(new TextFieldWithFormulaAutocompletion());
     }
 
     private void loadSimpleComboBoxes() {
