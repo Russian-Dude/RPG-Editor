@@ -5,7 +5,6 @@ import enums.EnumsLists;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
@@ -38,6 +37,7 @@ public class SkillMainViewController {
     private static HashMap<Pane, SkillMainViewController> elementsCoefficientsMapFx = new HashMap<>();
     private static HashMap<Pane, SkillMainViewController> beingTypesCoefficientsMapFx = new HashMap<>();
     private static HashMap<Pane, SkillMainViewController> sizeCoefficientsMapFx = new HashMap<>();
+    private static HashMap<Pane, SkillMainViewController> subTargetsMapFx = new HashMap<>();
 
 
     @FXML
@@ -57,6 +57,10 @@ public class SkillMainViewController {
     private TextField requiredConcentrationFx;
     @FXML
     private TextField damageFx;
+    @FXML
+    private ComboBox<String> mainTargetFx;
+    @FXML
+    private VBox targetsFx;
     @FXML
     private VBox damageElementCoefficientsFx;
     @FXML
@@ -201,6 +205,8 @@ public class SkillMainViewController {
         buffTypeFx.setValue("PHYSIC");
         skillTypeFx.setItems(EnumsLists.skillTypes);
         skillTypeFx.setValue("NO");
+        mainTargetFx.setItems(EnumsLists.mainTargets);
+        mainTargetFx.setValue("ENEMY");
     }
 
     private void loadDefaultAdders() throws IOException {
@@ -315,6 +321,24 @@ public class SkillMainViewController {
         SizeCoefficientsDamageAdderController.controllers.get(sizeCoefficientsDamageAdder).setSelectedSize(size, coefficient);
     }
 
+    @FXML
+    private void loadSubTargetsAdder() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/SubTargetsAdder.fxml"));
+        Pane subTargetsAdder = loader.load();
+        targetsFx.getChildren().add(targetsFx.getChildren().size() - 1, subTargetsAdder);
+        subTargetsMapFx.put(subTargetsAdder, this);
+    }
+
+    private void loadSubTargetsAdder(Target target) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/SubTargetsAdder.fxml"));
+        Pane subTargetsAdder = loader.load();
+        targetsFx.getChildren().add(targetsFx.getChildren().size() - 1, subTargetsAdder);
+        subTargetsMapFx.put(subTargetsAdder, this);
+        SubTargetsAdderController.controllers.get(subTargetsAdder).setSelectedTarget(target);
+    }
+
     public static void removeElementsAdder(Pane elementsAdder) {
         elementsMapFx.get(elementsAdder).elementsFx.getChildren().remove(elementsAdder);
         elementsMapFx.remove(elementsAdder);
@@ -344,6 +368,11 @@ public class SkillMainViewController {
     public static void removeSizeCoefficientsDamageAdder(Pane sizeCoefficientsAdder) {
         sizeCoefficientsMapFx.get(sizeCoefficientsAdder).damageSizeCoefficientsFx.getChildren().remove(sizeCoefficientsAdder);
         sizeCoefficientsMapFx.remove(sizeCoefficientsAdder);
+    }
+
+    public static void removeSubTargetsAdder(Pane subTargetsAdder) {
+        subTargetsMapFx.get(subTargetsAdder).targetsFx.getChildren().remove(subTargetsAdder);
+        subTargetsMapFx.remove(subTargetsAdder);
     }
 
 
@@ -399,6 +428,12 @@ public class SkillMainViewController {
             forcedCancelAmountFx.setText(skillData.getHitsMade());
             forcedCancelReceivedOrDeal.setValue("Deal");
             forcedCancelHitsOrDamage.setValue("Hits");
+        }
+
+        // targets:
+        mainTargetFx.setValue(skillData.getMainTarget().name());
+        for (Target target : skillData.getTargets()) {
+            loadSubTargetsAdder(target);
         }
 
         // damage coefficients:
@@ -534,6 +569,13 @@ public class SkillMainViewController {
             else if (forcedCancelReceivedOrDeal.getValue().equals("Deal"))
                 skill.setDamageMade(forcedCancelAmountFx.getText());
         }
+
+        // targets:
+        skill.setMainTarget(Target.valueOf(mainTargetFx.getValue()));
+        skill.setTargets(targetsFx.getChildren().stream()
+                .filter(node -> node instanceof Pane)
+                .map(node -> SubTargetsAdderController.controllers.get(node).getSelectedTarget())
+                .collect(Collectors.toList()));
 
         // damage coefficients:
         damageElementCoefficientsFx.getChildren().stream()

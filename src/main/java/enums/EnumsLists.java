@@ -16,6 +16,8 @@ public class EnumsLists {
     public static ObservableList<String> sizes = FXCollections.observableList(getEnumSizesPlusNo());
     public static ObservableList<String> buffTypes = FXCollections.observableList(getEnumBuffTypes());
     public static ObservableList<String> skillTypes = FXCollections.observableList(getEnumSkillTypes());
+    public static ObservableList<String> mainTargets = FXCollections.observableList(getEnumMainTargets());
+    public static ObservableList<String> subTargets = FXCollections.observableList(getEnumSubTargets());
 
     private static List<String> getEnumElements() {
         return Arrays.stream(Element.values())
@@ -58,6 +60,20 @@ public class EnumsLists {
     private static List<String> getEnumSkillTypes() {
         return Arrays.stream(SkillType.values())
                 .map(SkillType::name)
+                .collect(Collectors.toList());
+    }
+
+    private static List<String> getEnumMainTargets() {
+        return Arrays.stream(Target.values())
+                .filter(Target::isCanBeMainTarget)
+                .map(Target::name)
+                .collect(Collectors.toList());
+    }
+
+    private static List<String> getEnumSubTargets() {
+        return Arrays.stream(Target.values())
+                .filter(Target::isCanBeSubTarget)
+                .map(Target::name)
                 .collect(Collectors.toList());
     }
 

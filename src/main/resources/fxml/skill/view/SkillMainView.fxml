@@ -63,20 +63,22 @@
                                       </columnConstraints>
                                       <rowConstraints>
                                           <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="100.0" vgrow="SOMETIMES" />
                                           <RowConstraints maxHeight="68.0" minHeight="5.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label text="Damage" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-                                          <TextField fx:id="damageFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                          <Label text="Attack type" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                                          <ComboBox fx:id="attackType" prefWidth="150.0" promptText="MELEE" visibleRowCount="4" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-                                          <Label text="Effect" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                                          <ComboBox fx:id="effectFx" prefWidth="150.0" promptText="NO" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                          <Label text="Elements" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-                                          <ScrollPane maxWidth="150.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <Label text="Damage" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                                          <TextField fx:id="damageFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <Label text="Attack type" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                                          <ComboBox fx:id="attackType" prefWidth="150.0" promptText="MELEE" visibleRowCount="4" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                                          <Label text="Effect" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                                          <ComboBox fx:id="effectFx" prefWidth="150.0" promptText="NO" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                          <Label text="Elements" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                                          <ScrollPane maxWidth="150.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                              <content>
                                                 <VBox fx:id="elementsFx">
                                                    <children>
@@ -85,8 +87,20 @@
                                                 </VBox>
                                              </content>
                                           </ScrollPane>
-                                          <Label text="Skill type" />
-                                          <ComboBox fx:id="skillTypeFx" prefWidth="150.0" GridPane.columnIndex="1" />
+                                          <Label text="Skill type" GridPane.rowIndex="2" />
+                                          <ComboBox fx:id="skillTypeFx" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label text="Main target" />
+                                          <Label text="Sub-targets" GridPane.rowIndex="1" />
+                                          <ComboBox fx:id="mainTargetFx" prefWidth="150.0" GridPane.columnIndex="1" />
+                                          <ScrollPane maxWidth="150.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <content>
+                                                <VBox fx:id="targetsFx">
+                                                   <children>
+                                                      <Button mnemonicParsing="false" onAction="#loadSubTargetsAdder" prefWidth="143.0" text="+" />
+                                                   </children>
+                                                </VBox>
+                                             </content>
+                                          </ScrollPane>
                                        </children>
                                        <padding>
                                           <Insets right="10.0" />
