@@ -36,6 +36,8 @@ public class SkillMainViewController {
     private static HashMap<Pane, SkillMainViewController> elementsMapFx = new HashMap<>();
     private static HashMap<Pane, SkillMainViewController> beingTypesMapFx = new HashMap<>();
     private static HashMap<Pane, SkillMainViewController> elementsCoefficientsMapFx = new HashMap<>();
+    private static HashMap<Pane, SkillMainViewController> beingTypesCoefficientsMapFx = new HashMap<>();
+    private static HashMap<Pane, SkillMainViewController> sizeCoefficientsMapFx = new HashMap<>();
 
 
     @FXML
@@ -57,6 +59,10 @@ public class SkillMainViewController {
     private TextField damageFx;
     @FXML
     private VBox damageElementCoefficientsFx;
+    @FXML
+    private VBox damageBeingTypesCoefficientsFx;
+    @FXML
+    private VBox damageSizeCoefficientsFx;
     @FXML
     private VBox elementsFx;
     @FXML
@@ -273,6 +279,42 @@ public class SkillMainViewController {
         ElementsCoefficientsDamageAdderController.controllers.get(elementsCoefficientsDamageAdder).setSelectedElement(element, coefficient);
     }
 
+    @FXML
+    private void loadBeingTypesCoefficientsDamageAdder() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/BeingTypesCoefficientsDamageAdder.fxml"));
+        Pane beingTypesCoefficientsDamageAdder = loader.load();
+        damageBeingTypesCoefficientsFx.getChildren().add(damageBeingTypesCoefficientsFx.getChildren().size() - 1, beingTypesCoefficientsDamageAdder);
+        beingTypesCoefficientsMapFx.put(beingTypesCoefficientsDamageAdder, this);
+    }
+
+    private void loadBeingTypesCoefficientsDamageAdder(BeingType beingType, double coefficient) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/BeingTypesCoefficientsDamageAdder.fxml"));
+        Pane beingTypesCoefficientsDamageAdder = loader.load();
+        damageBeingTypesCoefficientsFx.getChildren().add(damageBeingTypesCoefficientsFx.getChildren().size() - 1, beingTypesCoefficientsDamageAdder);
+        beingTypesCoefficientsMapFx.put(beingTypesCoefficientsDamageAdder, this);
+        BeingTypesCoefficientsDamageAdderController.controllers.get(beingTypesCoefficientsDamageAdder).setSelectedElement(beingType, coefficient);
+    }
+
+    @FXML
+    private void loadSizeCoefficientsDamageAdder() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/SizeCoefficientsDamageAdder.fxml"));
+        Pane sizeCoefficientsDamageAdder = loader.load();
+        damageSizeCoefficientsFx.getChildren().add(damageSizeCoefficientsFx.getChildren().size() - 1, sizeCoefficientsDamageAdder);
+        sizeCoefficientsMapFx.put(sizeCoefficientsDamageAdder, this);
+    }
+
+    private void loadSizeCoefficientsDamageAdder(Size size, double coefficient) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/SizeCoefficientsDamageAdder.fxml"));
+        Pane sizeCoefficientsDamageAdder = loader.load();
+        damageSizeCoefficientsFx.getChildren().add(damageSizeCoefficientsFx.getChildren().size() - 1, sizeCoefficientsDamageAdder);
+        sizeCoefficientsMapFx.put(sizeCoefficientsDamageAdder, this);
+        SizeCoefficientsDamageAdderController.controllers.get(sizeCoefficientsDamageAdder).setSelectedSize(size, coefficient);
+    }
+
     public static void removeElementsAdder(Pane elementsAdder) {
         elementsMapFx.get(elementsAdder).elementsFx.getChildren().remove(elementsAdder);
         elementsMapFx.remove(elementsAdder);
@@ -292,6 +334,16 @@ public class SkillMainViewController {
     public static void removeElementsCoefficientsDamageAdder(Pane elementsCoefficientsAdder) {
         elementsCoefficientsMapFx.get(elementsCoefficientsAdder).damageElementCoefficientsFx.getChildren().remove(elementsCoefficientsAdder);
         elementsCoefficientsMapFx.remove(elementsCoefficientsAdder);
+    }
+
+    public static void removeBeingTypesCoefficientsDamageAdder(Pane beingTypeCoefficientsAdder) {
+        beingTypesCoefficientsMapFx.get(beingTypeCoefficientsAdder).damageBeingTypesCoefficientsFx.getChildren().remove(beingTypeCoefficientsAdder);
+        beingTypesCoefficientsMapFx.remove(beingTypeCoefficientsAdder);
+    }
+
+    public static void removeSizeCoefficientsDamageAdder(Pane sizeCoefficientsAdder) {
+        sizeCoefficientsMapFx.get(sizeCoefficientsAdder).damageSizeCoefficientsFx.getChildren().remove(sizeCoefficientsAdder);
+        sizeCoefficientsMapFx.remove(sizeCoefficientsAdder);
     }
 
 
@@ -352,6 +404,12 @@ public class SkillMainViewController {
         // damage coefficients:
         for (java.util.Map.Entry<Element, Double> coefficient : skillData.getCoefficients().atk().element().getCoefficientsMap().entrySet()) {
             loadElementsCoefficientsDamageAdder(coefficient.getKey(), coefficient.getValue());
+        }
+        for (java.util.Map.Entry<BeingType, Double> coefficient : skillData.getCoefficients().atk().beingType().getCoefficientsMap().entrySet()) {
+            loadBeingTypesCoefficientsDamageAdder(coefficient.getKey(), coefficient.getValue());
+        }
+        for (java.util.Map.Entry<Size, Double> coefficient : skillData.getCoefficients().atk().size().getCoefficientsMap().entrySet()) {
+            loadSizeCoefficientsDamageAdder(coefficient.getKey(), coefficient.getValue());
         }
 
         // buff fields:
@@ -484,6 +542,20 @@ public class SkillMainViewController {
                     Element element = ElementsCoefficientsDamageAdderController.controllers.get(adder).getSelectedElement();
                     double coefficient = ElementsCoefficientsDamageAdderController.controllers.get(adder).getCoefficient();
                     skill.getCoefficients().atk().element().set(element, coefficient);
+                });
+        damageBeingTypesCoefficientsFx.getChildren().stream()
+                .filter(node -> node instanceof Pane)
+                .forEach(adder -> {
+                    BeingType beingType = BeingTypesCoefficientsDamageAdderController.controllers.get(adder).getSelectedBeingType();
+                    double coefficient = BeingTypesCoefficientsDamageAdderController.controllers.get(adder).getCoefficient();
+                    skill.getCoefficients().atk().beingType().set(beingType, coefficient);
+                });
+        damageSizeCoefficientsFx.getChildren().stream()
+                .filter(node -> node instanceof Pane)
+                .forEach(adder -> {
+                    Size size = SizeCoefficientsDamageAdderController.controllers.get(adder).getSelectedSize();
+                    double coefficient = BeingTypesCoefficientsDamageAdderController.controllers.get(adder).getCoefficient();
+                    skill.getCoefficients().atk().size().set(size, coefficient);
                 });
 
         // buff fields:

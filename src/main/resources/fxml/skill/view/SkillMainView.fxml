@@ -92,15 +92,35 @@
                                           <Insets right="10.0" />
                                        </padding>
                                     </GridPane>
-                                    <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                                    <VBox alignment="TOP_CENTER" prefHeight="260.0" prefWidth="100.0">
                                        <children>
                                           <Label text="Damage Coefficients:" />
                                           <Label text="Elements" />
-                                          <ScrollPane maxHeight="100.0" maxWidth="200.0" prefHeight="200.0" prefWidth="200.0">
+                                          <ScrollPane maxHeight="100.0" maxWidth="182.0" minWidth="180.0" prefHeight="200.0" prefWidth="180.0">
                                              <content>
                                                 <VBox fx:id="damageElementCoefficientsFx" alignment="TOP_CENTER">
                                                    <children>
-                                                      <Button fx:id="ElementsDamageCoefficientsAddButton" mnemonicParsing="false" onAction="#loadElementsCoefficientsDamageAdder" prefWidth="143.0" text="+" />
+                                                      <Button fx:id="ElementsDamageCoefficientsAddButton" mnemonicParsing="false" onAction="#loadElementsCoefficientsDamageAdder" prefWidth="180.0" text="+" />
+                                                   </children>
+                                                </VBox>
+                                             </content>
+                                          </ScrollPane>
+                                          <Label text="Being types" />
+                                          <ScrollPane maxHeight="100.0" maxWidth="182.0" minWidth="180.0" prefHeight="200.0" prefWidth="180.0">
+                                             <content>
+                                                <VBox fx:id="damageBeingTypesCoefficientsFx" alignment="TOP_CENTER">
+                                                   <children>
+                                                      <Button fx:id="BeingTypesDamageCoefficientsAddButton1" mnemonicParsing="false" onAction="#loadBeingTypesCoefficientsDamageAdder" prefWidth="180.0" text="+" />
+                                                   </children>
+                                                </VBox>
+                                             </content>
+                                          </ScrollPane>
+                                          <Label text="Sizes" />
+                                          <ScrollPane maxHeight="100.0" maxWidth="182.0" minWidth="180.0" prefHeight="200.0" prefWidth="180.0">
+                                             <content>
+                                                <VBox fx:id="damageSizeCoefficientsFx" alignment="TOP_CENTER">
+                                                   <children>
+                                                      <Button fx:id="SizeDamageCoefficientsAddButton" mnemonicParsing="false" onAction="#loadSizeCoefficientsDamageAdder" prefWidth="180.0" text="+" />
                                                    </children>
                                                 </VBox>
                                              </content>
