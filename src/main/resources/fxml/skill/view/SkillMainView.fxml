@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -19,6 +18,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import ru.rdude.fxlib.containers.MultipleChoiceContainer?>
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skill.view.SkillMainViewController">
   <tabs>
@@ -78,29 +78,13 @@
                                           <Label text="Effect" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
                                           <ComboBox fx:id="effectFx" prefWidth="150.0" promptText="NO" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                           <Label text="Elements" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
-                                          <ScrollPane maxWidth="150.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                             <content>
-                                                <VBox fx:id="elementsFx">
-                                                   <children>
-                                                      <Button fx:id="ElementsAddButton" mnemonicParsing="false" onAction="#loadElementsAdder" prefWidth="143.0" text="+" />
-                                                   </children>
-                                                </VBox>
-                                             </content>
-                                          </ScrollPane>
                                           <Label text="Skill type" GridPane.rowIndex="2" />
                                           <ComboBox fx:id="skillTypeFx" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                           <Label text="Main target" />
                                           <Label text="Sub-targets" GridPane.rowIndex="1" />
                                           <ComboBox fx:id="mainTargetFx" prefWidth="150.0" GridPane.columnIndex="1" />
-                                          <ScrollPane maxWidth="150.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <content>
-                                                <VBox fx:id="targetsFx">
-                                                   <children>
-                                                      <Button mnemonicParsing="false" onAction="#loadSubTargetsAdder" prefWidth="143.0" text="+" />
-                                                   </children>
-                                                </VBox>
-                                             </content>
-                                          </ScrollPane>
+                                          <MultipleChoiceContainer fx:id="elementsFx" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <MultipleChoiceContainer fx:id="targetsFx" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                        </children>
                                        <padding>
                                           <Insets right="10.0" />
@@ -110,35 +94,11 @@
                                        <children>
                                           <Label text="Damage Coefficients:" />
                                           <Label text="Elements" />
-                                          <ScrollPane maxHeight="100.0" maxWidth="182.0" minWidth="180.0" prefHeight="200.0" prefWidth="180.0">
-                                             <content>
-                                                <VBox fx:id="damageElementCoefficientsFx" alignment="TOP_CENTER">
-                                                   <children>
-                                                      <Button fx:id="ElementsDamageCoefficientsAddButton" mnemonicParsing="false" onAction="#loadElementsCoefficientsDamageAdder" prefWidth="180.0" text="+" />
-                                                   </children>
-                                                </VBox>
-                                             </content>
-                                          </ScrollPane>
+                                          <MultipleChoiceContainer fx:id="damageElementCoefficientsFx" maxWidth="200.0" prefHeight="75.0" visualElementType="PERCENT_TEXT_FIELD" />
                                           <Label text="Being types" />
-                                          <ScrollPane maxHeight="100.0" maxWidth="182.0" minWidth="180.0" prefHeight="200.0" prefWidth="180.0">
-                                             <content>
-                                                <VBox fx:id="damageBeingTypesCoefficientsFx" alignment="TOP_CENTER">
-                                                   <children>
-                                                      <Button fx:id="BeingTypesDamageCoefficientsAddButton1" mnemonicParsing="false" onAction="#loadBeingTypesCoefficientsDamageAdder" prefWidth="180.0" text="+" />
-                                                   </children>
-                                                </VBox>
-                                             </content>
-                                          </ScrollPane>
+                                          <MultipleChoiceContainer fx:id="damageBeingTypesCoefficientsFx" maxWidth="200.0" prefHeight="75.0" visualElementType="PERCENT_TEXT_FIELD" />
                                           <Label text="Sizes" />
-                                          <ScrollPane maxHeight="100.0" maxWidth="182.0" minWidth="180.0" prefHeight="200.0" prefWidth="180.0">
-                                             <content>
-                                                <VBox fx:id="damageSizeCoefficientsFx" alignment="TOP_CENTER">
-                                                   <children>
-                                                      <Button fx:id="SizeDamageCoefficientsAddButton" mnemonicParsing="false" onAction="#loadSizeCoefficientsDamageAdder" prefWidth="180.0" text="+" />
-                                                   </children>
-                                                </VBox>
-                                             </content>
-                                          </ScrollPane>
+                                          <MultipleChoiceContainer fx:id="damageSizeCoefficientsFx" maxWidth="200.0" prefHeight="75.0" visualElementType="PERCENT_TEXT_FIELD" />
                                        </children>
                                     </VBox>
                                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
@@ -169,7 +129,7 @@
                   </ScrollPane>
                   <ScrollPane minWidth="200.0">
                      <content>
-                        <SplitPane>
+                        <SplitPane prefHeight="700.0" prefWidth="250.0">
                            <items>
                               <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
                                  <children>
@@ -193,6 +153,100 @@
                                           <TextField fx:id="requiredStaminaFx" alignment="CENTER" maxWidth="65.0" prefWidth="65.0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                                           <TextField fx:id="requiredConcentrationFx" alignment="CENTER" maxWidth="65.0" prefWidth="65.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                                        </children>
+                                    </GridPane>
+                                    <Label text="Stats requirements:" />
+                                    <GridPane alignment="CENTER" prefHeight="500.0" vgap="2.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="113.0" minWidth="10.0" prefWidth="84.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="157.0" minWidth="35.0" prefWidth="30.0" />
+                                          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="106.0" minWidth="10.0" prefWidth="94.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="35.0" prefWidth="30.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label alignment="CENTER" text="Flee" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                                          <Label alignment="CENTER" text="Gold" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                                          <Label text="Expirience" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                                          <Label text="Critical" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                                          <Label text="Parry" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+                                          <Label text="Defence" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
+                                          <Label text="Hit" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                                          <Label text="Block" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
+                                          <Label text="Maximum&#10;HP" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="CENTER" />
+                                          <Label text="HP&#10;Restoration" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="12" GridPane.valignment="CENTER" />
+                                          <Label text="Concentration" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="CENTER" />
+                                          <Label text="Lucky&#10;Dodge" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="CENTER" />
+                                          <Label text="Intelligence" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                                          <Label text="Dexterity" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                                          <Label text="Strenght" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                                          <Label text="Agility" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                                          <Label text="Vitality" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+                                          <Label text="Luck" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
+                                          <Label text="Stamina&#10;by hit" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                                          <Label text="Stamina&#10;recovery" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
+                                          <Label text="Current&#10;Stamina" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="CENTER" />
+                                          <Label text="Maximum&#10;Stamina" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="12" GridPane.valignment="CENTER" />
+                                          <Label text="Phisic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="13" GridPane.valignment="CENTER" />
+                                          <Label text="Magic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="14" GridPane.valignment="CENTER" />
+                                          <TextField fx:id="fleeFx1" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <TextField fx:id="goldFx1" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <TextField fx:id="expFx1" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <TextField fx:id="critFx1" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                          <TextField fx:id="parryFx1" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                          <TextField fx:id="defFx1" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                          <TextField fx:id="hitFx1" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                          <TextField fx:id="blockFx1" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                          <TextField fx:id="hpMaxFx1" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                          <TextField fx:id="hpRestFx1" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                          <TextField fx:id="concentrationFx1" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                                          <TextField fx:id="luckyDodgeFx1" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                                          <TextField fx:id="intFx1" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                          <TextField fx:id="dexFx1" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                          <TextField fx:id="strFx1" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                          <TextField fx:id="agiFx1" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                                          <TextField fx:id="vitFx1" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+                                          <TextField fx:id="luckFx1" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+                                          <TextField fx:id="stmByHitFx1" GridPane.columnIndex="3" GridPane.rowIndex="9" />
+                                          <TextField fx:id="stmRecoveryFx1" GridPane.columnIndex="3" GridPane.rowIndex="10" />
+                                          <TextField fx:id="stmFx1" GridPane.columnIndex="3" GridPane.rowIndex="11" />
+                                          <TextField fx:id="stmMaxFx1" GridPane.columnIndex="3" GridPane.rowIndex="12" />
+                                          <TextField fx:id="physicResistanceFx1" GridPane.columnIndex="3" GridPane.rowIndex="13" />
+                                          <TextField fx:id="magicResistanceFx1" GridPane.columnIndex="3" GridPane.rowIndex="14" />
+                                          <Label text="Melee Min" />
+                                          <Label text="Melee Max" GridPane.columnIndex="2" />
+                                          <Label text="Range Min" GridPane.rowIndex="1" />
+                                          <Label text="Range Max" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                          <Label text="Magic Min" GridPane.rowIndex="2" />
+                                          <Label text="Magic Max" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                          <TextField GridPane.columnIndex="1" />
+                                          <TextField GridPane.columnIndex="3" />
+                                          <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                          <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <TextField GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                       </children>
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding>
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
                                     </GridPane>
                                  </children>
                               </VBox>
@@ -283,25 +337,9 @@
                                                       <Label text="Size" />
                                                       <ComboBox fx:id="transformationSizeFx" prefWidth="150.0" promptText="NO" />
                                                       <Label text="Being types" />
-                                                      <ScrollPane maxHeight="100.0" maxWidth="150.0" prefHeight="200.0" prefWidth="200.0">
-                                                         <content>
-                                                            <VBox fx:id="transformationBeingTypesFx">
-                                                               <children>
-                                                                  <Button mnemonicParsing="false" onAction="#loadBeingTypesAdder" prefWidth="143.0" text="+" />
-                                                               </children>
-                                                            </VBox>
-                                                         </content>
-                                                      </ScrollPane>
+                                                      <MultipleChoiceContainer fx:id="transformationBeingTypesFx" maxWidth="200.0" prefHeight="75.0" />
                                                       <Label text="Elements" />
-                                                      <ScrollPane maxHeight="100.0" maxWidth="150.0" prefHeight="200.0" prefWidth="200.0">
-                                                         <content>
-                                                            <VBox fx:id="transformationElementsFx">
-                                                               <children>
-                                                                  <Button mnemonicParsing="false" onAction="#loadTransformationElementsAdder" prefWidth="143.0" text="+" />
-                                                               </children>
-                                                            </VBox>
-                                                         </content>
-                                                      </ScrollPane>
+                                                      <MultipleChoiceContainer fx:id="transformationElementsFx" maxWidth="200.0" prefHeight="75.0" />
                                                       <HBox alignment="TOP_CENTER" spacing="15.0">
                                                          <children>
                                                             <RadioButton mnemonicParsing="false" text="Add">

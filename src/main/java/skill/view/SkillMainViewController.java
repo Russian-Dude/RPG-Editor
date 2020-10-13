@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import ru.rdude.fxlib.containers.MultipleChoiceContainer;
+import ru.rdude.fxlib.containers.MultipleChoiceContainerElementWithPercents;
 import ru.rdude.rpg.game.logic.data.SkillData;
 import ru.rdude.rpg.game.logic.entities.beings.Being;
 import ru.rdude.rpg.game.logic.entities.beings.Player;
@@ -25,23 +27,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 public class SkillMainViewController {
 
 
     private SkillData skill;
-
-    private static HashMap<Pane, SkillMainViewController> elementsMapFx = new HashMap<>();
-    private static HashMap<Pane, SkillMainViewController> beingTypesMapFx = new HashMap<>();
-    private static HashMap<Pane, SkillMainViewController> elementsCoefficientsMapFx = new HashMap<>();
-    private static HashMap<Pane, SkillMainViewController> beingTypesCoefficientsMapFx = new HashMap<>();
-    private static HashMap<Pane, SkillMainViewController> sizeCoefficientsMapFx = new HashMap<>();
-    private static HashMap<Pane, SkillMainViewController> subTargetsMapFx = new HashMap<>();
-
-
-    @FXML
-    private HBox testBox;
 
     @FXML
     private TextField nameFx;
@@ -60,15 +52,15 @@ public class SkillMainViewController {
     @FXML
     private ComboBox<String> mainTargetFx;
     @FXML
-    private VBox targetsFx;
+    private MultipleChoiceContainer<Target> targetsFx;
     @FXML
-    private VBox damageElementCoefficientsFx;
+    private MultipleChoiceContainer<Element> damageElementCoefficientsFx;
     @FXML
-    private VBox damageBeingTypesCoefficientsFx;
+    private MultipleChoiceContainer<BeingType> damageBeingTypesCoefficientsFx;
     @FXML
-    private VBox damageSizeCoefficientsFx;
+    private MultipleChoiceContainer<Size> damageSizeCoefficientsFx;
     @FXML
-    private VBox elementsFx;
+    private MultipleChoiceContainer<Element> elementsFx;
     @FXML
     private ComboBox<String> effectFx;
     @FXML
@@ -172,22 +164,84 @@ public class SkillMainViewController {
 
     // transformation:
     @FXML
-    private TitledPane transformationTitledPaneFx;
+    private MultipleChoiceContainer<BeingType> transformationBeingTypesFx;
     @FXML
-    private VBox transformationBeingTypesFx;
-    @FXML
-    private VBox transformationElementsFx;
+    private MultipleChoiceContainer<Element> transformationElementsFx;
     @FXML
     private ComboBox<String> transformationSizeFx;
     @FXML
     private RadioButton transformationOverrideFx;
 
+    // requirements:
+    @FXML
+    private TextField reqmeleeMinDmgFx;
+    @FXML
+    private TextField reqmeleeMaxDmgFx;
+    @FXML
+    private TextField reqrangeMinDmgFx;
+    @FXML
+    private TextField reqrangeMaxDmgFx;
+    @FXML
+    private TextField reqmagicMinDmgFx;
+    @FXML
+    private TextField reqmagicMaxDmgFx;
+    @FXML
+    private TextField reqtimeFx;
+    @FXML
+    private TextField reqgoldFx;
+    @FXML
+    private TextField reqfleeFx;
+    @FXML
+    private TextField reqexpFx;
+    @FXML
+    private TextField reqintFx;
+    @FXML
+    private TextField reqdexFx;
+    @FXML
+    private TextField reqstrFx;
+    @FXML
+    private TextField reqagiFx;
+    @FXML
+    private TextField reqvitFx;
+    @FXML
+    private TextField reqluckFx;
+    @FXML
+    private TextField reqcritFx;
+    @FXML
+    private TextField reqparryFx;
+    @FXML
+    private TextField reqdefFx;
+    @FXML
+    private TextField reqhitFx;
+    @FXML
+    private TextField reqblockFx;
+    @FXML
+    private TextField reqhpMaxFx;
+    @FXML
+    private TextField reqhpRestFx;
+    @FXML
+    private TextField reqconcentrationFx;
+    @FXML
+    private TextField reqluckyDodgeFx;
+    @FXML
+    private TextField reqstmFx;
+    @FXML
+    private TextField reqstmByHitFx;
+    @FXML
+    private TextField reqstmRecoveryFx;
+    @FXML
+    private TextField reqstmMaxFx;
+    @FXML
+    private TextField reqphysicResistanceFx;
+    @FXML
+    private TextField reqmagicResistanceFx;
+
+
 
     @FXML
     public void initialize() throws IOException {
         loadSimpleComboBoxes();
-        loadDefaultAdders();
-        testBox.getChildren().add(new TextFieldWithFormulaAutocompletion());
+        loadMultipleChoiceContainers();
     }
 
     private void loadSimpleComboBoxes() {
@@ -209,172 +263,15 @@ public class SkillMainViewController {
         mainTargetFx.setValue("ENEMY");
     }
 
-    private void loadDefaultAdders() throws IOException {
-        loadElementsAdder();
+    private void loadMultipleChoiceContainers() {
+        elementsFx.setAvailableElements(Arrays.asList(Element.values()));
+        targetsFx.setAvailableElements(Arrays.stream(Target.values()).filter(Target::isCanBeSubTarget).collect(Collectors.toSet()));
+        damageSizeCoefficientsFx.setAvailableElements(Arrays.asList(Size.values()));
+        damageBeingTypesCoefficientsFx.setAvailableElements(Arrays.asList(BeingType.values()));
+        damageElementCoefficientsFx.setAvailableElements(Arrays.asList(Element.values()));
+        transformationElementsFx.setAvailableElements(Arrays.asList(Element.values()));
+        transformationBeingTypesFx.setAvailableElements(Arrays.asList(BeingType.values()));
     }
-
-    @FXML
-    private void loadElementsAdder() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/ElementsAdder.fxml"));
-        Pane elementsAdder = loader.load();
-        elementsFx.getChildren().add(elementsFx.getChildren().size() - 1, elementsAdder);
-        elementsMapFx.put(elementsAdder, this);
-    }
-
-    private void loadElementsAdder(Element element) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/ElementsAdder.fxml"));
-        Pane elementsAdder = loader.load();
-        elementsFx.getChildren().add(elementsFx.getChildren().size() - 1, elementsAdder);
-        elementsMapFx.put(elementsAdder, this);
-        ElementsAdderController.controllers.get(elementsAdder).setSelectedElement(element);
-    }
-
-    @FXML
-    private void loadTransformationElementsAdder() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/TransformationElementsAdder.fxml"));
-        Pane elementsAdder = loader.load();
-        transformationElementsFx.getChildren().add(transformationElementsFx.getChildren().size() - 1, elementsAdder);
-        elementsMapFx.put(elementsAdder, this);
-    }
-
-    private void loadTransformationElementsAdder(Element element) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/TransformationElementsAdder.fxml"));
-        Pane elementsAdder = loader.load();
-        transformationElementsFx.getChildren().add(transformationElementsFx.getChildren().size() - 1, elementsAdder);
-        elementsMapFx.put(elementsAdder, this);
-        TransformationElementsAdderController.controllers.get(elementsAdder).setSelectedElement(element);
-    }
-
-    @FXML
-    private void loadBeingTypesAdder() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/BeingTypeAdder.fxml"));
-        Pane beingTypeAdder = loader.load();
-        transformationBeingTypesFx.getChildren().add(transformationBeingTypesFx.getChildren().size() - 1, beingTypeAdder);
-        beingTypesMapFx.put(beingTypeAdder, this);
-    }
-
-    private void loadBeingTypesAdder(BeingType beingType) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/BeingTypeAdder.fxml"));
-        Pane beingTypeAdder = loader.load();
-        transformationBeingTypesFx.getChildren().add(transformationBeingTypesFx.getChildren().size() - 1, beingTypeAdder);
-        beingTypesMapFx.put(beingTypeAdder, this);
-        BeingTypeAdderController.controllers.get(beingTypeAdder).setSelectedBeingType(beingType);
-    }
-
-    @FXML
-    private void loadElementsCoefficientsDamageAdder() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/ElementsCoefficientsDamageAdder.fxml"));
-        Pane elementsCoefficientsDamageAdder = loader.load();
-        damageElementCoefficientsFx.getChildren().add(damageElementCoefficientsFx.getChildren().size() - 1, elementsCoefficientsDamageAdder);
-        elementsCoefficientsMapFx.put(elementsCoefficientsDamageAdder, this);
-    }
-
-    private void loadElementsCoefficientsDamageAdder(Element element, double coefficient) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/ElementsCoefficientsDamageAdder.fxml"));
-        Pane elementsCoefficientsDamageAdder = loader.load();
-        damageElementCoefficientsFx.getChildren().add(damageElementCoefficientsFx.getChildren().size() - 1, elementsCoefficientsDamageAdder);
-        elementsCoefficientsMapFx.put(elementsCoefficientsDamageAdder, this);
-        ElementsCoefficientsDamageAdderController.controllers.get(elementsCoefficientsDamageAdder).setSelectedElement(element, coefficient);
-    }
-
-    @FXML
-    private void loadBeingTypesCoefficientsDamageAdder() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/BeingTypesCoefficientsDamageAdder.fxml"));
-        Pane beingTypesCoefficientsDamageAdder = loader.load();
-        damageBeingTypesCoefficientsFx.getChildren().add(damageBeingTypesCoefficientsFx.getChildren().size() - 1, beingTypesCoefficientsDamageAdder);
-        beingTypesCoefficientsMapFx.put(beingTypesCoefficientsDamageAdder, this);
-    }
-
-    private void loadBeingTypesCoefficientsDamageAdder(BeingType beingType, double coefficient) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/BeingTypesCoefficientsDamageAdder.fxml"));
-        Pane beingTypesCoefficientsDamageAdder = loader.load();
-        damageBeingTypesCoefficientsFx.getChildren().add(damageBeingTypesCoefficientsFx.getChildren().size() - 1, beingTypesCoefficientsDamageAdder);
-        beingTypesCoefficientsMapFx.put(beingTypesCoefficientsDamageAdder, this);
-        BeingTypesCoefficientsDamageAdderController.controllers.get(beingTypesCoefficientsDamageAdder).setSelectedElement(beingType, coefficient);
-    }
-
-    @FXML
-    private void loadSizeCoefficientsDamageAdder() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/SizeCoefficientsDamageAdder.fxml"));
-        Pane sizeCoefficientsDamageAdder = loader.load();
-        damageSizeCoefficientsFx.getChildren().add(damageSizeCoefficientsFx.getChildren().size() - 1, sizeCoefficientsDamageAdder);
-        sizeCoefficientsMapFx.put(sizeCoefficientsDamageAdder, this);
-    }
-
-    private void loadSizeCoefficientsDamageAdder(Size size, double coefficient) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/SizeCoefficientsDamageAdder.fxml"));
-        Pane sizeCoefficientsDamageAdder = loader.load();
-        damageSizeCoefficientsFx.getChildren().add(damageSizeCoefficientsFx.getChildren().size() - 1, sizeCoefficientsDamageAdder);
-        sizeCoefficientsMapFx.put(sizeCoefficientsDamageAdder, this);
-        SizeCoefficientsDamageAdderController.controllers.get(sizeCoefficientsDamageAdder).setSelectedSize(size, coefficient);
-    }
-
-    @FXML
-    private void loadSubTargetsAdder() throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/SubTargetsAdder.fxml"));
-        Pane subTargetsAdder = loader.load();
-        targetsFx.getChildren().add(targetsFx.getChildren().size() - 1, subTargetsAdder);
-        subTargetsMapFx.put(subTargetsAdder, this);
-    }
-
-    private void loadSubTargetsAdder(Target target) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(SkillMainViewController.class.getResource("/fxml/skill/view/SubTargetsAdder.fxml"));
-        Pane subTargetsAdder = loader.load();
-        targetsFx.getChildren().add(targetsFx.getChildren().size() - 1, subTargetsAdder);
-        subTargetsMapFx.put(subTargetsAdder, this);
-        SubTargetsAdderController.controllers.get(subTargetsAdder).setSelectedTarget(target);
-    }
-
-    public static void removeElementsAdder(Pane elementsAdder) {
-        elementsMapFx.get(elementsAdder).elementsFx.getChildren().remove(elementsAdder);
-        elementsMapFx.remove(elementsAdder);
-    }
-
-    public static void removeTransformationElementsAdder(Pane elementsAdder) {
-        System.out.println("tetetete");
-        elementsMapFx.get(elementsAdder).transformationElementsFx.getChildren().remove(elementsAdder);
-        elementsMapFx.remove(elementsAdder);
-    }
-
-    public static void removeBeingTypeAdder(Pane beingTypeAdder) {
-        beingTypesMapFx.get(beingTypeAdder).transformationBeingTypesFx.getChildren().remove(beingTypeAdder);
-        beingTypesMapFx.remove(beingTypeAdder);
-    }
-
-    public static void removeElementsCoefficientsDamageAdder(Pane elementsCoefficientsAdder) {
-        elementsCoefficientsMapFx.get(elementsCoefficientsAdder).damageElementCoefficientsFx.getChildren().remove(elementsCoefficientsAdder);
-        elementsCoefficientsMapFx.remove(elementsCoefficientsAdder);
-    }
-
-    public static void removeBeingTypesCoefficientsDamageAdder(Pane beingTypeCoefficientsAdder) {
-        beingTypesCoefficientsMapFx.get(beingTypeCoefficientsAdder).damageBeingTypesCoefficientsFx.getChildren().remove(beingTypeCoefficientsAdder);
-        beingTypesCoefficientsMapFx.remove(beingTypeCoefficientsAdder);
-    }
-
-    public static void removeSizeCoefficientsDamageAdder(Pane sizeCoefficientsAdder) {
-        sizeCoefficientsMapFx.get(sizeCoefficientsAdder).damageSizeCoefficientsFx.getChildren().remove(sizeCoefficientsAdder);
-        sizeCoefficientsMapFx.remove(sizeCoefficientsAdder);
-    }
-
-    public static void removeSubTargetsAdder(Pane subTargetsAdder) {
-        subTargetsMapFx.get(subTargetsAdder).targetsFx.getChildren().remove(subTargetsAdder);
-        subTargetsMapFx.remove(subTargetsAdder);
-    }
-
 
     @FXML
     private void showNameInEditorSameAsName() {
@@ -410,7 +307,7 @@ public class SkillMainViewController {
         permanentFx.setSelected(skillData.isPermanent());
         recalculateEveryIterationFx.setSelected(skillData.isRecalculateStatsEveryIteration());
         for (Element element : skillData.getElements()) {
-            loadElementsAdder(element);
+            elementsFx.addElement(element);
         }
         if (skillData.getDamageReceived() != null) {
             forcedCancelAmountFx.setText(skillData.getDamageReceived());
@@ -433,18 +330,21 @@ public class SkillMainViewController {
         // targets:
         mainTargetFx.setValue(skillData.getMainTarget().name());
         for (Target target : skillData.getTargets()) {
-            loadSubTargetsAdder(target);
+            targetsFx.addElement(target);
         }
 
         // damage coefficients:
         for (java.util.Map.Entry<Element, Double> coefficient : skillData.getCoefficients().atk().element().getCoefficientsMap().entrySet()) {
-            loadElementsCoefficientsDamageAdder(coefficient.getKey(), coefficient.getValue());
+            MultipleChoiceContainerElementWithPercents<Element> node = (MultipleChoiceContainerElementWithPercents<Element>) damageElementCoefficientsFx.addElement(coefficient.getKey());
+            node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d));
         }
         for (java.util.Map.Entry<BeingType, Double> coefficient : skillData.getCoefficients().atk().beingType().getCoefficientsMap().entrySet()) {
-            loadBeingTypesCoefficientsDamageAdder(coefficient.getKey(), coefficient.getValue());
+            MultipleChoiceContainerElementWithPercents<BeingType> node = (MultipleChoiceContainerElementWithPercents<BeingType>) damageBeingTypesCoefficientsFx.addElement(coefficient.getKey());
+            node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d));
         }
         for (java.util.Map.Entry<Size, Double> coefficient : skillData.getCoefficients().atk().size().getCoefficientsMap().entrySet()) {
-            loadSizeCoefficientsDamageAdder(coefficient.getKey(), coefficient.getValue());
+            MultipleChoiceContainerElementWithPercents<Size> node = (MultipleChoiceContainerElementWithPercents<Size>) damageSizeCoefficientsFx.addElement(coefficient.getKey());
+            node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d));
         }
 
         // buff fields:
@@ -481,13 +381,68 @@ public class SkillMainViewController {
 
         // transformation:
         for (BeingType beingType : skillData.getTransformation().getBeingTypes()) {
-            loadBeingTypesAdder(beingType);
+            transformationBeingTypesFx.addElement(beingType);
         }
         for (Element element : skillData.getTransformation().getElements()) {
-            loadTransformationElementsAdder(element);
+            transformationElementsFx.addElement(element);
         }
         transformationSizeFx.setValue(skillData.getTransformation().getSize() == null ? "NO" : skillData.getTransformation().getSize().name());
         transformationOverrideFx.setSelected(skillData.getTransformation().isOverride());
+
+        // requirements:
+        reqmeleeMinDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().melee().minValue()));
+        reqmeleeMaxDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().melee().maxValue()));
+        reqrangeMinDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().range().minValue()));
+        reqrangeMaxDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().range().maxValue()));
+        reqmagicMinDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().magic().minValue()));
+        reqmagicMaxDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().magic().maxValue()));
+        reqfleeFx.setText(String.valueOf((int) skillData.getRequirements().getStats().flee().value()));
+        /*
+    @FXML
+    private TextField expFx;
+    @FXML
+    private TextField intFx;
+    @FXML
+    private TextField dexFx;
+    @FXML
+    private TextField strFx;
+    @FXML
+    private TextField agiFx;
+    @FXML
+    private TextField vitFx;
+    @FXML
+    private TextField luckFx;
+    @FXML
+    private TextField critFx;
+    @FXML
+    private TextField parryFx;
+    @FXML
+    private TextField defFx;
+    @FXML
+    private TextField hitFx;
+    @FXML
+    private TextField blockFx;
+    @FXML
+    private TextField hpMaxFx;
+    @FXML
+    private TextField hpRestFx;
+    @FXML
+    private TextField concentrationFx;
+    @FXML
+    private TextField luckyDodgeFx;
+    @FXML
+    private TextField stmFx;
+    @FXML
+    private TextField stmByHitFx;
+    @FXML
+    private TextField stmRecoveryFx;
+    @FXML
+    private TextField stmMaxFx;
+    @FXML
+    private TextField physicResistanceFx;
+    @FXML
+    private TextField magicResistanceFx;
+         */
     }
 
     private void loadBuffFieldIfPossible(SkillData data, String fieldParsedName, Class<? extends Stat> statClass, TextField fieldFx) {
@@ -553,10 +508,8 @@ public class SkillMainViewController {
                 0d : Double.parseDouble(actsEveryTurnFx.getText().replaceAll(" ", "")));
         skill.setActsEveryMinute(actsEveryMinuteFx.getText().replaceAll(" ", "").isEmpty() ?
                 0d : Double.parseDouble(actsEveryMinuteFx.getText()));
-        skill.setElements(elementsFx.getChildren().stream()
-                .filter(node -> node instanceof Pane)
-                .map(node -> ElementsAdderController.controllers.get(node).getSelectedElement())
-                .collect(Collectors.toSet()));
+
+        skill.setElements(new HashSet<>(elementsFx.getElements()));
 
         if (forcedCancelHitsOrDamage.getValue().equals("Hits")) {
             if (forcedCancelReceivedOrDeal.getValue().equals("Receive"))
@@ -572,31 +525,25 @@ public class SkillMainViewController {
 
         // targets:
         skill.setMainTarget(Target.valueOf(mainTargetFx.getValue()));
-        skill.setTargets(targetsFx.getChildren().stream()
-                .filter(node -> node instanceof Pane)
-                .map(node -> SubTargetsAdderController.controllers.get(node).getSelectedTarget())
-                .collect(Collectors.toList()));
+        skill.setTargets(targetsFx.getElements());
 
         // damage coefficients:
-        damageElementCoefficientsFx.getChildren().stream()
-                .filter(node -> node instanceof Pane)
-                .forEach(adder -> {
-                    Element element = ElementsCoefficientsDamageAdderController.controllers.get(adder).getSelectedElement();
-                    double coefficient = ElementsCoefficientsDamageAdderController.controllers.get(adder).getCoefficient();
+        damageElementCoefficientsFx.getNodesElements()
+                .forEach(node -> {
+                    Element element = node.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<Element>) node).getPercents() / 100d;
                     skill.getCoefficients().atk().element().set(element, coefficient);
                 });
-        damageBeingTypesCoefficientsFx.getChildren().stream()
-                .filter(node -> node instanceof Pane)
-                .forEach(adder -> {
-                    BeingType beingType = BeingTypesCoefficientsDamageAdderController.controllers.get(adder).getSelectedBeingType();
-                    double coefficient = BeingTypesCoefficientsDamageAdderController.controllers.get(adder).getCoefficient();
+        damageBeingTypesCoefficientsFx.getNodesElements()
+                .forEach(node -> {
+                    BeingType beingType = node.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<BeingType>) node).getPercents() / 100d;
                     skill.getCoefficients().atk().beingType().set(beingType, coefficient);
                 });
-        damageSizeCoefficientsFx.getChildren().stream()
-                .filter(node -> node instanceof Pane)
-                .forEach(adder -> {
-                    Size size = SizeCoefficientsDamageAdderController.controllers.get(adder).getSelectedSize();
-                    double coefficient = BeingTypesCoefficientsDamageAdderController.controllers.get(adder).getCoefficient();
+        damageSizeCoefficientsFx.getNodesElements()
+                .forEach(node -> {
+                    Size size = node.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<Size>) node).getPercents() / 100d;
                     skill.getCoefficients().atk().size().set(size, coefficient);
                 });
 
@@ -636,14 +583,8 @@ public class SkillMainViewController {
         saveBuffField("MRES", magicResistanceFx, MagicResistance.class);
 
         // transformation:
-        skill.getTransformation().setBeingTypes(transformationBeingTypesFx.getChildren().stream()
-                .filter(node -> node instanceof Pane)
-                .map(node -> BeingTypeAdderController.controllers.get(node).getSelectedElement())
-                .collect(Collectors.toSet()));
-        skill.getTransformation().setElements(transformationElementsFx.getChildren().stream()
-                .filter(node -> node instanceof Pane)
-                .map(node -> TransformationElementsAdderController.controllers.get(node).getSelectedElement())
-                .collect(Collectors.toSet()));
+        skill.getTransformation().setBeingTypes(new HashSet<>(transformationBeingTypesFx.getElements()));
+        skill.getTransformation().setElements(new HashSet<>(transformationElementsFx.getElements()));
         skill.getTransformation().setSize(transformationSizeFx.getValue().equals("NO") ? null : Size.valueOf(transformationSizeFx.getValue()));
         skill.getTransformation().setOverride(transformationOverrideFx.isSelected());
     }
