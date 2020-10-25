@@ -4,12 +4,11 @@ package skill.view;
 import enums.EnumsLists;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
 import ru.rdude.fxlib.containers.MultipleChoiceContainer;
 import ru.rdude.fxlib.containers.MultipleChoiceContainerElementWithPercents;
+import ru.rdude.fxlib.containers.TitledMultipleChoiceContainer;
 import ru.rdude.rpg.game.logic.data.SkillData;
 import ru.rdude.rpg.game.logic.entities.beings.Being;
 import ru.rdude.rpg.game.logic.entities.beings.Player;
@@ -237,11 +236,14 @@ public class SkillMainViewController {
     private TextField reqmagicResistanceFx;
 
 
+    @FXML
+    private TitledMultipleChoiceContainer<String> testFx;
 
     @FXML
     public void initialize() throws IOException {
         loadSimpleComboBoxes();
         loadMultipleChoiceContainers();
+
     }
 
     private void loadSimpleComboBoxes() {

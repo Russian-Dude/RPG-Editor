@@ -1,4 +1,4 @@
-package skill;
+package enums;
 
 import java.util.Set;
 
