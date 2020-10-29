@@ -19,6 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import ru.rdude.fxlib.containers.MultipleChoiceContainer?>
+<?import ru.rdude.fxlib.containers.MultipleChoiceContainerExtended?>
 <?import ru.rdude.fxlib.containers.TitledMultipleChoiceContainer?>
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skill.view.SkillMainViewController">
@@ -53,9 +54,6 @@
                                           <TextField fx:id="nameFx" alignment="CENTER" maxWidth="150.0" onKeyReleased="#showNameInEditorSameAsName" GridPane.columnIndex="1" />
                                           <TextField fx:id="nameInEditorFx" alignment="CENTER" maxWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                        </children>
-                                       <padding>
-                                          <Insets bottom="2.0" />
-                                       </padding>
                                     </GridPane>
                                     <GridPane prefWidth="261.0">
                                       <columnConstraints>
@@ -254,6 +252,23 @@
                            </items>
                         </SplitPane>
                      </content>
+                  </ScrollPane>
+                  <ScrollPane>
+                    <content>
+                        <VBox alignment="TOP_CENTER">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" text="SKILL CHAINING">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Must cast:" />
+                              <MultipleChoiceContainerExtended maxWidth="200.0" prefHeight="100.0" />
+                              <Label text="Can cast:" />
+                              <MultipleChoiceContainerExtended maxWidth="200.0" prefHeight="100.0" prefWidth="200.0" />
+                           </children>
+                        </VBox>
+                    </content>
                   </ScrollPane>
                   <ScrollPane>
                      <content>
