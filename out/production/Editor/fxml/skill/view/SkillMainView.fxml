@@ -19,13 +19,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import ru.rdude.fxlib.containers.MultipleChoiceContainer?>
+<?import ru.rdude.fxlib.containers.MultipleChoiceContainerExtended?>
 <?import ru.rdude.fxlib.containers.TitledMultipleChoiceContainer?>
+<?import ru.rdude.fxlib.textfields.AutocomplitionTextField?>
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skill.view.SkillMainViewController">
   <tabs>
     <Tab closable="false" text="Main">
       <content>
-            <HBox alignment="TOP_CENTER" spacing="50.0">
+            <HBox alignment="TOP_CENTER">
                <children>
                   <ScrollPane pannable="true">
                      <content>
@@ -53,9 +55,6 @@
                                           <TextField fx:id="nameFx" alignment="CENTER" maxWidth="150.0" onKeyReleased="#showNameInEditorSameAsName" GridPane.columnIndex="1" />
                                           <TextField fx:id="nameInEditorFx" alignment="CENTER" maxWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                        </children>
-                                       <padding>
-                                          <Insets bottom="2.0" />
-                                       </padding>
                                     </GridPane>
                                     <GridPane prefWidth="261.0">
                                       <columnConstraints>
@@ -255,6 +254,37 @@
                         </SplitPane>
                      </content>
                   </ScrollPane>
+                  <ScrollPane minWidth="400.0">
+                    <content>
+                        <VBox alignment="TOP_CENTER" minWidth="400.0">
+                           <children>
+                              <Label alignment="CENTER" contentDisplay="CENTER" text="SKILL CHAINING">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <HBox minWidth="400.0">
+                                 <children>
+                                    <VBox alignment="CENTER">
+                                       <children>
+                                          <Label text="Must cast:" />
+                                          <MultipleChoiceContainerExtended fx:id="skillsMustCastFx" maxWidth="200.0" minWidth="200.0" prefHeight="100.0" />
+                                       </children>
+                                    </VBox>
+                                    <VBox alignment="CENTER">
+                                       <children>
+                                          <Label text="Can cast:" />
+                                          <MultipleChoiceContainerExtended fx:id="skillsCanCastFx" maxWidth="200.0" minWidth="200.0" prefHeight="100.0" prefWidth="200.0" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <Label text="Skills on being action:" />
+                              <MultipleChoiceContainer fx:id="skillsOnBeingActionFx" maxWidth="200.0" minWidth="400.0" prefHeight="100.0" prefWidth="400.0" />
+                           </children>
+                        </VBox>
+                    </content>
+                  </ScrollPane>
                   <ScrollPane>
                      <content>
                         <SplitPane>
@@ -386,36 +416,36 @@
                                                       <Label text="Melee" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
                                                       <Label text="Range" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
                                                       <Label text="Magic" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
-                                                      <TextField fx:id="meleeMinDmgFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                      <AutocomplitionTextField fx:id="meleeMinDmgFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                          <GridPane.margin>
                                                             <Insets right="2.0" />
                                                          </GridPane.margin>
-                                                      </TextField>
-                                                      <TextField fx:id="meleeMaxDmgFx" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                      </AutocomplitionTextField>
+                                                      <AutocomplitionTextField fx:id="meleeMaxDmgFx" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                          <GridPane.margin>
                                                             <Insets left="2.0" />
                                                          </GridPane.margin>
-                                                      </TextField>
-                                                      <TextField fx:id="rangeMinDmgFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                      </AutocomplitionTextField>
+                                                      <AutocomplitionTextField fx:id="rangeMinDmgFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                          <GridPane.margin>
                                                             <Insets right="2.0" />
                                                          </GridPane.margin>
-                                                      </TextField>
-                                                      <TextField fx:id="rangeMaxDmgFx" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                      </AutocomplitionTextField>
+                                                      <AutocomplitionTextField fx:id="rangeMaxDmgFx" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="2">
                                                          <GridPane.margin>
                                                             <Insets left="2.0" />
                                                          </GridPane.margin>
-                                                      </TextField>
-                                                      <TextField fx:id="magicMinDmgFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                      </AutocomplitionTextField>
+                                                      <AutocomplitionTextField fx:id="magicMinDmgFx" alignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                          <GridPane.margin>
                                                             <Insets right="2.0" />
                                                          </GridPane.margin>
-                                                      </TextField>
-                                                      <TextField fx:id="magicMaxDmgFx" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                                      </AutocomplitionTextField>
+                                                      <AutocomplitionTextField fx:id="magicMaxDmgFx" alignment="CENTER" GridPane.columnIndex="2" GridPane.rowIndex="3">
                                                          <GridPane.margin>
                                                             <Insets left="2.0" />
                                                          </GridPane.margin>
-                                                      </TextField>
+                                                      </AutocomplitionTextField>
                                                    </children>
                                                 </GridPane>
                                                 <Label text="Buff Stats">
@@ -469,30 +499,30 @@
                                                       <Label text="Maximum&#10;Stamina" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
                                                       <Label text="Phisic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
                                                       <Label text="Magic&#10;Resistance" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="11" GridPane.valignment="CENTER" />
-                                                      <TextField fx:id="fleeFx" GridPane.columnIndex="1" />
-                                                      <TextField fx:id="goldFx" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                      <TextField fx:id="expFx" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                      <TextField fx:id="critFx" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                      <TextField fx:id="parryFx" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                                      <TextField fx:id="defFx" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                                      <TextField fx:id="hitFx" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                                      <TextField fx:id="blockFx" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                                      <TextField fx:id="hpMaxFx" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                                      <TextField fx:id="hpRestFx" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                                                      <TextField fx:id="concentrationFx" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                                                      <TextField fx:id="luckyDodgeFx" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                                                      <TextField fx:id="intFx" GridPane.columnIndex="3" />
-                                                      <TextField fx:id="dexFx" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                      <TextField fx:id="strFx" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                                      <TextField fx:id="agiFx" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                                      <TextField fx:id="vitFx" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                                                      <TextField fx:id="luckFx" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                                                      <TextField fx:id="stmByHitFx" GridPane.columnIndex="3" GridPane.rowIndex="6" />
-                                                      <TextField fx:id="stmRecoveryFx" GridPane.columnIndex="3" GridPane.rowIndex="7" />
-                                                      <TextField fx:id="stmFx" GridPane.columnIndex="3" GridPane.rowIndex="8" />
-                                                      <TextField fx:id="stmMaxFx" GridPane.columnIndex="3" GridPane.rowIndex="9" />
-                                                      <TextField fx:id="physicResistanceFx" GridPane.columnIndex="3" GridPane.rowIndex="10" />
-                                                      <TextField fx:id="magicResistanceFx" GridPane.columnIndex="3" GridPane.rowIndex="11" />
+                                                      <AutocomplitionTextField fx:id="fleeFx" GridPane.columnIndex="1" />
+                                                      <AutocomplitionTextField fx:id="goldFx" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <AutocomplitionTextField fx:id="expFx" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <AutocomplitionTextField fx:id="critFx" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <AutocomplitionTextField fx:id="parryFx" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <AutocomplitionTextField fx:id="defFx" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                      <AutocomplitionTextField fx:id="hitFx" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                      <AutocomplitionTextField fx:id="blockFx" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                      <AutocomplitionTextField fx:id="hpMaxFx" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                                      <AutocomplitionTextField fx:id="hpRestFx" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                                      <AutocomplitionTextField fx:id="concentrationFx" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                                      <AutocomplitionTextField fx:id="luckyDodgeFx" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                                      <AutocomplitionTextField fx:id="intFx" GridPane.columnIndex="3" />
+                                                      <AutocomplitionTextField fx:id="dexFx" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                      <AutocomplitionTextField fx:id="strFx" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                                      <AutocomplitionTextField fx:id="agiFx" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                                      <AutocomplitionTextField fx:id="vitFx" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                                                      <AutocomplitionTextField fx:id="luckFx" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                                      <AutocomplitionTextField fx:id="stmByHitFx" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                                                      <AutocomplitionTextField fx:id="stmRecoveryFx" GridPane.columnIndex="3" GridPane.rowIndex="7" />
+                                                      <AutocomplitionTextField fx:id="stmFx" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+                                                      <AutocomplitionTextField fx:id="stmMaxFx" GridPane.columnIndex="3" GridPane.rowIndex="9" />
+                                                      <AutocomplitionTextField fx:id="physicResistanceFx" GridPane.columnIndex="3" GridPane.rowIndex="10" />
+                                                      <AutocomplitionTextField fx:id="magicResistanceFx" GridPane.columnIndex="3" GridPane.rowIndex="11" />
                                                    </children>
                                                    <padding>
                                                       <Insets right="10.0" />

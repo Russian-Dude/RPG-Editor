@@ -1,16 +1,18 @@
 package skill.view;
 
 
+import data.Data;
 import enums.EnumsLists;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
-import ru.rdude.fxlib.containers.MultipleChoiceContainer;
-import ru.rdude.fxlib.containers.MultipleChoiceContainerElementWithPercents;
-import ru.rdude.fxlib.containers.TitledMultipleChoiceContainer;
+import ru.rdude.fxlib.containers.*;
+import ru.rdude.fxlib.textfields.AutocomplitionTextField;
 import ru.rdude.rpg.game.logic.data.SkillData;
 import ru.rdude.rpg.game.logic.entities.beings.Being;
+import ru.rdude.rpg.game.logic.entities.beings.BeingAction;
 import ru.rdude.rpg.game.logic.entities.beings.Player;
 import ru.rdude.rpg.game.logic.entities.skills.SkillParser;
 import ru.rdude.rpg.game.logic.enums.*;
@@ -99,67 +101,67 @@ public class SkillMainViewController {
     @FXML
     private ComboBox<String> buffTypeFx;
     @FXML
-    private TextField meleeMinDmgFx;
+    private AutocomplitionTextField meleeMinDmgFx;
     @FXML
-    private TextField meleeMaxDmgFx;
+    private AutocomplitionTextField meleeMaxDmgFx;
     @FXML
-    private TextField rangeMinDmgFx;
+    private AutocomplitionTextField rangeMinDmgFx;
     @FXML
-    private TextField rangeMaxDmgFx;
+    private AutocomplitionTextField rangeMaxDmgFx;
     @FXML
-    private TextField magicMinDmgFx;
+    private AutocomplitionTextField magicMinDmgFx;
     @FXML
-    private TextField magicMaxDmgFx;
+    private AutocomplitionTextField magicMaxDmgFx;
     @FXML
-    private TextField timeFx;
+    private AutocomplitionTextField timeFx;
     @FXML
-    private TextField goldFx;
+    private AutocomplitionTextField goldFx;
     @FXML
-    private TextField fleeFx;
+    private AutocomplitionTextField fleeFx;
     @FXML
-    private TextField expFx;
+    private AutocomplitionTextField expFx;
     @FXML
-    private TextField intFx;
+    private AutocomplitionTextField intFx;
     @FXML
-    private TextField dexFx;
+    private AutocomplitionTextField dexFx;
     @FXML
-    private TextField strFx;
+    private AutocomplitionTextField strFx;
     @FXML
-    private TextField agiFx;
+    private AutocomplitionTextField agiFx;
     @FXML
-    private TextField vitFx;
+    private AutocomplitionTextField vitFx;
     @FXML
-    private TextField luckFx;
+    private AutocomplitionTextField luckFx;
     @FXML
-    private TextField critFx;
+    private AutocomplitionTextField critFx;
     @FXML
-    private TextField parryFx;
+    private AutocomplitionTextField parryFx;
     @FXML
-    private TextField defFx;
+    private AutocomplitionTextField defFx;
     @FXML
-    private TextField hitFx;
+    private AutocomplitionTextField hitFx;
     @FXML
-    private TextField blockFx;
+    private AutocomplitionTextField blockFx;
     @FXML
-    private TextField hpMaxFx;
+    private AutocomplitionTextField hpMaxFx;
     @FXML
-    private TextField hpRestFx;
+    private AutocomplitionTextField hpRestFx;
     @FXML
-    private TextField concentrationFx;
+    private AutocomplitionTextField concentrationFx;
     @FXML
-    private TextField luckyDodgeFx;
+    private AutocomplitionTextField luckyDodgeFx;
     @FXML
-    private TextField stmFx;
+    private AutocomplitionTextField stmFx;
     @FXML
-    private TextField stmByHitFx;
+    private AutocomplitionTextField stmByHitFx;
     @FXML
-    private TextField stmRecoveryFx;
+    private AutocomplitionTextField stmRecoveryFx;
     @FXML
-    private TextField stmMaxFx;
+    private AutocomplitionTextField stmMaxFx;
     @FXML
-    private TextField physicResistanceFx;
+    private AutocomplitionTextField physicResistanceFx;
     @FXML
-    private TextField magicResistanceFx;
+    private AutocomplitionTextField magicResistanceFx;
 
     // transformation:
     @FXML
@@ -235,6 +237,13 @@ public class SkillMainViewController {
     @FXML
     private TextField reqmagicResistanceFx;
 
+    // Skill chaining
+    @FXML
+    private MultipleChoiceContainerExtended<SkillData, SkillSearchController> skillsCanCastFx;
+    @FXML
+    private MultipleChoiceContainerExtended<SkillData, SkillSearchController> skillsMustCastFx;
+    @FXML
+    private MultipleChoiceContainer<BeingAction.Action> skillsOnBeingActionFx;
 
     @FXML
     private TitledMultipleChoiceContainer<String> testFx;
@@ -243,7 +252,16 @@ public class SkillMainViewController {
     public void initialize() throws IOException {
         loadSimpleComboBoxes();
         loadMultipleChoiceContainers();
+        configAutoComplitionTextFields();
 
+    }
+
+    private void configAutoComplitionTextFields() {
+        AutocomplitionTextFieldConfigurator.configure(
+                meleeMinDmgFx, meleeMaxDmgFx, rangeMinDmgFx, rangeMaxDmgFx, magicMinDmgFx, magicMaxDmgFx,
+                timeFx, goldFx, fleeFx, expFx, intFx, dexFx, strFx, agiFx, vitFx, luckFx, critFx, parryFx,
+                defFx, hitFx, blockFx, hpMaxFx, hpRestFx, concentrationFx, luckyDodgeFx, stmFx, stmByHitFx,
+                stmRecoveryFx, stmMaxFx, physicResistanceFx, magicResistanceFx);
     }
 
     private void loadSimpleComboBoxes() {
@@ -273,6 +291,31 @@ public class SkillMainViewController {
         damageElementCoefficientsFx.setAvailableElements(Arrays.asList(Element.values()));
         transformationElementsFx.setAvailableElements(Arrays.asList(Element.values()));
         transformationBeingTypesFx.setAvailableElements(Arrays.asList(BeingType.values()));
+        // skills chain:
+        // skills can cast:
+        skillsCanCastFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        skillsCanCastFx.setAvailableElements(Data.getSkills());
+        skillsCanCastFx.setNameBy(SkillData::getNameInEditor);
+        skillsCanCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
+        skillsCanCastFx.setExtendedSearchOptions(SkillSearchController.getFunctionMap());
+        SkillPopupConfigurator.configure(skillsCanCastFx);
+        // skills must cast:
+        skillsMustCastFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        skillsMustCastFx.setAvailableElements(Data.getSkills());
+        skillsMustCastFx.setNameBy(SkillData::getNameInEditor);
+        skillsMustCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
+        skillsMustCastFx.setExtendedSearchOptions(SkillSearchController.getFunctionMap());
+        SkillPopupConfigurator.configure(skillsMustCastFx);
+        // skills on being action:
+        skillsOnBeingActionFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.WITH_TWO_VALUES_AND_PERCENTS);
+        skillsOnBeingActionFx.setAvailableElements(Arrays.asList(BeingAction.Action.values()));
+        MultipleChoiceContainerElementTwoChoice.ExtendedOptionsBuilder<SkillData, SkillSearchController> onBeingActionBuilder = MultipleChoiceContainerElementTwoChoice.extendedOptionsBuilder();
+        onBeingActionBuilder.setCollection(Data.getSkills())
+                .setNameByFunction(SkillData::getNameInEditor)
+                .setSearchByFunction(SkillData::getName)
+                .setExtendedSearchNode(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml")))
+                .setExtendedSearchFunctions(SkillSearchController.getFunctionMap());
+        skillsOnBeingActionFx.setExtendedOptions(onBeingActionBuilder);
     }
 
     @FXML
@@ -390,6 +433,18 @@ public class SkillMainViewController {
         }
         transformationSizeFx.setValue(skillData.getTransformation().getSize() == null ? "NO" : skillData.getTransformation().getSize().name());
         transformationOverrideFx.setSelected(skillData.getTransformation().isOverride());
+
+        // skill chaining:
+        skillData.getSkillsCouldCast().forEach((guid, chance) -> ((MultipleChoiceContainerElementWithPercents<SkillData>) skillsCanCastFx.addElement(Data.getSkillData(guid))).setTextFieldValue(String.valueOf(chance)));
+        skillData.getSkillsMustCast().forEach((guid, chance) -> ((MultipleChoiceContainerElementWithPercents<SkillData>) skillsMustCastFx.addElement(Data.getSkillData(guid))).setTextFieldValue(String.valueOf(chance)));
+        skillData.getSkillsOnBeingAction().forEach((action, guidChanceMap) -> {
+            guidChanceMap.forEach((guid, chance) -> {
+                MultipleChoiceContainerElementTwoChoiceWithPercents<BeingAction.Action, SkillData> element =
+                        (MultipleChoiceContainerElementTwoChoiceWithPercents<BeingAction.Action, SkillData>) skillsOnBeingActionFx.addElement(action);
+                element.setText(String.valueOf(chance));
+                element.setSecondValue(Data.getSkillData(guid));
+            });
+        });
 
         // requirements:
         reqmeleeMinDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().melee().minValue()));
@@ -589,6 +644,36 @@ public class SkillMainViewController {
         skill.getTransformation().setElements(new HashSet<>(transformationElementsFx.getElements()));
         skill.getTransformation().setSize(transformationSizeFx.getValue().equals("NO") ? null : Size.valueOf(transformationSizeFx.getValue()));
         skill.getTransformation().setOverride(transformationOverrideFx.isSelected());
+
+        // skill chaining:
+        // skills can cast:
+        skill.setSkillsCouldCast(skillsCanCastFx.getNodesElements().stream()
+                .collect(Collectors.toMap(
+                        nodeElement -> nodeElement.getSelectedElement().getGuid(),
+                        nodeElement -> (float) ((MultipleChoiceContainerElementWithPercents<SkillData>) nodeElement).getPercents(),
+                        (a, b) -> a,
+                        HashMap::new)));
+        // skills must cast:
+        skill.setSkillsCouldCast(skillsMustCastFx.getNodesElements().stream()
+                .collect(Collectors.toMap(
+                        nodeElement -> nodeElement.getSelectedElement().getGuid(),
+                        nodeElement -> (float) ((MultipleChoiceContainerElementWithPercents<SkillData>) nodeElement).getPercents(),
+                        (a, b) -> a,
+                        HashMap::new)));
+        // skills on being action:
+        java.util.Map<BeingAction.Action, java.util.Map<Long, Float>> skillsOnBeingActionMap = new HashMap<>();
+        skillsOnBeingActionFx.getNodesElements().forEach(element -> {
+            java.util.Map<Long, Float> subMap;
+            if (!skillsOnBeingActionMap.containsKey(element.getSelectedElement())) {
+                subMap = new HashMap<>();
+            }
+            else {
+                subMap = skillsOnBeingActionMap.get(element.getSelectedElement());
+            }
+            subMap.put(((MultipleChoiceContainerElementTwoChoiceWithPercents<BeingAction.Action, SkillData>) element).getSecondValue().getGuid(), (float) (double) ((MultipleChoiceContainerElementTwoChoiceWithPercents<BeingAction.Action, SkillData>) element).getPercents());
+            skillsOnBeingActionMap.put(element.getSelectedElement(), subMap);
+        });
+        skill.setSkillsOnBeingAction(skillsOnBeingActionMap);
     }
 
     private void saveBuffField(String fieldParsedName, TextField fieldFx, Class<? extends Stat> statClass) {
