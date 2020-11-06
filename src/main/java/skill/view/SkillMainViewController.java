@@ -3,13 +3,17 @@ package skill.view;
 
 import data.Data;
 import enums.EnumsLists;
+import enums.StatNames;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
+import ru.rdude.fxlib.boxes.SearchComboBox;
 import ru.rdude.fxlib.containers.*;
 import ru.rdude.fxlib.textfields.AutocomplitionTextField;
+import ru.rdude.rpg.game.logic.data.ItemData;
+import ru.rdude.rpg.game.logic.data.MonsterData;
 import ru.rdude.rpg.game.logic.data.SkillData;
 import ru.rdude.rpg.game.logic.entities.beings.Being;
 import ru.rdude.rpg.game.logic.entities.beings.BeingAction;
@@ -25,10 +29,8 @@ import ru.rdude.rpg.game.logic.stats.secondary.*;
 import ru.rdude.rpg.game.utils.Functions;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.text.ParseException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SkillMainViewController {
@@ -95,7 +97,7 @@ public class SkillMainViewController {
     @FXML
     private CheckBox recalculateEveryIterationFx;
     @FXML
-    private ComboBox<String> onDuplicatingFx;
+    private SearchComboBox<SkillOverlay> onDuplicatingFx;
 
     // buffs:
     @FXML
@@ -175,67 +177,9 @@ public class SkillMainViewController {
 
     // requirements:
     @FXML
-    private TextField reqmeleeMinDmgFx;
+    private MultipleChoiceContainer<StatNames> statsRequirementsFx;
     @FXML
-    private TextField reqmeleeMaxDmgFx;
-    @FXML
-    private TextField reqrangeMinDmgFx;
-    @FXML
-    private TextField reqrangeMaxDmgFx;
-    @FXML
-    private TextField reqmagicMinDmgFx;
-    @FXML
-    private TextField reqmagicMaxDmgFx;
-    @FXML
-    private TextField reqtimeFx;
-    @FXML
-    private TextField reqgoldFx;
-    @FXML
-    private TextField reqfleeFx;
-    @FXML
-    private TextField reqexpFx;
-    @FXML
-    private TextField reqintFx;
-    @FXML
-    private TextField reqdexFx;
-    @FXML
-    private TextField reqstrFx;
-    @FXML
-    private TextField reqagiFx;
-    @FXML
-    private TextField reqvitFx;
-    @FXML
-    private TextField reqluckFx;
-    @FXML
-    private TextField reqcritFx;
-    @FXML
-    private TextField reqparryFx;
-    @FXML
-    private TextField reqdefFx;
-    @FXML
-    private TextField reqhitFx;
-    @FXML
-    private TextField reqblockFx;
-    @FXML
-    private TextField reqhpMaxFx;
-    @FXML
-    private TextField reqhpRestFx;
-    @FXML
-    private TextField reqconcentrationFx;
-    @FXML
-    private TextField reqluckyDodgeFx;
-    @FXML
-    private TextField reqstmFx;
-    @FXML
-    private TextField reqstmByHitFx;
-    @FXML
-    private TextField reqstmRecoveryFx;
-    @FXML
-    private TextField reqstmMaxFx;
-    @FXML
-    private TextField reqphysicResistanceFx;
-    @FXML
-    private TextField reqmagicResistanceFx;
+    private MultipleChoiceContainerExtended<ItemData, ItemSearchController> itemsRequirementsFx;
 
     // Skill chaining
     @FXML
@@ -244,9 +188,23 @@ public class SkillMainViewController {
     private MultipleChoiceContainerExtended<SkillData, SkillSearchController> skillsMustCastFx;
     @FXML
     private MultipleChoiceContainer<BeingAction.Action> skillsOnBeingActionFx;
-
     @FXML
-    private TitledMultipleChoiceContainer<String> testFx;
+    private RadioButton onBeingActionCastToEnemyFx;
+    @FXML
+    private RadioButton onBeingActionCastToSelfFx;
+
+    // summon:
+    @FXML
+    private MultipleChoiceContainerExtended<MonsterData, MonsterSearchController> summonFx;
+
+    // receive items:
+    @FXML
+    private MultipleChoiceContainerExtended<ItemData, ItemSearchController> receiveItemsFx;
+    @FXML
+    private RadioButton keepItemsFx;
+    @FXML
+    private RadioButton takeItemsFx;
+
 
     @FXML
     public void initialize() throws IOException {
@@ -281,34 +239,49 @@ public class SkillMainViewController {
         skillTypeFx.setValue("NO");
         mainTargetFx.setItems(EnumsLists.mainTargets);
         mainTargetFx.setValue("ENEMY");
+        onDuplicatingFx.setCollection(Arrays.asList(SkillOverlay.values()));
+        onDuplicatingFx.setValue(SkillOverlay.UPDATE);
     }
 
     private void loadMultipleChoiceContainers() {
-        elementsFx.setAvailableElements(Arrays.asList(Element.values()));
-        targetsFx.setAvailableElements(Arrays.stream(Target.values()).filter(Target::isCanBeSubTarget).collect(Collectors.toSet()));
-        damageSizeCoefficientsFx.setAvailableElements(Arrays.asList(Size.values()));
-        damageBeingTypesCoefficientsFx.setAvailableElements(Arrays.asList(BeingType.values()));
-        damageElementCoefficientsFx.setAvailableElements(Arrays.asList(Element.values()));
-        transformationElementsFx.setAvailableElements(Arrays.asList(Element.values()));
-        transformationBeingTypesFx.setAvailableElements(Arrays.asList(BeingType.values()));
+        // simple containers:
+        elementsFx.setElements(Arrays.asList(Element.values()));
+        elementsFx.setUniqueElements(true);
+        targetsFx.setElements(Arrays.stream(Target.values()).filter(Target::isCanBeSubTarget).collect(Collectors.toSet()));
+        damageSizeCoefficientsFx.setElements(Arrays.asList(Size.values()));
+        damageSizeCoefficientsFx.setUniqueElements(true);
+        damageBeingTypesCoefficientsFx.setElements(Arrays.asList(BeingType.values()));
+        damageBeingTypesCoefficientsFx.setUniqueElements(true);
+        damageElementCoefficientsFx.setElements(Arrays.asList(Element.values()));
+        damageElementCoefficientsFx.setUniqueElements(true);
+        transformationElementsFx.setElements(Arrays.asList(Element.values()));
+        transformationElementsFx.setUniqueElements(true);
+        transformationBeingTypesFx.setElements(Arrays.asList(BeingType.values()));
+        transformationBeingTypesFx.setUniqueElements(true);
+
         // skills chain:
         // skills can cast:
         skillsCanCastFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
-        skillsCanCastFx.setAvailableElements(Data.getSkills());
+        skillsCanCastFx.setUniqueElements(true);
+        skillsCanCastFx.setElements(Data.getSkills());
         skillsCanCastFx.setNameBy(SkillData::getNameInEditor);
         skillsCanCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
         skillsCanCastFx.setExtendedSearchOptions(SkillSearchController.getFunctionMap());
         SkillPopupConfigurator.configure(skillsCanCastFx);
+
         // skills must cast:
         skillsMustCastFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
-        skillsMustCastFx.setAvailableElements(Data.getSkills());
+        skillsMustCastFx.setUniqueElements(true);
+        skillsMustCastFx.setElements(Data.getSkills());
         skillsMustCastFx.setNameBy(SkillData::getNameInEditor);
         skillsMustCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
         skillsMustCastFx.setExtendedSearchOptions(SkillSearchController.getFunctionMap());
         SkillPopupConfigurator.configure(skillsMustCastFx);
+
         // skills on being action:
         skillsOnBeingActionFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.WITH_TWO_VALUES_AND_PERCENTS);
-        skillsOnBeingActionFx.setAvailableElements(Arrays.asList(BeingAction.Action.values()));
+        skillsOnBeingActionFx.setUniqueElements(true);
+        skillsOnBeingActionFx.setElements(Arrays.asList(BeingAction.Action.values()));
         MultipleChoiceContainerElementTwoChoice.ExtendedOptionsBuilder<SkillData, SkillSearchController> onBeingActionBuilder = MultipleChoiceContainerElementTwoChoice.extendedOptionsBuilder();
         onBeingActionBuilder.setCollection(Data.getSkills())
                 .setNameByFunction(SkillData::getNameInEditor)
@@ -316,6 +289,35 @@ public class SkillMainViewController {
                 .setExtendedSearchNode(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml")))
                 .setExtendedSearchFunctions(SkillSearchController.getFunctionMap());
         skillsOnBeingActionFx.setExtendedOptions(onBeingActionBuilder);
+
+        // requirements:
+        //stat requirements:
+        statsRequirementsFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.WITH_TEXT_FIELD);
+        statsRequirementsFx.setUniqueElements(true);
+        statsRequirementsFx.setElements(List.of(StatNames.values()));
+        statsRequirementsFx.setNameBy(StatNames::getName);
+        statsRequirementsFx.setSearchBy(StatNames::getName, StatNames::name);
+
+        // items requirements:
+        itemsRequirementsFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.WITH_TEXT_FIELD);
+        itemsRequirementsFx.setUniqueElements(true);
+        itemsRequirementsFx.setElements(Data.getItems());
+        itemsRequirementsFx.setNameBy(ItemData::getNameInEditor);
+        itemsRequirementsFx.setSearchBy(ItemData::getName, ItemData::getNameInEditor);
+
+        //summon:
+        summonFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.BASIC);
+        summonFx.setUniqueElements(true);
+        summonFx.setElements(Data.getMonsters());
+        summonFx.setNameBy(MonsterData::getNameInEditor);
+        summonFx.setSearchBy(MonsterData::getName, MonsterData::getNameInEditor);
+
+        // receive items:
+        receiveItemsFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.BASIC);
+        receiveItemsFx.setUniqueElements(true);
+        receiveItemsFx.setElements(Data.getItems());
+        receiveItemsFx.setNameBy(ItemData::getNameInEditor);
+        receiveItemsFx.setSearchBy(ItemData::getName, ItemData::getNameInEditor);
     }
 
     @FXML
@@ -351,6 +353,7 @@ public class SkillMainViewController {
         actsEveryTurnFx.setText(String.valueOf((int) skillData.getActsEveryTurn()));
         permanentFx.setSelected(skillData.isPermanent());
         recalculateEveryIterationFx.setSelected(skillData.isRecalculateStatsEveryIteration());
+        onDuplicatingFx.setValue(skillData.getOverlay());
         for (Element element : skillData.getElements()) {
             elementsFx.addElement(element);
         }
@@ -445,61 +448,39 @@ public class SkillMainViewController {
                 element.setSecondValue(Data.getSkillData(guid));
             });
         });
+        if (skillData.isOnBeingActionCastToEnemy()) {
+            onBeingActionCastToEnemyFx.setSelected(true);
+            onBeingActionCastToSelfFx.setSelected(false);
+        }
+        else {
+            onBeingActionCastToEnemyFx.setSelected(false);
+            onBeingActionCastToSelfFx.setSelected(true);
+        }
 
         // requirements:
-        reqmeleeMinDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().melee().minValue()));
-        reqmeleeMaxDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().melee().maxValue()));
-        reqrangeMinDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().range().minValue()));
-        reqrangeMaxDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().range().maxValue()));
-        reqmagicMinDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().magic().minValue()));
-        reqmagicMaxDmgFx.setText(String.valueOf((int) skillData.getRequirements().getStats().dmg().magic().maxValue()));
-        reqfleeFx.setText(String.valueOf((int) skillData.getRequirements().getStats().flee().value()));
-        /*
-    @FXML
-    private TextField expFx;
-    @FXML
-    private TextField intFx;
-    @FXML
-    private TextField dexFx;
-    @FXML
-    private TextField strFx;
-    @FXML
-    private TextField agiFx;
-    @FXML
-    private TextField vitFx;
-    @FXML
-    private TextField luckFx;
-    @FXML
-    private TextField critFx;
-    @FXML
-    private TextField parryFx;
-    @FXML
-    private TextField defFx;
-    @FXML
-    private TextField hitFx;
-    @FXML
-    private TextField blockFx;
-    @FXML
-    private TextField hpMaxFx;
-    @FXML
-    private TextField hpRestFx;
-    @FXML
-    private TextField concentrationFx;
-    @FXML
-    private TextField luckyDodgeFx;
-    @FXML
-    private TextField stmFx;
-    @FXML
-    private TextField stmByHitFx;
-    @FXML
-    private TextField stmRecoveryFx;
-    @FXML
-    private TextField stmMaxFx;
-    @FXML
-    private TextField physicResistanceFx;
-    @FXML
-    private TextField magicResistanceFx;
-         */
+        // stats requirements:
+        skillData.getRequirements().getStats().forEachWithNestedStats(stat ->
+                ((MultipleChoiceContainerElementWithTextField<StatNames>) statsRequirementsFx.addElement(StatNames.get(stat.getClass())))
+                        .setTextFieldValue(String.valueOf(stat.value())));
+        // items requirements:
+        skillData.getRequirements().getItems().forEach((guid, amount) ->
+                ((MultipleChoiceContainerElementWithTextField<ItemData>) itemsRequirementsFx.addElement(Data.getItemData(guid)))
+                        .setTextFieldValue(String.valueOf(amount)));
+        if (skillData.getRequirements().isTakeItems()) {
+            takeItemsFx.setSelected(true);
+            keepItemsFx.setSelected(false);
+        } else {
+            keepItemsFx.setSelected(true);
+            takeItemsFx.setSelected(false);
+        }
+
+        // summon:
+        skillData.getSummon().forEach(guid -> summonFx.addElement(Data.getMonsterData(guid)));
+
+        // receive items:
+        skillData.getReceiveItems().forEach((guid, amount) ->
+                ((MultipleChoiceContainerElementWithTextField<ItemData>) receiveItemsFx.addElement(Data.getItemData(guid)))
+                        .getTextFieldNode().setText(String.valueOf(amount)));
     }
 
     private void loadBuffFieldIfPossible(SkillData data, String fieldParsedName, Class<? extends Stat> statClass, TextField fieldFx) {
@@ -567,6 +548,7 @@ public class SkillMainViewController {
                 0d : Double.parseDouble(actsEveryMinuteFx.getText()));
 
         skill.setElements(new HashSet<>(elementsFx.getElements()));
+        skill.setOverlay(onDuplicatingFx.getValue());
 
         if (forcedCancelHitsOrDamage.getValue().equals("Hits")) {
             if (forcedCancelReceivedOrDeal.getValue().equals("Receive"))
@@ -666,14 +648,34 @@ public class SkillMainViewController {
             java.util.Map<Long, Float> subMap;
             if (!skillsOnBeingActionMap.containsKey(element.getSelectedElement())) {
                 subMap = new HashMap<>();
-            }
-            else {
+            } else {
                 subMap = skillsOnBeingActionMap.get(element.getSelectedElement());
             }
             subMap.put(((MultipleChoiceContainerElementTwoChoiceWithPercents<BeingAction.Action, SkillData>) element).getSecondValue().getGuid(), (float) (double) ((MultipleChoiceContainerElementTwoChoiceWithPercents<BeingAction.Action, SkillData>) element).getPercents());
             skillsOnBeingActionMap.put(element.getSelectedElement(), subMap);
         });
         skill.setSkillsOnBeingAction(skillsOnBeingActionMap);
+        // on being action cast to:
+        skill.setOnBeingActionCastToEnemy(onBeingActionCastToEnemyFx.isSelected());
+        // requirements:
+        // stats requirements:
+        statsRequirementsFx.getNodesElements().forEach(nodeElement -> skill.getRequirements().getStats().get(nodeElement.getSelectedElement().getClazz())
+                .set(Double.parseDouble(((MultipleChoiceContainerElementWithTextField<StatNames>) nodeElement).getTextFieldValue())));
+        // item requirements:
+        itemsRequirementsFx.getNodesElements().forEach(nodeElement -> skill.getRequirements().getItems()
+                .put(nodeElement.getSelectedElement().getGuid(), Integer.parseInt(((MultipleChoiceContainerElementWithTextField<ItemData>) nodeElement).getTextFieldValue())));
+        skill.getRequirements().setTakeItems(takeItemsFx.isSelected());
+
+        // summon:
+        skill.setSummon(summonFx.getNodesElements().stream().map(nodeElement -> nodeElement.getSelectedElement().getGuid()).collect(Collectors.toList()));
+
+        // receive items:
+        skill.setReceiveItems(receiveItemsFx.getNodesElements().stream()
+                .collect(Collectors.toMap(
+                        nodeElement -> nodeElement.getSelectedElement().getGuid(),
+                        nodeElement -> Integer.parseInt(((MultipleChoiceContainerElementWithTextField<ItemData>) nodeElement).getTextFieldNode().getText()),
+                        (a, b) -> a,
+                        HashMap::new)));
     }
 
     private void saveBuffField(String fieldParsedName, TextField fieldFx, Class<? extends Stat> statClass) {
@@ -707,13 +709,13 @@ public class SkillMainViewController {
             if (!actsEveryMinuteFx.getText().replaceAll(" ", "").isEmpty())
                 Double.parseDouble(actsEveryMinuteFx.getText());
         } catch (Exception e) {
-            messages.add("ACTS EVERY MINUTE field has not numeric characters");
+            messages.add("ACTS EVERY MINUTE field has non numeric characters");
         }
         try {
             if (!actsEveryTurnFx.getText().replaceAll(" ", "").isEmpty())
                 Double.parseDouble(actsEveryTurnFx.getText());
         } catch (Exception e) {
-            messages.add("ACTS EVERY TURN field has not numeric characters");
+            messages.add("ACTS EVERY TURN field has non numeric characters");
         }
         // stat buffs:
         if (!isBuffFieldCorrect(skillParser, "MELEEATKMIN", meleeMinDmgFx))
@@ -774,6 +776,48 @@ public class SkillMainViewController {
             messages.add("Equation in the PHYSIC RESISTANCE field can not be parsed");
         if (!isBuffFieldCorrect(skillParser, "MRES", magicResistanceFx))
             messages.add("Equation in the MAGIC RESISTANCE field can not be parsed");
+
+        // requirements:
+        // stats requirements:
+        statsRequirementsFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithTextField<StatNames>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Requirement of stat " + nodeElement.getSelectedElement().getName().toUpperCase() + " is empty");
+            } else {
+                try {
+                    Double.parseDouble(textValue);
+                } catch (NumberFormatException e) {
+                    messages.add("Requirement of stat " + nodeElement.getSelectedElement().getName().toUpperCase() + " has non numeric characters");
+                }
+            }
+        });
+        // items requirements:
+        itemsRequirementsFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithTextField<ItemData>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Requirement amount of item " + nodeElement.getSelectedElement().getNameInEditor().toUpperCase() + " is empty");
+            } else {
+                try {
+                    Double.parseDouble(textValue);
+                } catch (NumberFormatException e) {
+                    messages.add("Requirement amount of item " + nodeElement.getSelectedElement().getNameInEditor().toUpperCase() + " has non numeric characters");
+                }
+            }
+        });
+
+        // receive items:
+        receiveItemsFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithTextField<ItemData>) nodeElement).getTextFieldNode().getText();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Receiving amount of item " + nodeElement.getSelectedElement().getNameInEditor().toUpperCase() + " is empty");
+            } else {
+                try {
+                    Integer.parseInt(textValue);
+                } catch (NumberFormatException e) {
+                    messages.add("Receiving amount of item " + nodeElement.getSelectedElement().getNameInEditor().toUpperCase() + " has non numeric characters");
+                }
+            }
+        });
 
         return messages;
     }
