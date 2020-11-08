@@ -4,7 +4,7 @@ package skill.view;
 import data.Data;
 import enums.EnumsLists;
 import enums.FormulaVariable;
-import enums.StatNames;
+import enums.StatName;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -101,7 +101,7 @@ public class SkillMainViewController {
     @FXML
     private ComboBox<String> buffTypeFx;
     @FXML
-    private MultipleChoiceContainer<StatNames> statsFx;
+    private MultipleChoiceContainer<StatName> statsFx;
 
     // transformation:
     @FXML
@@ -115,7 +115,7 @@ public class SkillMainViewController {
 
     // requirements:
     @FXML
-    private MultipleChoiceContainer<StatNames> statsRequirementsFx;
+    private MultipleChoiceContainer<StatName> statsRequirementsFx;
     @FXML
     private MultipleChoiceContainerExtended<ItemData, ItemSearchController> itemsRequirementsFx;
 
@@ -142,6 +142,24 @@ public class SkillMainViewController {
     private RadioButton keepItemsFx;
     @FXML
     private RadioButton takeItemsFx;
+
+    // buff coefficients:
+    @FXML
+    private MultipleChoiceContainer<AttackType> buffAttackTypeAtkFx;
+    @FXML
+    private MultipleChoiceContainer<AttackType> buffAttackTypeDefFx;
+    @FXML
+    private MultipleChoiceContainer<BeingType> buffBeingTypeAtkFx;
+    @FXML
+    private MultipleChoiceContainer<BeingType> buffBeingTypeDefFx;
+    @FXML
+    private MultipleChoiceContainer<Element> buffElementAtkFx;
+    @FXML
+    private MultipleChoiceContainer<Element> buffElementDefFx;
+    @FXML
+    private MultipleChoiceContainer<Size> buffSizeAtkFx;
+    @FXML
+    private MultipleChoiceContainer<Size> buffSizeDefFx;
 
 
     @FXML
@@ -228,9 +246,9 @@ public class SkillMainViewController {
         //stat requirements:
         statsRequirementsFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.WITH_TEXT_FIELD);
         statsRequirementsFx.setUniqueElements(true);
-        statsRequirementsFx.setElements(List.of(StatNames.values()));
-        statsRequirementsFx.setNameBy(StatNames::getName);
-        statsRequirementsFx.setSearchBy(StatNames::getName, StatNames::name);
+        statsRequirementsFx.setElements(List.of(StatName.values()));
+        statsRequirementsFx.setNameBy(StatName::getName);
+        statsRequirementsFx.setSearchBy(StatName::getName, StatName::name);
 
         // items requirements:
         itemsRequirementsFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.WITH_TEXT_FIELD);
@@ -256,15 +274,51 @@ public class SkillMainViewController {
         // stats buff:
         statsFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.WITH_AUTOFILL_TEXT_FIELD);
         statsFx.setUniqueElements(true);
-        statsFx.setElements(List.of(StatNames.values()));
-        statsFx.setNameBy(StatNames::getName);
-        statsFx.setSearchBy(StatNames::getName, StatNames::name);
+        statsFx.setElements(List.of(StatName.values()));
+        statsFx.setNameBy(StatName::getName);
+        statsFx.setSearchBy(StatName::getName, StatName::name);
         MultipleChoiceContainerElementWithAutofillTextField.AutocomplitionTextFieldBuilder<FormulaVariable> statsBuilder =
                 MultipleChoiceContainerElementWithAutofillTextField.builder();
         statsBuilder.setNameFunction(FormulaVariable::getVariable)
                 .setExtendedDescriptionFunction(FormulaVariable::getDescription)
                 .setCollection(FormulaVariable.getAllVariables());
         statsFx.setExtendedOptions(statsBuilder);
+
+        // buff coefficients:
+        List<AttackType> attackTypeWithoutWeaponType = new ArrayList<>(List.of(AttackType.values()));
+        attackTypeWithoutWeaponType.remove(AttackType.WEAPON_TYPE);
+        // attack type atk:
+        buffAttackTypeAtkFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        buffAttackTypeAtkFx.setUniqueElements(true);
+        buffAttackTypeAtkFx.setElements(attackTypeWithoutWeaponType);
+        // attack type def:
+        buffAttackTypeDefFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        buffAttackTypeDefFx.setUniqueElements(true);
+        buffAttackTypeDefFx.setElements(attackTypeWithoutWeaponType);
+        // being type atk:
+        buffBeingTypeAtkFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        buffBeingTypeAtkFx.setUniqueElements(true);
+        buffBeingTypeAtkFx.setElements(Arrays.asList(BeingType.values()));
+        // being type def:
+        buffBeingTypeDefFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        buffBeingTypeDefFx.setUniqueElements(true);
+        buffBeingTypeDefFx.setElements(Arrays.asList(BeingType.values()));
+        // elements atk:
+        buffElementAtkFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        buffElementAtkFx.setUniqueElements(true);
+        buffElementAtkFx.setElements(Arrays.asList(Element.values()));
+        // elements def:
+        buffElementDefFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        buffElementDefFx.setUniqueElements(true);
+        buffElementDefFx.setElements(Arrays.asList(Element.values()));
+        // size atk:
+        buffSizeAtkFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        buffSizeAtkFx.setUniqueElements(true);
+        buffSizeAtkFx.setElements(Arrays.asList(Size.values()));
+        // size def:
+        buffSizeDefFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
+        buffSizeDefFx.setUniqueElements(true);
+        buffSizeDefFx.setElements(Arrays.asList(Size.values()));
     }
 
     @FXML
@@ -330,16 +384,22 @@ public class SkillMainViewController {
 
         // damage coefficients:
         for (java.util.Map.Entry<Element, Double> coefficient : skillData.getCoefficients().atk().element().getCoefficientsMap().entrySet()) {
-            MultipleChoiceContainerElementWithPercents<Element> node = (MultipleChoiceContainerElementWithPercents<Element>) damageElementCoefficientsFx.addElement(coefficient.getKey());
-            node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d));
+            if (coefficient.getValue() != 1d) {
+                MultipleChoiceContainerElementWithPercents<Element> node = (MultipleChoiceContainerElementWithPercents<Element>) damageElementCoefficientsFx.addElement(coefficient.getKey());
+                node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d).replaceFirst("\\.0+\\b", ""));
+            }
         }
         for (java.util.Map.Entry<BeingType, Double> coefficient : skillData.getCoefficients().atk().beingType().getCoefficientsMap().entrySet()) {
-            MultipleChoiceContainerElementWithPercents<BeingType> node = (MultipleChoiceContainerElementWithPercents<BeingType>) damageBeingTypesCoefficientsFx.addElement(coefficient.getKey());
-            node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d));
+            if (coefficient.getValue() != 1d) {
+                MultipleChoiceContainerElementWithPercents<BeingType> node = (MultipleChoiceContainerElementWithPercents<BeingType>) damageBeingTypesCoefficientsFx.addElement(coefficient.getKey());
+                node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d).replaceFirst("\\.0+\\b", ""));
+            }
         }
         for (java.util.Map.Entry<Size, Double> coefficient : skillData.getCoefficients().atk().size().getCoefficientsMap().entrySet()) {
-            MultipleChoiceContainerElementWithPercents<Size> node = (MultipleChoiceContainerElementWithPercents<Size>) damageSizeCoefficientsFx.addElement(coefficient.getKey());
-            node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d));
+            if (coefficient.getValue() != 1d) {
+                MultipleChoiceContainerElementWithPercents<Size> node = (MultipleChoiceContainerElementWithPercents<Size>) damageSizeCoefficientsFx.addElement(coefficient.getKey());
+                node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d).replaceFirst("\\.0+\\b", ""));
+            }
         }
 
         // transformation:
@@ -374,7 +434,7 @@ public class SkillMainViewController {
         // requirements:
         // stats requirements:
         skillData.getRequirements().getStats().forEachWithNestedStats(stat ->
-                ((MultipleChoiceContainerElementWithTextField<StatNames>) statsRequirementsFx.addElement(StatNames.get(stat.getClass())))
+                ((MultipleChoiceContainerElementWithTextField<StatName>) statsRequirementsFx.addElement(StatName.get(stat.getClass())))
                         .setTextFieldValue(String.valueOf(stat.value())));
         // items requirements:
         skillData.getRequirements().getItems().forEach((guid, amount) ->
@@ -400,10 +460,68 @@ public class SkillMainViewController {
         buffTypeFx.setValue(skillData.getBuffType().name());
         // buff stats:
         skillData.getStats().forEach((statClass, formula) -> {
-            MultipleChoiceContainerElement<StatNames> nodeElement = statsFx.addElement(StatNames.get(statClass));
-            StatNames statNames = StatNames.get(statClass);
-            ((MultipleChoiceContainerElementWithAutofillTextField<StatNames, FormulaVariable>) nodeElement)
+            MultipleChoiceContainerElement<StatName> nodeElement = statsFx.addElement(StatName.get(statClass));
+            StatName statNames = StatName.get(statClass);
+            ((MultipleChoiceContainerElementWithAutofillTextField<StatName, FormulaVariable>) nodeElement)
                     .setTextFieldValue(statNames == null ? formula : shortBuffField(statNames.getVariableName(), formula));
+        });
+
+        // buff coefficients:
+        // attack type atk
+        skillData.getCoefficients().atk().attackType().getCoefficientsMap().forEach((type, value) -> {
+            if (value != 1d) {
+                ((MultipleChoiceContainerElementWithPercents<AttackType>) buffAttackTypeAtkFx.addElement(type))
+                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+            }
+        });
+        // attack type def
+        skillData.getCoefficients().def().attackType().getCoefficientsMap().forEach((type, value) -> {
+            if (value != 1d) {
+                ((MultipleChoiceContainerElementWithPercents<AttackType>) buffAttackTypeDefFx.addElement(type))
+                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+            }
+        });
+        // being type atk
+        skillData.getCoefficients().atk().beingType().getCoefficientsMap().forEach((type, value) -> {
+            if (value != 1d) {
+                ((MultipleChoiceContainerElementWithPercents<BeingType>) buffBeingTypeAtkFx.addElement(type))
+                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+            }
+        });
+        // being type def
+        skillData.getCoefficients().def().beingType().getCoefficientsMap().forEach((type, value) -> {
+            if (value != 1d) {
+                ((MultipleChoiceContainerElementWithPercents<BeingType>) buffBeingTypeDefFx.addElement(type))
+                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+            }
+        });
+        // elements type atk
+        skillData.getCoefficients().atk().element().getCoefficientsMap().forEach((type, value) -> {
+            if (value != 1d) {
+                ((MultipleChoiceContainerElementWithPercents<Element>) buffElementAtkFx.addElement(type))
+                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+            }
+        });
+        // elements type def
+        skillData.getCoefficients().def().element().getCoefficientsMap().forEach((type, value) -> {
+            if (value != 1d) {
+                ((MultipleChoiceContainerElementWithPercents<Element>) buffElementDefFx.addElement(type))
+                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+            }
+        });
+        // size atk
+        skillData.getCoefficients().atk().size().getCoefficientsMap().forEach((type, value) -> {
+            if (value != 1d) {
+                ((MultipleChoiceContainerElementWithPercents<Size>) buffSizeAtkFx.addElement(type))
+                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+            }
+        });
+        // size def
+        skillData.getCoefficients().def().size().getCoefficientsMap().forEach((type, value) -> {
+            if (value != 1d) {
+                ((MultipleChoiceContainerElementWithPercents<Size>) buffSizeDefFx.addElement(type))
+                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+            }
         });
     }
 
@@ -517,7 +635,7 @@ public class SkillMainViewController {
         }
         statsFx.getNodesElements().forEach(nodeElement ->
                 skill.getStats().put(nodeElement.getSelectedElement().getClazz(), extendBuffField(nodeElement.getSelectedElement().getVariableName(),
-                        ((MultipleChoiceContainerElementWithAutofillTextField<StatNames, FormulaVariable>) nodeElement).getTextFieldValue())));
+                        ((MultipleChoiceContainerElementWithAutofillTextField<StatName, FormulaVariable>) nodeElement).getTextFieldValue())));
 
 
         // transformation:
@@ -559,7 +677,7 @@ public class SkillMainViewController {
         // requirements:
         // stats requirements:
         statsRequirementsFx.getNodesElements().forEach(nodeElement -> skill.getRequirements().getStats().get(nodeElement.getSelectedElement().getClazz())
-                .set(Double.parseDouble(((MultipleChoiceContainerElementWithTextField<StatNames>) nodeElement).getTextFieldValue())));
+                .set(Double.parseDouble(((MultipleChoiceContainerElementWithTextField<StatName>) nodeElement).getTextFieldValue())));
         // item requirements:
         itemsRequirementsFx.getNodesElements().forEach(nodeElement -> skill.getRequirements().getItems()
                 .put(nodeElement.getSelectedElement().getGuid(), Integer.parseInt(((MultipleChoiceContainerElementWithTextField<ItemData>) nodeElement).getTextFieldValue())));
@@ -575,6 +693,64 @@ public class SkillMainViewController {
                         nodeElement -> Integer.parseInt(((MultipleChoiceContainerElementWithTextField<ItemData>) nodeElement).getTextFieldNode().getText()),
                         (a, b) -> a,
                         HashMap::new)));
+
+        // buff coefficients:
+        // attack type atk:
+        buffAttackTypeAtkFx.getNodesElements()
+                .forEach(nodeElement -> {
+                    AttackType selectedElement = nodeElement.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<AttackType>) nodeElement).getPercents() / 100d;
+                    skill.getBuffCoefficients().atk().attackType().set(selectedElement, coefficient);
+                });
+        // attack type def:
+        buffAttackTypeDefFx.getNodesElements()
+                .forEach(nodeElement -> {
+                    AttackType selectedElement = nodeElement.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<AttackType>) nodeElement).getPercents() / 100d;
+                    skill.getBuffCoefficients().def().attackType().set(selectedElement, coefficient);
+                });
+        // being type atk:
+        buffBeingTypeAtkFx.getNodesElements()
+                .forEach(nodeElement -> {
+                    BeingType selectedElement = nodeElement.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<BeingType>) nodeElement).getPercents() / 100d;
+                    skill.getBuffCoefficients().atk().beingType().set(selectedElement, coefficient);
+                });
+        // being type def:
+        buffBeingTypeDefFx.getNodesElements()
+                .forEach(nodeElement -> {
+                    BeingType selectedElement = nodeElement.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<BeingType>) nodeElement).getPercents() / 100d;
+                    skill.getBuffCoefficients().def().beingType().set(selectedElement, coefficient);
+                });
+        // elements atk:
+        buffElementAtkFx.getNodesElements()
+                .forEach(nodeElement -> {
+                    Element selectedElement = nodeElement.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<Element>) nodeElement).getPercents() / 100d;
+                    skill.getBuffCoefficients().atk().element().set(selectedElement, coefficient);
+                });
+        // elements def:
+        buffElementDefFx.getNodesElements()
+                .forEach(nodeElement -> {
+                    Element selectedElement = nodeElement.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<Element>) nodeElement).getPercents() / 100d;
+                    skill.getBuffCoefficients().def().element().set(selectedElement, coefficient);
+                });
+        // size atk:
+        buffSizeAtkFx.getNodesElements()
+                .forEach(nodeElement -> {
+                    Size selectedElement = nodeElement.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<Size>) nodeElement).getPercents() / 100d;
+                    skill.getBuffCoefficients().atk().size().set(selectedElement, coefficient);
+                });
+        // size def:
+        buffSizeDefFx.getNodesElements()
+                .forEach(nodeElement -> {
+                    Size selectedElement = nodeElement.getSelectedElement();
+                    double coefficient = ((MultipleChoiceContainerElementWithPercents<Size>) nodeElement).getPercents() / 100d;
+                    skill.getBuffCoefficients().def().size().set(selectedElement, coefficient);
+                });
     }
 
     private void saveBuffField(String fieldParsedName, TextField fieldFx, Class<? extends Stat> statClass) {
@@ -618,7 +794,7 @@ public class SkillMainViewController {
         }
         // stat buffs:
         statsFx.getNodesElements().forEach(nodeElement -> {
-            String formula = ((MultipleChoiceContainerElementWithAutofillTextField<StatNames, FormulaVariable>) nodeElement).getTextFieldValue();
+            String formula = ((MultipleChoiceContainerElementWithAutofillTextField<StatName, FormulaVariable>) nodeElement).getTextFieldValue();
             if (!skillParser.testParse(formula)) {
                 messages.add("Equation in stat buff " + nodeElement.getSelectedElement().getName().toUpperCase() + " can not be parsed");
             }
@@ -626,7 +802,7 @@ public class SkillMainViewController {
         // requirements:
         // stats requirements:
         statsRequirementsFx.getNodesElements().forEach(nodeElement -> {
-            String textValue = ((MultipleChoiceContainerElementWithTextField<StatNames>) nodeElement).getTextFieldValue();
+            String textValue = ((MultipleChoiceContainerElementWithTextField<StatName>) nodeElement).getTextFieldValue();
             if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
                 messages.add("Requirement of stat " + nodeElement.getSelectedElement().getName().toUpperCase() + " is empty");
             } else {

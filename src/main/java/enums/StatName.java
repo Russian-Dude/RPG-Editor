@@ -6,7 +6,7 @@ import ru.rdude.rpg.game.logic.stats.secondary.*;
 
 import java.util.Arrays;
 
-public enum StatNames {
+public enum StatName {
     LVL(Lvl.class, "Level", "LVL"),
     EXP(Lvl.Exp.class, "Experience", "EXP"),
     DEF(Def.class, "Defence", "DEF"),
@@ -42,13 +42,13 @@ public enum StatNames {
     private String name;
     private String variableName;
 
-    StatNames(Class<? extends Stat> cl, String name, String variableName) {
+    StatName(Class<? extends Stat> cl, String name, String variableName) {
         this.cl = cl;
         this.name = name;
         this.variableName = variableName;
     }
 
-    public static StatNames get(Class<? extends Stat> statClass) {
+    public static StatName get(Class<? extends Stat> statClass) {
         return Arrays.stream(values())
                 .filter(statName -> statName.cl == statClass)
                 .findFirst()
