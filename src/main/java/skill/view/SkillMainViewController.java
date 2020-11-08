@@ -10,6 +10,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.WindowEvent;
 import ru.rdude.fxlib.boxes.SearchComboBox;
 import ru.rdude.fxlib.containers.*;
 import ru.rdude.fxlib.textfields.AutocomplitionTextField;
@@ -167,7 +170,6 @@ public class SkillMainViewController {
         loadSimpleComboBoxes();
         loadMultipleChoiceContainers();
         configAutoComplitionTextFields();
-
     }
 
     private void configAutoComplitionTextFields() {
@@ -848,7 +850,17 @@ public class SkillMainViewController {
         return textField.getText().replaceAll(" ", "").isEmpty() || parser.testParse(extendBuffField(parsedName, textField.getText()));
     }
 
-    private void showUnableToSaveMessage(ArrayList<String> reasons) {
+    private void showUnableToSaveMessage(List<String> reasons) {
+        Alert dialog = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
+        dialog.setTitle("Skill can not be saved");
+        dialog.setHeaderText("Following fields are incorrect");
+        String reasonsText = reasons.stream()
+                .map(line -> line + "\r\n")
+                .limit(20)
+                .reduce((line1, line2) -> line1 + line2)
+                .orElse("");
+        dialog.setContentText(reasonsText);
+        dialog.showAndWait();
     }
 
 }
