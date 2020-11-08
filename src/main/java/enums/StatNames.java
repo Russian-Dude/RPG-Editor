@@ -7,53 +7,52 @@ import ru.rdude.rpg.game.logic.stats.secondary.*;
 import java.util.Arrays;
 
 public enum StatNames {
-    LVL(Lvl.class, "Level"),
-    LVL_POINT(Lvl.Points.class, "Level Point"),
-    EXP_CLASS(Lvl.ExpBase.class, "Experience class"),
-    EXP_BASE(Lvl.ExpBase.class, "Experience base"),
-    DEF(Def.class, "Defence"),
-    AGI(Agi.class, "Agility"),
-    DEX(Dex.class, "Dexterity"),
-    INT(Int.class, "Intelligence"),
-    LUCK(Luck.class, "Luck"),
-    STR(Str.class, "Strength"),
-    VIT(Vit.class, "Vitality"),
-    STM(Stm.class, "Stamina current"),
-    STM_ATK(Stm.PerHit.class, "Stamina per hit"),
-    STM_MAX(Stm.Max.class, "Stamina max"),
-    STM_REST(Stm.Recovery.class, "Stamina recovery"),
-    HP(Hp.class, "Health"),
-    HP_MAX(Hp.Max.class, "Health max"),
-    HP_REST(Hp.Recovery.class, "Health recovery"),
-    MELEE_MIN(Dmg.Melee.MeleeMin.class, "Melee min damage"),
-    MELEE_MAX(Dmg.Melee.MeleeMax.class, "Melee max damage"),
-    RANGE_MIN(Dmg.Range.RangeMin.class, "Range min damage"),
-    RANGE_MAX(Dmg.Range.RangeMax.class, "Range max damage"),
-    MAGIC_MIN(Dmg.Magic.MagicMin.class, "Magic min damage"),
-    MAGIC_MAX(Dmg.Magic.MagicMax.class, "Magic max damage"),
-    CRIT(Crit.class, "Critical"),
-    PARRY(Parry.class, "Parry"),
-    HIT(Hit.class, "Hit"),
-    BLOCK(Block.class, "Block"),
-    CONCENTRATION(Concentration.class, "Concentration"),
-    LUCKY_DODGE(Flee.LuckyDodgeChance.class, "Lucky dodge"),
-    FLEE(Flee.class, "Flee"),
-    PHYSIC_RESISTANCE(PhysicResistance.class, "Physic resistance"),
-    MAGIC_RESISTANCE(MagicResistance.class, "Magic resistance");
+    LVL(Lvl.class, "Level", "LVL"),
+    EXP(Lvl.Exp.class, "Experience", "EXP"),
+    DEF(Def.class, "Defence", "DEF"),
+    AGI(Agi.class, "Agility", "AGI"),
+    DEX(Dex.class, "Dexterity", "DEX"),
+    INT(Int.class, "Intelligence", "INT"),
+    LUCK(Luck.class, "Luck", "LUCK"),
+    STR(Str.class, "Strength", "STR"),
+    VIT(Vit.class, "Vitality", "VIT"),
+    STM(Stm.class, "Stamina current", "STM"),
+    STM_ATK(Stm.PerHit.class, "Stamina per hit", "STMATK"),
+    STM_MAX(Stm.Max.class, "Stamina max", "STMMAX"),
+    STM_REST(Stm.Recovery.class, "Stamina recovery", "STMREST"),
+    HP_MAX(Hp.Max.class, "Health max", "HPMAX"),
+    HP_REST(Hp.Recovery.class, "Health recovery", "HPREST"),
+    MELEE_MIN(Dmg.Melee.MeleeMin.class, "Melee min damage", "MELEEATKMIN"),
+    MELEE_MAX(Dmg.Melee.MeleeMax.class, "Melee max damage", "MELEEATKMAX"),
+    RANGE_MIN(Dmg.Range.RangeMin.class, "Range min damage", "RANGEATKMIN"),
+    RANGE_MAX(Dmg.Range.RangeMax.class, "Range max damage", "RANGEATKMAX"),
+    MAGIC_MIN(Dmg.Magic.MagicMin.class, "Magic min damage", "MAGICATKMIN"),
+    MAGIC_MAX(Dmg.Magic.MagicMax.class, "Magic max damage", "MAGICATKMAX"),
+    CRIT(Crit.class, "Critical", "CRIT"),
+    PARRY(Parry.class, "Parry", "PARRY"),
+    HIT(Hit.class, "Hit", "HIT"),
+    BLOCK(Block.class, "Block", "BLOCK"),
+    CONCENTRATION(Concentration.class, "Concentration", "CONC"),
+    LUCKY_DODGE(Flee.LuckyDodgeChance.class, "Lucky dodge", "LKYDODGE"),
+    FLEE(Flee.class, "Flee", "FLEE"),
+    PHYSIC_RESISTANCE(PhysicResistance.class, "Physic resistance", "PRES"),
+    MAGIC_RESISTANCE(MagicResistance.class, "Magic resistance", "MRES");
 
     private Class<? extends Stat> cl;
     private String name;
+    private String variableName;
 
-    StatNames(Class<? extends Stat> cl, String name) {
+    StatNames(Class<? extends Stat> cl, String name, String variableName) {
         this.cl = cl;
         this.name = name;
+        this.variableName = variableName;
     }
 
     public static StatNames get(Class<? extends Stat> statClass) {
         return Arrays.stream(values())
                 .filter(statName -> statName.cl == statClass)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElse(null);
     }
 
     public Class<? extends Stat> getClazz() {
@@ -62,5 +61,9 @@ public enum StatNames {
 
     public String getName() {
         return name;
+    }
+
+    public String getVariableName() {
+        return variableName;
     }
 }

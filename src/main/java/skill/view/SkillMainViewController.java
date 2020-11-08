@@ -3,6 +3,7 @@ package skill.view;
 
 import data.Data;
 import enums.EnumsLists;
+import enums.FormulaVariable;
 import enums.StatNames;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -24,12 +25,9 @@ import ru.rdude.rpg.game.logic.gameStates.Battle;
 import ru.rdude.rpg.game.logic.gameStates.Camp;
 import ru.rdude.rpg.game.logic.gameStates.Map;
 import ru.rdude.rpg.game.logic.stats.Stat;
-import ru.rdude.rpg.game.logic.stats.primary.*;
-import ru.rdude.rpg.game.logic.stats.secondary.*;
 import ru.rdude.rpg.game.utils.Functions;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,7 +49,7 @@ public class SkillMainViewController {
     @FXML
     private TextField requiredConcentrationFx;
     @FXML
-    private TextField damageFx;
+    private AutocomplitionTextField<FormulaVariable> damageFx;
     @FXML
     private ComboBox<String> mainTargetFx;
     @FXML
@@ -103,67 +101,7 @@ public class SkillMainViewController {
     @FXML
     private ComboBox<String> buffTypeFx;
     @FXML
-    private AutocomplitionTextField meleeMinDmgFx;
-    @FXML
-    private AutocomplitionTextField meleeMaxDmgFx;
-    @FXML
-    private AutocomplitionTextField rangeMinDmgFx;
-    @FXML
-    private AutocomplitionTextField rangeMaxDmgFx;
-    @FXML
-    private AutocomplitionTextField magicMinDmgFx;
-    @FXML
-    private AutocomplitionTextField magicMaxDmgFx;
-    @FXML
-    private AutocomplitionTextField timeFx;
-    @FXML
-    private AutocomplitionTextField goldFx;
-    @FXML
-    private AutocomplitionTextField fleeFx;
-    @FXML
-    private AutocomplitionTextField expFx;
-    @FXML
-    private AutocomplitionTextField intFx;
-    @FXML
-    private AutocomplitionTextField dexFx;
-    @FXML
-    private AutocomplitionTextField strFx;
-    @FXML
-    private AutocomplitionTextField agiFx;
-    @FXML
-    private AutocomplitionTextField vitFx;
-    @FXML
-    private AutocomplitionTextField luckFx;
-    @FXML
-    private AutocomplitionTextField critFx;
-    @FXML
-    private AutocomplitionTextField parryFx;
-    @FXML
-    private AutocomplitionTextField defFx;
-    @FXML
-    private AutocomplitionTextField hitFx;
-    @FXML
-    private AutocomplitionTextField blockFx;
-    @FXML
-    private AutocomplitionTextField hpMaxFx;
-    @FXML
-    private AutocomplitionTextField hpRestFx;
-    @FXML
-    private AutocomplitionTextField concentrationFx;
-    @FXML
-    private AutocomplitionTextField luckyDodgeFx;
-    @FXML
-    private AutocomplitionTextField stmFx;
-    @FXML
-    private AutocomplitionTextField stmByHitFx;
-    @FXML
-    private AutocomplitionTextField stmRecoveryFx;
-    @FXML
-    private AutocomplitionTextField stmMaxFx;
-    @FXML
-    private AutocomplitionTextField physicResistanceFx;
-    @FXML
-    private AutocomplitionTextField magicResistanceFx;
+    private MultipleChoiceContainer<StatNames> statsFx;
 
     // transformation:
     @FXML
@@ -215,11 +153,7 @@ public class SkillMainViewController {
     }
 
     private void configAutoComplitionTextFields() {
-        AutocomplitionTextFieldConfigurator.configure(
-                meleeMinDmgFx, meleeMaxDmgFx, rangeMinDmgFx, rangeMaxDmgFx, magicMinDmgFx, magicMaxDmgFx,
-                timeFx, goldFx, fleeFx, expFx, intFx, dexFx, strFx, agiFx, vitFx, luckFx, critFx, parryFx,
-                defFx, hitFx, blockFx, hpMaxFx, hpRestFx, concentrationFx, luckyDodgeFx, stmFx, stmByHitFx,
-                stmRecoveryFx, stmMaxFx, physicResistanceFx, magicResistanceFx);
+        AutocomplitionTextFieldConfigurator.configureFormulaTextFields(damageFx);
     }
 
     private void loadSimpleComboBoxes() {
@@ -318,6 +252,19 @@ public class SkillMainViewController {
         receiveItemsFx.setElements(Data.getItems());
         receiveItemsFx.setNameBy(ItemData::getNameInEditor);
         receiveItemsFx.setSearchBy(ItemData::getName, ItemData::getNameInEditor);
+
+        // stats buff:
+        statsFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.WITH_AUTOFILL_TEXT_FIELD);
+        statsFx.setUniqueElements(true);
+        statsFx.setElements(List.of(StatNames.values()));
+        statsFx.setNameBy(StatNames::getName);
+        statsFx.setSearchBy(StatNames::getName, StatNames::name);
+        MultipleChoiceContainerElementWithAutofillTextField.AutocomplitionTextFieldBuilder<FormulaVariable> statsBuilder =
+                MultipleChoiceContainerElementWithAutofillTextField.builder();
+        statsBuilder.setNameFunction(FormulaVariable::getVariable)
+                .setExtendedDescriptionFunction(FormulaVariable::getDescription)
+                .setCollection(FormulaVariable.getAllVariables());
+        statsFx.setExtendedOptions(statsBuilder);
     }
 
     @FXML
@@ -395,38 +342,6 @@ public class SkillMainViewController {
             node.setTextFieldValue(String.valueOf(coefficient.getValue() * 100d));
         }
 
-        // buff fields:
-        buffTypeFx.setValue(skillData.getBuffType().name());
-        loadBuffFieldIfPossible(skillData, "MELEEATKMIN", Dmg.Melee.MeleeMin.class, meleeMinDmgFx);
-        loadBuffFieldIfPossible(skillData, "MELEEATKMAX", Dmg.Melee.MeleeMax.class, meleeMaxDmgFx);
-        loadBuffFieldIfPossible(skillData, "RANGEATKMIN", Dmg.Range.RangeMin.class, rangeMinDmgFx);
-        loadBuffFieldIfPossible(skillData, "RANGEATKMAX", Dmg.Range.RangeMax.class, rangeMaxDmgFx);
-        loadBuffFieldIfPossible(skillData, "MAGICATKMIN", Dmg.Magic.MagicMin.class, magicMinDmgFx);
-        loadBuffFieldIfPossible(skillData, "MAGICATKMAX", Dmg.Magic.MagicMax.class, magicMaxDmgFx);
-        loadBuffFieldIfPossible(skillData, "EXP", Lvl.Exp.class, expFx);
-        loadBuffFieldIfPossible(skillData, "INT", Int.class, intFx);
-        loadBuffFieldIfPossible(skillData, "DEX", Dex.class, dexFx);
-        loadBuffFieldIfPossible(skillData, "STR", Str.class, strFx);
-        loadBuffFieldIfPossible(skillData, "AGI", Agi.class, agiFx);
-        loadBuffFieldIfPossible(skillData, "VIT", Vit.class, vitFx);
-        loadBuffFieldIfPossible(skillData, "LUCK", Luck.class, luckFx);
-        loadBuffFieldIfPossible(skillData, "CRIT", Crit.class, critFx);
-        loadBuffFieldIfPossible(skillData, "PARRY", Parry.class, parryFx);
-        loadBuffFieldIfPossible(skillData, "DEF", Def.class, defFx);
-        loadBuffFieldIfPossible(skillData, "HIT", Hit.class, hitFx);
-        loadBuffFieldIfPossible(skillData, "BLOCK", Block.class, blockFx);
-        loadBuffFieldIfPossible(skillData, "HPMAX", Hp.Max.class, hpMaxFx);
-        loadBuffFieldIfPossible(skillData, "HPREST", Hp.Recovery.class, hpRestFx);
-        loadBuffFieldIfPossible(skillData, "CONC", Concentration.class, concentrationFx);
-        loadBuffFieldIfPossible(skillData, "LKYDODGE", Flee.LuckyDodgeChance.class, luckyDodgeFx);
-        loadBuffFieldIfPossible(skillData, "FLEE", Flee.class, fleeFx);
-        loadBuffFieldIfPossible(skillData, "STM", Stm.class, stmFx);
-        loadBuffFieldIfPossible(skillData, "STMATK", Stm.PerHit.class, stmByHitFx);
-        loadBuffFieldIfPossible(skillData, "STMREST", Stm.Recovery.class, stmRecoveryFx);
-        loadBuffFieldIfPossible(skillData, "STMMAX", Stm.Max.class, stmMaxFx);
-        loadBuffFieldIfPossible(skillData, "PRES", PhysicResistance.class, physicResistanceFx);
-        loadBuffFieldIfPossible(skillData, "MRES", MagicResistance.class, magicResistanceFx);
-
         // transformation:
         for (BeingType beingType : skillData.getTransformation().getBeingTypes()) {
             transformationBeingTypesFx.addElement(beingType);
@@ -451,8 +366,7 @@ public class SkillMainViewController {
         if (skillData.isOnBeingActionCastToEnemy()) {
             onBeingActionCastToEnemyFx.setSelected(true);
             onBeingActionCastToSelfFx.setSelected(false);
-        }
-        else {
+        } else {
             onBeingActionCastToEnemyFx.setSelected(false);
             onBeingActionCastToSelfFx.setSelected(true);
         }
@@ -481,6 +395,16 @@ public class SkillMainViewController {
         skillData.getReceiveItems().forEach((guid, amount) ->
                 ((MultipleChoiceContainerElementWithTextField<ItemData>) receiveItemsFx.addElement(Data.getItemData(guid)))
                         .getTextFieldNode().setText(String.valueOf(amount)));
+
+        // buff type:
+        buffTypeFx.setValue(skillData.getBuffType().name());
+        // buff stats:
+        skillData.getStats().forEach((statClass, formula) -> {
+            MultipleChoiceContainerElement<StatNames> nodeElement = statsFx.addElement(StatNames.get(statClass));
+            StatNames statNames = StatNames.get(statClass);
+            ((MultipleChoiceContainerElementWithAutofillTextField<StatNames, FormulaVariable>) nodeElement)
+                    .setTextFieldValue(statNames == null ? formula : shortBuffField(statNames.getVariableName(), formula));
+        });
     }
 
     private void loadBuffFieldIfPossible(SkillData data, String fieldParsedName, Class<? extends Stat> statClass, TextField fieldFx) {
@@ -591,35 +515,10 @@ public class SkillMainViewController {
         if (skill.getStats() == null) {
             skill.setStats(new HashMap<>());
         }
-        saveBuffField("MELEEATKMIN", meleeMinDmgFx, Dmg.Melee.MeleeMin.class);
-        saveBuffField("MELEEATKMAX", meleeMaxDmgFx, Dmg.Melee.MeleeMax.class);
-        saveBuffField("RANGEATKMIN", rangeMinDmgFx, Dmg.Range.RangeMin.class);
-        saveBuffField("RANGEATKMAX", rangeMaxDmgFx, Dmg.Range.RangeMax.class);
-        saveBuffField("MAGICATKMIN", magicMinDmgFx, Dmg.Magic.MagicMin.class);
-        saveBuffField("MAGICATKMAX", magicMaxDmgFx, Dmg.Magic.MagicMax.class);
-        saveBuffField("FLEE", fleeFx, Flee.class);
-        saveBuffField("EXP", expFx, Lvl.Exp.class);
-        saveBuffField("INT", intFx, Int.class);
-        saveBuffField("DEX", dexFx, Dex.class);
-        saveBuffField("STR", strFx, Str.class);
-        saveBuffField("AGI", agiFx, Agi.class);
-        saveBuffField("VIT", vitFx, Vit.class);
-        saveBuffField("LUCK", luckFx, Luck.class);
-        saveBuffField("CRIT", critFx, Crit.class);
-        saveBuffField("PARRY", parryFx, Parry.class);
-        saveBuffField("DEF", defFx, Def.class);
-        saveBuffField("HIT", hitFx, Hit.class);
-        saveBuffField("BLOCK", blockFx, Block.class);
-        saveBuffField("HPMAX", hpMaxFx, Hp.Max.class);
-        saveBuffField("HPREST", hpRestFx, Hp.Recovery.class);
-        saveBuffField("CONC", concentrationFx, Concentration.class);
-        saveBuffField("LKYDODGE", luckyDodgeFx, Flee.LuckyDodgeChance.class);
-        saveBuffField("STM", stmFx, Stm.class);
-        saveBuffField("STMATK", stmByHitFx, Stm.PerHit.class);
-        saveBuffField("STMREST", stmRecoveryFx, Stm.Recovery.class);
-        saveBuffField("STMMAX", stmMaxFx, Stm.Max.class);
-        saveBuffField("PRES", physicResistanceFx, PhysicResistance.class);
-        saveBuffField("MRES", magicResistanceFx, MagicResistance.class);
+        statsFx.getNodesElements().forEach(nodeElement ->
+                skill.getStats().put(nodeElement.getSelectedElement().getClazz(), extendBuffField(nodeElement.getSelectedElement().getVariableName(),
+                        ((MultipleChoiceContainerElementWithAutofillTextField<StatNames, FormulaVariable>) nodeElement).getTextFieldValue())));
+
 
         // transformation:
         skill.getTransformation().setBeingTypes(new HashSet<>(transformationBeingTypesFx.getElements()));
@@ -718,65 +617,12 @@ public class SkillMainViewController {
             messages.add("ACTS EVERY TURN field has non numeric characters");
         }
         // stat buffs:
-        if (!isBuffFieldCorrect(skillParser, "MELEEATKMIN", meleeMinDmgFx))
-            messages.add("Equation in the MELEE MIN DAMAGE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "MELEEATKMAX", meleeMaxDmgFx))
-            messages.add("Equation in the MELEE MAX DAMAGE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "RANGEATKMIN", rangeMinDmgFx))
-            messages.add("Equation in the RANGE MIN DAMAGE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "RANGEATKMAX", rangeMaxDmgFx))
-            messages.add("Equation in the RANGE MAX DAMAGE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "MAGICATKMIN", magicMinDmgFx))
-            messages.add("Equation in the MAGIC MIN DAMAGE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "MAGICATKMAX", magicMaxDmgFx))
-            messages.add("Equation in the MAGIC MAX DAMAGE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "FLEE", fleeFx))
-            messages.add("Equation in the FLEE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "EXP", expFx))
-            messages.add("Equation in the EXPERIENCE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "INT", intFx))
-            messages.add("Equation in the INTELLIGENCE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "DEX", dexFx))
-            messages.add("Equation in the DEXTERITY field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "STR", strFx))
-            messages.add("Equation in the STRENGTH field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "AGI", agiFx))
-            messages.add("Equation in the AGILITY field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "VIT", vitFx))
-            messages.add("Equation in the VITALITY field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "LUCK", luckFx))
-            messages.add("Equation in the LUCK field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "CRIT", critFx))
-            messages.add("Equation in the CRITICAL CHANCE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "PARRY", parryFx))
-            messages.add("Equation in the PARRY field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "DEF", defFx))
-            messages.add("Equation in the DEFENCE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "HIT", hitFx))
-            messages.add("Equation in the HIT field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "BLOCK", blockFx))
-            messages.add("Equation in the BLOCK field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "HPMAX", hpMaxFx))
-            messages.add("Equation in the MAXIMUM HEALTH field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "HPREST", hpRestFx))
-            messages.add("Equation in the HP RESTORATION field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "CONC", concentrationFx))
-            messages.add("Equation in the CONCENTRATION field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "LKYDODGE", luckyDodgeFx))
-            messages.add("Equation in the LUCKY DODGE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "STM", stmFx))
-            messages.add("Equation in the CURRENT STAMINA field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "STMATK", stmByHitFx))
-            messages.add("Equation in the STAMINA BY HIT field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "STMREST", stmRecoveryFx))
-            messages.add("Equation in the STAMINA RECOVERY field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "STMMAX", stmMaxFx))
-            messages.add("Equation in the MAXIMUM STAMINA field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "PRES", physicResistanceFx))
-            messages.add("Equation in the PHYSIC RESISTANCE field can not be parsed");
-        if (!isBuffFieldCorrect(skillParser, "MRES", magicResistanceFx))
-            messages.add("Equation in the MAGIC RESISTANCE field can not be parsed");
-
+        statsFx.getNodesElements().forEach(nodeElement -> {
+            String formula = ((MultipleChoiceContainerElementWithAutofillTextField<StatNames, FormulaVariable>) nodeElement).getTextFieldValue();
+            if (!skillParser.testParse(formula)) {
+                messages.add("Equation in stat buff " + nodeElement.getSelectedElement().getName().toUpperCase() + " can not be parsed");
+            }
+        });
         // requirements:
         // stats requirements:
         statsRequirementsFx.getNodesElements().forEach(nodeElement -> {

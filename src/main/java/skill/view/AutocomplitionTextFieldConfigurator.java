@@ -1,14 +1,16 @@
 package skill.view;
 
-import enums.FormulaVariables;
+import enums.FormulaVariable;
 import ru.rdude.fxlib.textfields.AutocomplitionTextField;
 
 public class AutocomplitionTextFieldConfigurator {
 
-    public static void configure(AutocomplitionTextField... autocomplitionTextFields) {
-        for (AutocomplitionTextField autocomplitionTextField : autocomplitionTextFields) {
+    public static void configureFormulaTextFields(AutocomplitionTextField<FormulaVariable>... autocomplitionTextFields) {
+        for (AutocomplitionTextField<FormulaVariable> autocomplitionTextField : autocomplitionTextFields) {
             if (autocomplitionTextField != null) {
-                autocomplitionTextField.setElements(FormulaVariables.getAllVariables());
+                autocomplitionTextField.setItemNameFunction(FormulaVariable::getVariable);
+                autocomplitionTextField.setExtendedDescriptionFunction(FormulaVariable::getDescription);
+                autocomplitionTextField.setElements(FormulaVariable.getAllVariables());
             }
         }
     }
