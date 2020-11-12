@@ -1,31 +1,34 @@
 package skill.view;
 
+import enums.EnumsLists;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
+import javafx.util.StringConverter;
 import ru.rdude.fxlib.containers.MultipleChoiceContainer;
+import ru.rdude.fxlib.containers.MultipleChoiceContainerElement;
 import ru.rdude.rpg.game.logic.data.SkillData;
-import ru.rdude.rpg.game.logic.enums.AttackType;
-import ru.rdude.rpg.game.logic.enums.Element;
-import ru.rdude.rpg.game.logic.enums.SkillEffect;
-import ru.rdude.rpg.game.logic.enums.SkillType;
+import ru.rdude.rpg.game.logic.enums.*;
 import ru.rdude.rpg.game.logic.gameStates.Battle;
 import ru.rdude.rpg.game.logic.gameStates.Camp;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public class SkillSearchController {
 
     @FXML
-    private ComboBox<SkillType> skillType;
+    private ComboBox<String> skillType;
     @FXML
-    private ComboBox<AttackType> attackType;
+    private ComboBox<String> attackType;
     @FXML
-    private ComboBox<SkillEffect> effect;
+    private ComboBox<String> effect;
     @FXML
     private MultipleChoiceContainer<Element> elements;
     @FXML
@@ -83,18 +86,62 @@ public class SkillSearchController {
     @FXML
     private RadioButton summonNo;
 
+
+    @FXML
+    public void initialize() {
+        StringConverter<String> stringConverter = new StringConverter<String>() {
+            @Override
+            public String toString(String s) {
+                return s == null ? "ANY" : s;
+            }
+
+            @Override
+            public String fromString(String s) {
+                return s.equals("ANY") ? null : s;
+            }
+        };
+        skillType.setItems(EnumsLists.skillTypesStringWithNull);
+        skillType.setConverter(stringConverter);
+        attackType.setItems(EnumsLists.attackTypesStringWithNull);
+        attackType.setConverter(stringConverter);
+        effect.setItems(EnumsLists.skillEffectsStringWithNull);
+        effect.setConverter(stringConverter);
+        elements.setElements(EnumsLists.elements);
+    }
+
+    @FXML
+    private void resetSearch() {
+        skillType.setValue(null);
+        attackType.setValue(null);
+        effect.setValue(null);
+        elements.getNodesElements().forEach(MultipleChoiceContainerElement::removeFromParent);
+        canBeUsedInBattle.setSelected(true);
+        canBeUsedInCamp.setSelected(true);
+        canBeUsedInMap.setSelected(true);
+        canBeBlocked.setSelected(true);
+        canBeResisted.setSelected(true);
+        canBeDodged.setSelected(true);
+        dealDamageAny.setSelected(true);
+        changeStatsAny.setSelected(true);
+        receiveItemsAny.setSelected(true);
+        requireItemsAny.setSelected(true);
+        hasDurationAny.setSelected(true);
+        applyTransformationAny.setSelected(true);
+        summonAny.setSelected(true);
+    }
+
     private static Map<Function<SkillSearchController, Control>, Function<SkillData, ?>> functionMap;
 
     public static Map<Function<SkillSearchController, Control>, Function<SkillData, ?>> getFunctionMap() {
         if (functionMap == null) {
             functionMap = new HashMap<>();
-            functionMap.put(SkillSearchController::getSkillType, SkillData::getType);
-            functionMap.put(SkillSearchController::getAttackType, SkillData::getAttackType);
-            functionMap.put(SkillSearchController::getEffect, SkillData::getEffect);
+            functionMap.put(SkillSearchController::getSkillType, skillData -> skillData.getType().name());
+            functionMap.put(SkillSearchController::getAttackType, skillData -> skillData.getAttackType().name());
+            functionMap.put(SkillSearchController::getEffect, skillData -> skillData.getEffect().name());
             functionMap.put(SkillSearchController::getElements, SkillData::getElements);
-            functionMap.put(SkillSearchController::getCanBeUsedInBattle, skillData -> skillData.getUsableInGameStates().get(Battle.class));
-            functionMap.put(SkillSearchController::getCanBeUsedInCamp, skillData -> skillData.getUsableInGameStates().get(Camp.class));
-            functionMap.put(SkillSearchController::getCanBeUsedInMap, skillData -> skillData.getUsableInGameStates().get(ru.rdude.rpg.game.logic.gameStates.Map.class));
+            functionMap.put(SkillSearchController::getCanBeUsedInBattle, skillData -> skillData.getUsableInGameStates().get(GameState.BATTLE));
+            functionMap.put(SkillSearchController::getCanBeUsedInCamp, skillData -> skillData.getUsableInGameStates().get(GameState.CAMP));
+            functionMap.put(SkillSearchController::getCanBeUsedInMap, skillData -> skillData.getUsableInGameStates().get(GameState.MAP));
             functionMap.put(SkillSearchController::getCanBeBlocked, SkillData::isCanBeBlocked);
             functionMap.put(SkillSearchController::getCanBeResisted, SkillData::isCanBeResisted);
             functionMap.put(SkillSearchController::getCanBeDodged, SkillData::isCanBeDodged);
@@ -136,15 +183,15 @@ public class SkillSearchController {
     }
 
 
-    public ComboBox<SkillType> getSkillType() {
+    public ComboBox<String> getSkillType() {
         return skillType;
     }
 
-    public ComboBox<AttackType> getAttackType() {
+    public ComboBox<String> getAttackType() {
         return attackType;
     }
 
-    public ComboBox<SkillEffect> getEffect() {
+    public ComboBox<String> getEffect() {
         return effect;
     }
 

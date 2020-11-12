@@ -7,9 +7,21 @@ import ru.rdude.rpg.game.logic.data.SkillData;
 
 public class Saver {
 
-    private Packer packer;
+    private static Saver instance;
+    private Packer packer = new Packer();
 
-    public void save(EntityData entityData) {
+    private static Saver getInstance() {
+        if (instance == null) {
+            instance = new Saver();
+        }
+        return instance;
+    }
+
+    public static void save(EntityData entityData) {
+        getInstance().savePr(entityData);
+    }
+
+    private void savePr(EntityData entityData) {
         if (entityData instanceof SkillData) {
             Data.addSkillData((SkillData) entityData);
             packer.pack((SkillData) entityData);

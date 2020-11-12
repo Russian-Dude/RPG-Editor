@@ -2,7 +2,7 @@ package data.io.packer;
 
 import ru.rdude.rpg.game.logic.data.EntityData;
 import ru.rdude.rpg.game.logic.data.SkillData;
-import ru.rdude.rpg.game.logic.data.io.JsonSerializer;
+import ru.rdude.rpg.game.logic.data.io.GameJsonSerializer;
 import settings.Settings;
 
 import java.io.*;
@@ -12,10 +12,10 @@ import java.util.zip.ZipOutputStream;
 
 public class Packer {
 
-    private JsonSerializer jsonSerializer;
+    private GameJsonSerializer jsonSerializer;
 
     public Packer() {
-        jsonSerializer = new JsonSerializer();
+        jsonSerializer = new GameJsonSerializer();
     }
 
     public void pack(SkillData skillData) {

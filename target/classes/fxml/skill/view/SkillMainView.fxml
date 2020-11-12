@@ -405,13 +405,13 @@
                                                    <children>
                                                       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="220.0">
                                                          <children>
-                                                            <Label text="Attack by attack type" textAlignment="CENTER" />
+                                                            <Label text="Attack with attack type" textAlignment="CENTER" />
                                                             <MultipleChoiceContainer fx:id="buffAttackTypeAtkFx" minHeight="85.0" />
-                                                            <Label text="Attack by being type" />
+                                                            <Label text="Attack to being type" />
                                                             <MultipleChoiceContainer fx:id="buffBeingTypeAtkFx" minHeight="85.0" />
-                                                            <Label text="Attack by element" />
+                                                            <Label text="Attack to element" />
                                                             <MultipleChoiceContainer fx:id="buffElementAtkFx" minHeight="85.0" />
-                                                            <Label text="Attack by size" />
+                                                            <Label text="Attack to size" />
                                                             <MultipleChoiceContainer fx:id="buffSizeAtkFx" minHeight="85.0" />
                                                          </children>
                                                       </VBox>

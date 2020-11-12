@@ -2,7 +2,7 @@ package skill.view;
 
 
 import data.Data;
-import data.io.packer.Packer;
+import data.Saver;
 import enums.EnumsLists;
 import enums.FormulaVariable;
 import javafx.collections.FXCollections;
@@ -175,21 +175,21 @@ public class SkillMainViewController {
     }
 
     private void loadSimpleComboBoxes() {
-        attackType.setItems(EnumsLists.attackTypes);
+        attackType.setItems(EnumsLists.attackTypesString);
         attackType.setValue(AttackType.MELEE.name());
-        effectFx.setItems(EnumsLists.skillEffects);
+        effectFx.setItems(EnumsLists.skillEffectsString);
         effectFx.setValue(SkillEffect.NO.name());
         forcedCancelHitsOrDamage.setItems(FXCollections.observableList(Arrays.asList("Hits", "Damage")));
         forcedCancelHitsOrDamage.setValue("Hits");
         forcedCancelReceivedOrDeal.setItems(FXCollections.observableList(Arrays.asList("Received", "Deal")));
         forcedCancelReceivedOrDeal.setValue("Received");
-        transformationSizeFx.setItems(EnumsLists.sizes);
+        transformationSizeFx.setItems(EnumsLists.sizesString);
         transformationSizeFx.setValue("NO");
-        buffTypeFx.setItems(EnumsLists.buffTypes);
+        buffTypeFx.setItems(EnumsLists.buffTypesString);
         buffTypeFx.setValue("PHYSIC");
-        skillTypeFx.setItems(EnumsLists.skillTypes);
+        skillTypeFx.setItems(EnumsLists.skillTypesString);
         skillTypeFx.setValue(SkillType.NO_TYPE.name());
-        mainTargetFx.setItems(EnumsLists.mainTargets);
+        mainTargetFx.setItems(EnumsLists.mainTargetsString);
         mainTargetFx.setValue("ENEMY");
         onDuplicatingFx.setCollection(Arrays.asList(SkillOverlay.values()));
         onDuplicatingFx.setValue(SkillOverlay.UPDATE);
@@ -218,7 +218,7 @@ public class SkillMainViewController {
         skillsCanCastFx.setElements(Data.getSkills());
         skillsCanCastFx.setNameBy(SkillData::getNameInEditor);
         skillsCanCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
-        skillsCanCastFx.setExtendedSearchOptions(SkillSearchController.getFunctionMap());
+        skillsMustCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
         SkillPopupConfigurator.configure(skillsCanCastFx);
 
         // skills must cast:
@@ -227,7 +227,7 @@ public class SkillMainViewController {
         skillsMustCastFx.setElements(Data.getSkills());
         skillsMustCastFx.setNameBy(SkillData::getNameInEditor);
         skillsMustCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
-        skillsMustCastFx.setExtendedSearchOptions(SkillSearchController.getFunctionMap());
+        skillsMustCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
         SkillPopupConfigurator.configure(skillsMustCastFx);
 
         // skills on being action:
@@ -345,9 +345,9 @@ public class SkillMainViewController {
         canBeBlockedFx.setSelected(skillData.isCanBeBlocked());
         canBeDodgedFx.setSelected(skillData.isCanBeDodged());
         canBeResistedFx.setSelected(skillData.isCanBeResisted());
-        canBeUsedInBattleFx.setSelected(skillData.getUsableInGameStates().get(Battle.class));
-        canBeUsedInCampFx.setSelected(skillData.getUsableInGameStates().get(Camp.class));
-        canBeUsedInMapFx.setSelected(skillData.getUsableInGameStates().get(Map.class));
+        canBeUsedInBattleFx.setSelected(skillData.getUsableInGameStates().get(GameState.BATTLE));
+        canBeUsedInCampFx.setSelected(skillData.getUsableInGameStates().get(GameState.CAMP));
+        canBeUsedInMapFx.setSelected(skillData.getUsableInGameStates().get(GameState.MAP));
         durationMinutesFx.setText(skillData.getDurationInMinutes());
         durationTurnsFx.setText(skillData.getDurationInTurns());
         actsEveryMinuteFx.setText(String.valueOf((int) skillData.getActsEveryMinute()));
@@ -459,11 +459,10 @@ public class SkillMainViewController {
         // buff type:
         buffTypeFx.setValue(skillData.getBuffType().name());
         // buff stats:
-        skillData.getStats().forEach((statClass, formula) -> {
-            MultipleChoiceContainerElement<StatName> nodeElement = statsFx.addElement(StatName.get(statClass));
-            StatName statNames = StatName.get(statClass);
+        skillData.getStats().forEach((statName, formula) -> {
+            MultipleChoiceContainerElement<StatName> nodeElement = statsFx.addElement(statName);
             ((MultipleChoiceContainerElementWithAutofillTextField<StatName, FormulaVariable>) nodeElement)
-                    .setTextFieldValue(statNames == null ? formula : shortBuffField(statNames.getVariableName(), formula));
+                    .setTextFieldValue(statName == null ? formula : shortBuffField(statName.getVariableName(), formula));
         });
 
         // buff coefficients:
@@ -526,8 +525,8 @@ public class SkillMainViewController {
     }
 
     private void loadBuffFieldIfPossible(SkillData data, String fieldParsedName, Class<? extends Stat> statClass, TextField fieldFx) {
-        if (data.getStats().containsKey(statClass)) {
-            String equation = data.getStats().get(statClass);
+        if (data.getStats().containsKey(StatName.get(statClass))) {
+            String equation = data.getStats().get(StatName.get(statClass));
             fieldFx.setText(shortBuffField(fieldParsedName, equation));
         }
     }
@@ -557,12 +556,12 @@ public class SkillMainViewController {
             return field.toUpperCase();
     }
 
-    private void saveSkill() {
+    private boolean saveSkill() {
         if (skill == null) skill = new SkillData(Functions.generateGuid());
         ArrayList<String> reasonsWhyCantSave = isFieldsCorrect();
         if (reasonsWhyCantSave.size() > 0) {
             showUnableToSaveMessage(reasonsWhyCantSave);
-            return;
+            return false;
         }
         skill.setName(nameFx.getText());
         skill.setAttackType(AttackType.valueOf(attackType.getValue()));
@@ -634,7 +633,7 @@ public class SkillMainViewController {
             skill.setStats(new HashMap<>());
         }
         statsFx.getNodesElements().forEach(nodeElement ->
-                skill.getStats().put(nodeElement.getSelectedElement().getClazz(), extendBuffField(nodeElement.getSelectedElement().getVariableName(),
+                skill.getStats().put(StatName.get(nodeElement.getSelectedElement().getClazz()), extendBuffField(nodeElement.getSelectedElement().getVariableName(),
                         ((MultipleChoiceContainerElementWithAutofillTextField<StatName, FormulaVariable>) nodeElement).getTextFieldValue())));
 
 
@@ -791,12 +790,13 @@ public class SkillMainViewController {
                         skill.getBuffCoefficients().def().size().set(selectedElement, coefficient);
                     }
                 });
+        return true;
     }
 
     private void saveBuffField(String fieldParsedName, TextField fieldFx, Class<? extends Stat> statClass) {
         String textField = fieldFx.getText().replaceAll(" ", "");
         if (!textField.isEmpty()) {
-            skill.getStats().put(statClass, extendBuffField(fieldParsedName, textField));
+            skill.getStats().put(StatName.get(statClass), extendBuffField(fieldParsedName, textField));
         }
     }
 
@@ -881,6 +881,79 @@ public class SkillMainViewController {
             }
         });
 
+        // buff coefficients:
+        buffAttackTypeAtkFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<AttackType>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field buff attack with " + nodeElement.getSelectedElement().name().toUpperCase() + " is empty");
+            }
+        });
+        buffAttackTypeDefFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<AttackType>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field buff defence from " + nodeElement.getSelectedElement().name().toUpperCase() + " is empty");
+            }
+        });
+        buffBeingTypeAtkFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<BeingType>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field buff attack to " + nodeElement.getSelectedElement().name().toUpperCase() + " is empty");
+            }
+        });
+        buffBeingTypeDefFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<BeingType>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field buff defence from " + nodeElement.getSelectedElement().name().toUpperCase() + " is empty");
+            }
+        });
+        buffElementAtkFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<Element>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field buff attack to " + nodeElement.getSelectedElement().name().toUpperCase() + " is empty");
+            }
+        });
+        buffElementDefFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<Element>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field buff defence from " + nodeElement.getSelectedElement().name().toUpperCase() + " is empty");
+            }
+        });
+        buffSizeAtkFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<Size>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field buff attack to " + nodeElement.getSelectedElement().name().toUpperCase() + " is empty");
+            }
+        });
+        buffSizeDefFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<Size>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field buff defence from " + nodeElement.getSelectedElement().name().toUpperCase() + " is empty");
+            }
+        });
+
+        // skill chaining:
+        skillsMustCastFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<SkillData>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field must cast " + nodeElement.getSelectedElement().getName().toUpperCase() + " is empty");
+            }
+        });
+        skillsCanCastFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementWithPercents<SkillData>) nodeElement).getTextFieldValue();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field can cast " + nodeElement.getSelectedElement().getName().toUpperCase() + " is empty");
+            }
+        });
+        skillsOnBeingActionFx.getNodesElements().forEach(nodeElement -> {
+            String textValue = ((MultipleChoiceContainerElementTwoChoiceWithPercents) nodeElement).getText();
+            if (textValue == null || textValue.replaceAll(" ", "").isEmpty()) {
+                messages.add("Field chance of cast on " + nodeElement.getSelectedElement().name().toUpperCase() + " being action is empty");
+            }
+            if (((MultipleChoiceContainerElementTwoChoiceWithPercents) nodeElement).getSecondValue() == null) {
+                messages.add("Field chance of cast on " + nodeElement.getSelectedElement().name().toUpperCase() + " has no skill chosen");
+            }
+        });
+
         return messages;
     }
 
@@ -903,10 +976,9 @@ public class SkillMainViewController {
 
     @FXML
     private void saveButtonPressed() {
-        System.out.println("save skill pressed");
-        saveSkill();
-        Packer packer = new Packer();
-        packer.pack(skill);
+        if (saveSkill()) {
+            Saver.save(skill);
+        }
     }
 
 }
