@@ -26,5 +26,11 @@
                </children></AnchorPane>
          </content>
       </Tab>
+       <Tab closable="false" text="Items" />
+       <Tab closable="false" text="Monsters" />
+       <Tab closable="false" text="Events" />
+       <Tab closable="false" text="Quests" />
+       <Tab closable="false" text="Modules" />
+       <Tab closable="false" text="Resources" />
    </tabs>
 </TabPane>

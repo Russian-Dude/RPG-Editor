@@ -4,6 +4,7 @@ import data.Data;
 import ru.rdude.fxlib.containers.MultipleChoiceContainerExtended;
 import ru.rdude.rpg.game.logic.data.SkillData;
 
+import java.util.HashMap;
 import java.util.stream.Stream;
 
 public class SkillPopupConfigurator {
@@ -73,7 +74,7 @@ public class SkillPopupConfigurator {
                     Stream.concat(Stream.concat(
                             skillData.getSkillsCouldCast().keySet().stream(),
                             skillData.getSkillsMustCast().keySet().stream()),
-                            skillData.getSkillsOnBeingAction().values().stream())
+                            skillData.getSkillsOnBeingAction().values().stream().flatMap(longFloatMap -> longFloatMap.keySet().stream()))
                             .distinct()
                             .map(guid -> Data.getSkillData(guid).getName())
                             .forEach(name -> {

@@ -1,6 +1,7 @@
 package data;
 
 import javafx.collections.*;
+import javafx.scene.image.Image;
 import ru.rdude.rpg.game.logic.data.ItemData;
 import ru.rdude.rpg.game.logic.data.Module;
 import ru.rdude.rpg.game.logic.data.MonsterData;
@@ -17,6 +18,8 @@ public class Data {
     private ObservableList<ItemData> items;
     private ObservableMap<Long, MonsterData> monstersMap;
     private ObservableList<MonsterData> monsters;
+
+    private ObservableList<Image> images;
 
     private Data() {
         // init fields:
@@ -107,6 +110,10 @@ public class Data {
 
     public static MonsterData getMonsterData(long guid) {
         return getInstance().monstersMap.get(guid);
+    }
+
+    public ObservableList<Image> getImages() {
+        return images;
     }
 
     public static void addSkillData(SkillData skillData) {

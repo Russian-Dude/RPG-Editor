@@ -33,6 +33,8 @@ public enum FormulaVariable {
     TSTMMAX("TSTMMAX", "   target maximum stamina"),
     STMREST("STMREST", "   caster stamina regeneration"),
     TSTMREST("TSTMREST", "   target stamina regeneration"),
+    HP("HP", "caster current health"),
+    THP("THP", "target current health"),
     HPMAX("HPMAX", "   caster maximum health"),
     THPMAX("THPMAX", "   target maximum health"),
     HPREST("HPREST", "   caster health regeneration"),

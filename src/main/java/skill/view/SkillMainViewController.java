@@ -2,20 +2,18 @@ package skill.view;
 
 
 import data.Data;
+import data.io.packer.Packer;
 import enums.EnumsLists;
 import enums.FormulaVariable;
-import enums.StatName;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
 import ru.rdude.fxlib.boxes.SearchComboBox;
 import ru.rdude.fxlib.containers.*;
 import ru.rdude.fxlib.textfields.AutocomplitionTextField;
+import ru.rdude.rpg.game.logic.coefficients.Coefficients;
 import ru.rdude.rpg.game.logic.data.ItemData;
 import ru.rdude.rpg.game.logic.data.MonsterData;
 import ru.rdude.rpg.game.logic.data.SkillData;
@@ -190,7 +188,7 @@ public class SkillMainViewController {
         buffTypeFx.setItems(EnumsLists.buffTypes);
         buffTypeFx.setValue("PHYSIC");
         skillTypeFx.setItems(EnumsLists.skillTypes);
-        skillTypeFx.setValue("NO");
+        skillTypeFx.setValue(SkillType.NO_TYPE.name());
         mainTargetFx.setItems(EnumsLists.mainTargets);
         mainTargetFx.setValue("ENEMY");
         onDuplicatingFx.setCollection(Arrays.asList(SkillOverlay.values()));
@@ -702,56 +700,96 @@ public class SkillMainViewController {
                 .forEach(nodeElement -> {
                     AttackType selectedElement = nodeElement.getSelectedElement();
                     double coefficient = ((MultipleChoiceContainerElementWithPercents<AttackType>) nodeElement).getPercents() / 100d;
-                    skill.getBuffCoefficients().atk().attackType().set(selectedElement, coefficient);
+                    if (coefficient != 1d) {
+                        if (skill.getBuffCoefficients() == null) {
+                            skill.setBuffCoefficients(new Coefficients());
+                        }
+                        skill.getBuffCoefficients().atk().attackType().set(selectedElement, coefficient);
+                    }
                 });
         // attack type def:
         buffAttackTypeDefFx.getNodesElements()
                 .forEach(nodeElement -> {
                     AttackType selectedElement = nodeElement.getSelectedElement();
                     double coefficient = ((MultipleChoiceContainerElementWithPercents<AttackType>) nodeElement).getPercents() / 100d;
-                    skill.getBuffCoefficients().def().attackType().set(selectedElement, coefficient);
+                    if (coefficient != 1d) {
+                        if (skill.getBuffCoefficients() == null) {
+                            skill.setBuffCoefficients(new Coefficients());
+                        }
+                        skill.getBuffCoefficients().def().attackType().set(selectedElement, coefficient);
+                    }
                 });
         // being type atk:
         buffBeingTypeAtkFx.getNodesElements()
                 .forEach(nodeElement -> {
                     BeingType selectedElement = nodeElement.getSelectedElement();
                     double coefficient = ((MultipleChoiceContainerElementWithPercents<BeingType>) nodeElement).getPercents() / 100d;
-                    skill.getBuffCoefficients().atk().beingType().set(selectedElement, coefficient);
+                    if (coefficient != 1d) {
+                        if (skill.getBuffCoefficients() == null) {
+                            skill.setBuffCoefficients(new Coefficients());
+                        }
+                        skill.getBuffCoefficients().atk().beingType().set(selectedElement, coefficient);
+                    }
                 });
         // being type def:
         buffBeingTypeDefFx.getNodesElements()
                 .forEach(nodeElement -> {
                     BeingType selectedElement = nodeElement.getSelectedElement();
                     double coefficient = ((MultipleChoiceContainerElementWithPercents<BeingType>) nodeElement).getPercents() / 100d;
-                    skill.getBuffCoefficients().def().beingType().set(selectedElement, coefficient);
+                    if (coefficient != 1d) {
+                        if (skill.getBuffCoefficients() == null) {
+                            skill.setBuffCoefficients(new Coefficients());
+                        }
+                        skill.getBuffCoefficients().def().beingType().set(selectedElement, coefficient);
+                    }
                 });
         // elements atk:
         buffElementAtkFx.getNodesElements()
                 .forEach(nodeElement -> {
                     Element selectedElement = nodeElement.getSelectedElement();
                     double coefficient = ((MultipleChoiceContainerElementWithPercents<Element>) nodeElement).getPercents() / 100d;
-                    skill.getBuffCoefficients().atk().element().set(selectedElement, coefficient);
+                    if (coefficient != 1d) {
+                        if (skill.getBuffCoefficients() == null) {
+                            skill.setBuffCoefficients(new Coefficients());
+                        }
+                        skill.getBuffCoefficients().atk().element().set(selectedElement, coefficient);
+                    }
                 });
         // elements def:
         buffElementDefFx.getNodesElements()
                 .forEach(nodeElement -> {
                     Element selectedElement = nodeElement.getSelectedElement();
                     double coefficient = ((MultipleChoiceContainerElementWithPercents<Element>) nodeElement).getPercents() / 100d;
-                    skill.getBuffCoefficients().def().element().set(selectedElement, coefficient);
+                    if (coefficient != 1d) {
+                        if (skill.getBuffCoefficients() == null) {
+                            skill.setBuffCoefficients(new Coefficients());
+                        }
+                        skill.getBuffCoefficients().def().element().set(selectedElement, coefficient);
+                    }
                 });
         // size atk:
         buffSizeAtkFx.getNodesElements()
                 .forEach(nodeElement -> {
                     Size selectedElement = nodeElement.getSelectedElement();
                     double coefficient = ((MultipleChoiceContainerElementWithPercents<Size>) nodeElement).getPercents() / 100d;
-                    skill.getBuffCoefficients().atk().size().set(selectedElement, coefficient);
+                    if (coefficient != 1d) {
+                        if (skill.getBuffCoefficients() == null) {
+                            skill.setBuffCoefficients(new Coefficients());
+                        }
+                        skill.getBuffCoefficients().atk().size().set(selectedElement, coefficient);
+                    }
                 });
         // size def:
         buffSizeDefFx.getNodesElements()
                 .forEach(nodeElement -> {
                     Size selectedElement = nodeElement.getSelectedElement();
                     double coefficient = ((MultipleChoiceContainerElementWithPercents<Size>) nodeElement).getPercents() / 100d;
-                    skill.getBuffCoefficients().def().size().set(selectedElement, coefficient);
+                    if (coefficient != 1d) {
+                        if (skill.getBuffCoefficients() == null) {
+                            skill.setBuffCoefficients(new Coefficients());
+                        }
+                        skill.getBuffCoefficients().def().size().set(selectedElement, coefficient);
+                    }
                 });
     }
 
@@ -861,6 +899,14 @@ public class SkillMainViewController {
                 .orElse("");
         dialog.setContentText(reasonsText);
         dialog.showAndWait();
+    }
+
+    @FXML
+    private void saveButtonPressed() {
+        System.out.println("save skill pressed");
+        saveSkill();
+        Packer packer = new Packer();
+        packer.pack(skill);
     }
 
 }
