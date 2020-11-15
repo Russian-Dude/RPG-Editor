@@ -1,6 +1,7 @@
 package data.io.packer;
 
 import ru.rdude.rpg.game.logic.data.EntityData;
+import ru.rdude.rpg.game.logic.data.Module;
 import ru.rdude.rpg.game.logic.data.SkillData;
 import ru.rdude.rpg.game.logic.data.io.GameJsonSerializer;
 import settings.Settings;
@@ -18,9 +19,17 @@ public class Packer {
         jsonSerializer = new GameJsonSerializer();
     }
 
+    public void pack(Module module) {
+
+    }
+
     public void pack(SkillData skillData) {
+        pack(skillData, Settings.getSkillsFolder() + skillData.getName());
+    }
+
+    public void pack(SkillData skillData, String path) {
         try {
-            String pathToFile = Settings.getSkillsFolder() + skillData.getName() + ".zip";
+            String pathToFile = path.endsWith(".skill") ? path : path + ".skill";
 
             try (// zip out
                  ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(pathToFile));

@@ -46,6 +46,23 @@
                                        <children>
                                           <VBox alignment="TOP_CENTER" spacing="10.0">
                                              <children>
+                                                <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="20.0">
+                                                   <children>
+                                                      <Label fx:id="insideModuleOrFileFx" text="From module">
+                                                         <padding>
+                                                            <Insets left="15.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="System Italic" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="insideFx" text="-">
+                                                         <font>
+                                                            <Font name="System Italic" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
                                                 <GridPane>
                                                   <columnConstraints>
                                                     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
@@ -485,20 +502,6 @@
                </VBox>
             </children></HBox>
     </Tab>
-     <Tab closable="false" text="File">
-        <content>
-           <HBox onDragDetected="#saveButtonPressed" spacing="15.0">
-               <children>
-                  <Button mnemonicParsing="false" onAction="#saveButtonPressed" text="Save" />
-                  <Button mnemonicParsing="false" text="Load" />
-               </children>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <padding>
-                  <Insets left="25.0" top="25.0" />
-               </padding></HBox>
-        </content>
-     </Tab>
+     <Tab fx:id="saveTab" closable="false" />
   </tabs>
 </TabPane>

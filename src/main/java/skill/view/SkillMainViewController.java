@@ -8,12 +8,16 @@ import enums.FormulaVariable;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 import ru.rdude.fxlib.boxes.SearchComboBox;
 import ru.rdude.fxlib.containers.*;
 import ru.rdude.fxlib.textfields.AutocomplitionTextField;
 import ru.rdude.rpg.game.logic.coefficients.Coefficients;
+import ru.rdude.rpg.game.logic.data.EntityData;
 import ru.rdude.rpg.game.logic.data.ItemData;
 import ru.rdude.rpg.game.logic.data.MonsterData;
 import ru.rdude.rpg.game.logic.data.SkillData;
@@ -27,16 +31,27 @@ import ru.rdude.rpg.game.logic.gameStates.Camp;
 import ru.rdude.rpg.game.logic.gameStates.Map;
 import ru.rdude.rpg.game.logic.stats.Stat;
 import ru.rdude.rpg.game.utils.Functions;
+import settings.Settings;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SkillMainViewController {
+public class SkillMainViewController implements HasSaveButton {
 
 
+    private String fileName;
+    private Long insideModule;
     private SkillData skill;
 
+    @FXML
+    private Tab saveTab;
+
+    @FXML
+    private Label insideFx;
+    @FXML
+    private Label insideModuleOrFileFx;
     @FXML
     private TextField nameFx;
     @FXML
@@ -168,6 +183,14 @@ public class SkillMainViewController {
         loadSimpleComboBoxes();
         loadMultipleChoiceContainers();
         configAutoComplitionTextFields();
+        configSaveButtons();
+    }
+
+    private void configSaveButtons() {
+        // buttons creation
+        saveTab.setGraphic(new SaveButtons(this));
+        saveTab.setDisable(true);
+        saveTab.setStyle("-fx-opacity: 1; -fx-background-color: transparent");
     }
 
     private void configAutoComplitionTextFields() {
@@ -974,11 +997,43 @@ public class SkillMainViewController {
         dialog.showAndWait();
     }
 
-    @FXML
-    private void saveButtonPressed() {
-        if (saveSkill()) {
-            Saver.save(skill);
-        }
+    @Override
+    public Label getInsideModule() {
+        return insideFx;
     }
 
+    @Override
+    public Label getInsideModuleOrFile() {
+        return insideModuleOrFileFx;
+    }
+
+    @Override
+    public Long getInsideModuleGuid() {
+        return insideModule;
+    }
+
+    @Override
+    public void setInsideModuleGuid(Long guid) {
+        insideModule = guid;
+    }
+
+    @Override
+    public String getInsideFile() {
+        return fileName;
+    }
+
+    @Override
+    public void setInsideFile(String path) {
+        fileName = path;
+    }
+
+    @Override
+    public EntityData getEntityData() {
+        return skill;
+    }
+
+    @Override
+    public boolean save() {
+        return saveSkill();
+    }
 }

@@ -9,6 +9,8 @@ public class Settings {
 
     private static Settings instance;
 
+    private boolean autosaveModulesWhenEntityAdded;
+
     private Path settingsFile;
     private Properties settings;
 
@@ -20,7 +22,7 @@ public class Settings {
 
     private Settings() {
         skillsFolder = "D:\\test\\skills\\";
-        System.out.println("skillFolder: " + skillsFolder);
+        autosaveModulesWhenEntityAdded = true;
     }
 
     private static Settings getInstance() {
@@ -32,5 +34,13 @@ public class Settings {
 
     public static String getSkillsFolder() {
         return getInstance().skillsFolder;
+    }
+
+    public static boolean isAutosaveModulesWhenEntityAdded() {
+        return getInstance().autosaveModulesWhenEntityAdded;
+    }
+
+    public static void setAutosaveModulesWhenEntityAdded(boolean autosaveModulesWhenEntityAdded) {
+        getInstance().autosaveModulesWhenEntityAdded = autosaveModulesWhenEntityAdded;
     }
 }
