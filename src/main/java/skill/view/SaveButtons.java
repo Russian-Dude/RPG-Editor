@@ -74,6 +74,7 @@ public class SaveButtons extends HBox {
                     node.getInsideModule().setText(result.getNameInEditor());
                     node.setInsideFile(null);
                     node.setInsideModuleGuid(result.getGuid());
+                    node.getMainTab().setText(node.getEntityData().getNameInEditor());
                 }
             });
         });
@@ -89,6 +90,7 @@ public class SaveButtons extends HBox {
                 node.setInsideModuleGuid(null);
                 node.getInsideModuleOrFile().setText("Inside file");
                 node.getInsideModule().setText(file.getPath());
+                node.getMainTab().setText(node.getEntityData().getNameInEditor());
             }
         });
     }
@@ -104,116 +106,15 @@ public class SaveButtons extends HBox {
                             .filter(module -> module.getGuid() == node.getInsideModuleGuid())
                             .findFirst()
                             .ifPresent(module -> Saver.save(node.getEntityData(), module));
+                    node.getMainTab().setText(node.getEntityData().getNameInEditor());
                 }
             }
             else if (node.getInsideFile() != null && node.getInsideModuleGuid() == null) {
                 if (node.save()) {
                     Saver.save(node.getEntityData(), node.getInsideFile());
+                    node.getMainTab().setText(node.getEntityData().getNameInEditor());
                 }
             }
         });
     }
-
-    /*
-    private void configSaveButtons() {
-
-        // save as:
-        saveAsButton.setOnAction(event -> saveMenu.show(saveAsButton, Side.RIGHT, 0, 0));
-        asFile.setOnAction(event -> {
-            asFileMenu.show(saveAsButton, Side.RIGHT, 0, 0);
-        });
-        // save to module:
-        toModule.setOnAction(event -> {
-            // if only one module available:
-            if (Data.getModules().size() == 1 && (insideModule == null || insideModule.equals(Data.getModules().get(0).getGuid()))) {
-                if (Saver.save(skill, Data.getModules().get(0))) {
-                    insideModule = Data.getModules().get(0).getGuid();
-                    insideModuleOrFileFx.setText("Inside module");
-                    insideFx.setText(Data.getModules().get(0).getNameInEditor());
-                }
-            }
-            // if more than one module available:
-            else {
-                ContextMenu modulesMenu = new ContextMenu();
-                Data.getModules().forEach(module -> {
-                    MenuItem menuItem = new MenuItem(module.getNameInEditor());
-                    menuItem.setOnAction(e -> {
-                        if (Saver.save(skill, module)) {
-                            insideModule = module.getGuid();
-                            insideModuleOrFileFx.setText("Inside module");
-                            insideFx.setText(module.getNameInEditor());
-                        }
-                    });
-                    modulesMenu.getItems().add(menuItem);
-                });
-                modulesMenu.show(saveAsButton, Side.RIGHT, 0, 0);
-            }
-        });
-        // save to default file path:
-        asFileInSaveDirectory.setOnAction(event -> {
-            MenuItem setNameMenuItem = new MenuItem("set name");
-            setNameMenuItem.setOnAction(e -> {
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.APPLY, ButtonType.CANCEL);
-                alert.setHeaderText("Set name");
-                TextField textField = new TextField();
-                alert.setGraphic(textField);
-                boolean notOk = true;
-                while (notOk) {
-                    if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.CANCEL) {
-                        return;
-                    } else {
-                        File file = new File(Settings.getSkillsFolder() + textField.getText() + ".skill");
-                        if (file.exists()) {
-                            Alert existAlert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
-                            existAlert.setHeaderText("File with this name already exists. Overwrite?");
-                            if (existAlert.showAndWait().orElse(ButtonType.NO) == ButtonType.NO) {
-                                return;
-                            } else {
-                                if (Saver.save(skill, Settings.getSkillsFolder() + textField.getText())) {
-                                    insideModuleOrFileFx.setText("Inside file");
-                                    insideFx.setText(Settings.getSkillsFolder() + textField.getText());
-                                }
-                                notOk = false;
-                            }
-                        } else {
-                            if (Saver.save(skill, Settings.getSkillsFolder() + textField.getText())) {
-                                insideModuleOrFileFx.setText("Inside file");
-                                insideFx.setText(Settings.getSkillsFolder() + textField.getText());
-                            }
-                            notOk = false;
-                        }
-                    }
-                }
-            });
-            MenuItem useInEditorNameMenuItem = new MenuItem("use in editor name");
-            useInEditorNameMenuItem.setOnAction(e -> {
-                File file = new File(Settings.getSkillsFolder() + skill.getNameInEditor() + ".skill");
-                if (file.exists()) {
-                    Alert existAlert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO);
-                    existAlert.setHeaderText("File with this name already exists. Overwrite?");
-                    if (existAlert.showAndWait().orElse(ButtonType.NO) == ButtonType.NO) {
-                        return;
-                    } else {
-                        Saver.save(skill);
-                    }
-                }
-            });
-            ContextMenu contextMenu = new ContextMenu(setNameMenuItem, useInEditorNameMenuItem);
-            contextMenu.show(saveAsButton, Side.RIGHT, 0, 0);
-        });
-        // save to custom folder:
-        asFileToAnyPlace.setOnAction(event -> {
-            FileChooser fileChooser = new FileChooser();
-            //fileChooser.showSaveDialog()
-        });
-
-
-        saveTab.setGraphic(buttonsBox);
-        saveTab.setDisable(true);
-        saveTab.setStyle("-fx-opacity: 1; -fx-background-color: transparent");
-        saveButton.setMinWidth(35);
-        saveButton.setOnAction(event -> {
-        });
-    }
-     */
 }

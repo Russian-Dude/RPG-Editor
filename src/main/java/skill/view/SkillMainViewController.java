@@ -45,9 +45,10 @@ public class SkillMainViewController implements HasSaveButton {
     private Long insideModule;
     private SkillData skill;
 
+    private Tab mainTab;
+
     @FXML
     private Tab saveTab;
-
     @FXML
     private Label insideFx;
     @FXML
@@ -1035,5 +1036,15 @@ public class SkillMainViewController implements HasSaveButton {
     @Override
     public boolean save() {
         return saveSkill();
+    }
+
+    @Override
+    public void setMainTab(Tab tab) {
+        this.mainTab = tab;
+    }
+
+    @Override
+    public Tab getMainTab() {
+        return mainTab;
     }
 }

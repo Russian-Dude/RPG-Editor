@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
 <TabPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="MainViewController">
    <tabs>
@@ -15,10 +16,13 @@
                     <tabs>
                       <Tab closable="false" text="  +  ">
                         <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                              <VBox alignment="CENTER" spacing="25.0">
                                  <children>
-                                    <Label fx:id="testLabel" layoutX="90.0" layoutY="54.0" text="Test Label" />
-                                 </children></AnchorPane>
+                                    <Button minHeight="100.0" minWidth="200.0" mnemonicParsing="false" onAction="#createNewSkill" text="CREATE NEW SKILL" />
+                                    <Button minHeight="100.0" minWidth="200.0" mnemonicParsing="false" onAction="#createNewSkillFromCopy" text="COPY SKILL" />
+                                    <Button minHeight="100.0" minWidth="200.0" mnemonicParsing="false" onAction="#loadSkill" text="LOAD SKILL" />
+                                 </children>
+                              </VBox>
                         </content>
                       </Tab>
                     </tabs>

@@ -89,7 +89,7 @@ public class SkillSearchController {
 
     @FXML
     public void initialize() {
-        StringConverter<String> stringConverter = new StringConverter<String>() {
+        StringConverter<String> stringConverter = new StringConverter<>() {
             @Override
             public String toString(String s) {
                 return s == null ? "ANY" : s;
@@ -130,7 +130,59 @@ public class SkillSearchController {
         summonAny.setSelected(true);
     }
 
+    private static Map<Control, Function<SkillData, ?>> controlFunctionMap;
+
     private static Map<Function<SkillSearchController, Control>, Function<SkillData, ?>> functionMap;
+
+    public Map<Control, Function<SkillData, ?>> getControlFunctionMap() {
+        if (controlFunctionMap == null) {
+            controlFunctionMap = new HashMap<>();
+            controlFunctionMap.put(getSkillType(), skillData -> skillData.getType().name());
+            controlFunctionMap.put(getAttackType(), skillData -> skillData.getAttackType().name());
+            controlFunctionMap.put(getEffect(), skillData -> skillData.getEffect().name());
+            controlFunctionMap.put(getElements(), SkillData::getElements);
+            controlFunctionMap.put(getCanBeUsedInBattle(), skillData -> skillData.getUsableInGameStates().get(GameState.BATTLE));
+            controlFunctionMap.put(getCanBeUsedInCamp(), skillData -> skillData.getUsableInGameStates().get(GameState.CAMP));
+            controlFunctionMap.put(getCanBeUsedInMap(), skillData -> skillData.getUsableInGameStates().get(GameState.MAP));
+            controlFunctionMap.put(getCanBeBlocked(), SkillData::isCanBeBlocked);
+            controlFunctionMap.put(getCanBeResisted(), SkillData::isCanBeResisted);
+            controlFunctionMap.put(getCanBeDodged(), SkillData::isCanBeDodged);
+            controlFunctionMap.put(getDealDamageAny(), skillData -> true);
+            controlFunctionMap.put(getDealDamageYes(), skillData -> skillData.getDamage() != null && !skillData.getDamage().isEmpty());
+            controlFunctionMap.put(getDealDamageNo(), skillData -> skillData.getDamage() == null || skillData.getDamage().isEmpty());
+            controlFunctionMap.put(getChangeStatsAny(), skillData -> true);
+            controlFunctionMap.put(getChangeStatsYes(), skillData -> skillData.getStats().entrySet().stream()
+                    .anyMatch(entry -> entry.getValue() == null || !entry.getValue().isEmpty()));
+            controlFunctionMap.put(getChangeStatsNo(), skillData -> skillData.getStats().entrySet().stream()
+                    .allMatch(entry -> entry.getValue() != null && entry.getValue().isEmpty()));
+            controlFunctionMap.put(getReceiveItemsAny(), skillData -> true);
+            controlFunctionMap.put(getReceiveItemsYes(), skillData -> !skillData.getReceiveItems().isEmpty());
+            controlFunctionMap.put(getReceiveItemsNo(), skillData -> skillData.getReceiveItems().isEmpty());
+            controlFunctionMap.put(getRequireItemsAny(), skillData -> true);
+            controlFunctionMap.put(getRequireItemsYes(), skillData -> !skillData.getRequirements().getItems().isEmpty());
+            controlFunctionMap.put(getRequireItemsNo(), skillData -> skillData.getRequirements().getItems().isEmpty());
+            controlFunctionMap.put(getHasDurationAny(), skillData -> true);
+            controlFunctionMap.put(getHasDurationYes(),
+                    skillData -> (skillData.getDurationInMinutes() != null && !skillData.getDurationInMinutes().isEmpty())
+                            || (skillData.getDurationInTurns() != null && !skillData.getDurationInTurns().isEmpty()));
+            controlFunctionMap.put(getHasDurationNo(),
+                    skillData -> (skillData.getDurationInMinutes() == null || skillData.getDurationInMinutes().isEmpty())
+                            && (skillData.getDurationInTurns() == null || skillData.getDurationInTurns().isEmpty()));
+            controlFunctionMap.put(getApplyTransformationAny(), skillData -> true);
+            controlFunctionMap.put(getApplyTransformationYes(),
+                    skillData -> !skillData.getTransformation().getElements().isEmpty()
+                            || skillData.getTransformation().getSize() != null
+                            || !skillData.getTransformation().getBeingTypes().isEmpty());
+            controlFunctionMap.put(getApplyTransformationNo(),
+                    skillData -> skillData.getTransformation().getElements().isEmpty()
+                            && skillData.getTransformation().getSize() == null
+                            && skillData.getTransformation().getBeingTypes().isEmpty());
+            controlFunctionMap.put(getSummonAny(), skillData -> true);
+            controlFunctionMap.put(getSummonYes(), skillData -> !skillData.getSummon().isEmpty());
+            controlFunctionMap.put(getSummonNo(), skillData -> skillData.getSummon().isEmpty());
+        }
+        return controlFunctionMap;
+    }
 
     public static Map<Function<SkillSearchController, Control>, Function<SkillData, ?>> getFunctionMap() {
         if (functionMap == null) {
