@@ -2,6 +2,7 @@ package skill.view;
 
 import data.Data;
 import data.Saver;
+import entity.EntityEditorController;
 import javafx.geometry.Side;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -13,13 +14,13 @@ import ru.rdude.rpg.game.logic.data.ItemData;
 import ru.rdude.rpg.game.logic.data.Module;
 import ru.rdude.rpg.game.logic.data.MonsterData;
 import ru.rdude.rpg.game.logic.data.SkillData;
-import settings.Settings;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SaveButtons extends HBox {
 
-    private HasSaveButton node;
+    private EntityEditorController node;
 
     private Button saveButton;
     private Button saveToButton;
@@ -30,7 +31,7 @@ public class SaveButtons extends HBox {
 
     private SearchDialog<Module> searchDialogModule;
 
-    public SaveButtons(HasSaveButton node) {
+    public SaveButtons(EntityEditorController node) {
         this.node = node;
         // create nodes
         saveButton = new Button("Save");
@@ -65,34 +66,64 @@ public class SaveButtons extends HBox {
     }
 
     private void configMenuItemsPressed() {
-        // save to module:
-        toModule.setOnAction(event -> {
-            searchDialogModule.showAndWait().ifPresent(result -> {
-                if (node.save()) {
-                    Saver.save(node.getEntityData(), result);
-                    node.getInsideModuleOrFile().setText("Inside module");
-                    node.getInsideModule().setText(result.getNameInEditor());
-                    node.setInsideFile(null);
-                    node.setInsideModuleGuid(result.getGuid());
-                    node.getMainTab().setText(node.getEntityData().getNameInEditor());
-                }
-            });
-        });
-        // save to file:
-        toFile.setOnAction(event -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save to file");
-            saveToFileExtensionFilterConfig(fileChooser);
-            File file = fileChooser.showSaveDialog(this.getScene().getWindow());
-            if (file != null && node.save()) {
-                Saver.save(node.getEntityData(), file.getPath());
-                node.setInsideFile(file.getPath());
-                node.setInsideModuleGuid(null);
-                node.getInsideModuleOrFile().setText("Inside file");
-                node.getInsideModule().setText(file.getPath());
+        toModule.setOnAction(event -> saveToModule());
+        toFile.setOnAction(event -> saveToFile());
+    }
+
+    public boolean saveToFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save to file");
+        saveToFileExtensionFilterConfig(fileChooser);
+        File file = fileChooser.showSaveDialog(this.getScene().getWindow());
+        if (file != null && node.save()) {
+            Saver.save(node.getEntityData(), file.getPath());
+            node.setInsideFile(file.getPath());
+            node.setInsideModuleGuid(null);
+            node.getInsideModuleOrFile().setText("Inside file");
+            node.getInsideModule().setText(file.getPath());
+            node.getMainTab().setText(node.getEntityData().getNameInEditor());
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean saveToModule() {
+        AtomicBoolean isSaved = new AtomicBoolean(false);
+        searchDialogModule.showAndWait().ifPresent(result -> {
+            if (node.save()) {
+                Saver.save(node.getEntityData(), result);
+                node.getInsideModuleOrFile().setText("Inside module");
+                node.getInsideModule().setText(result.getNameInEditor());
+                node.setInsideFile(null);
+                node.setInsideModuleGuid(result.getGuid());
                 node.getMainTab().setText(node.getEntityData().getNameInEditor());
+                isSaved.set(true);
             }
         });
+        return isSaved.get();
+    }
+
+    public boolean save() {
+        if (node.getInsideFile() == null && node.getInsideModuleGuid() != null) {
+            if (node.save()) {
+                Data.getModules().stream()
+                        .filter(module -> module.getGuid() == node.getInsideModuleGuid())
+                        .findFirst()
+                        .ifPresent(module -> Saver.save(node.getEntityData(), module));
+                node.getMainTab().setText(node.getEntityData().getNameInEditor());
+                return true;
+            }
+        }
+        else if (node.getInsideFile() != null && node.getInsideModuleGuid() == null) {
+            if (node.save()) {
+                Saver.save(node.getEntityData(), node.getInsideFile());
+                node.getMainTab().setText(node.getEntityData().getNameInEditor());
+            }
+            return true;
+        }
+        return false;
     }
 
     private void configSaveButton() {
@@ -100,20 +131,8 @@ public class SaveButtons extends HBox {
             if (node.getInsideFile() == null && node.getInsideModuleGuid() == null) {
                 saveToMenu.show(saveButton, Side.BOTTOM, 0, 0);
             }
-            else if (node.getInsideFile() == null && node.getInsideModuleGuid() != null) {
-                if (node.save()) {
-                    Data.getModules().stream()
-                            .filter(module -> module.getGuid() == node.getInsideModuleGuid())
-                            .findFirst()
-                            .ifPresent(module -> Saver.save(node.getEntityData(), module));
-                    node.getMainTab().setText(node.getEntityData().getNameInEditor());
-                }
-            }
-            else if (node.getInsideFile() != null && node.getInsideModuleGuid() == null) {
-                if (node.save()) {
-                    Saver.save(node.getEntityData(), node.getInsideFile());
-                    node.getMainTab().setText(node.getEntityData().getNameInEditor());
-                }
+            else {
+                save();
             }
         });
     }

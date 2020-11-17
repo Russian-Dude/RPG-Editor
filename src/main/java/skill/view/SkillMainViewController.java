@@ -2,17 +2,16 @@ package skill.view;
 
 
 import data.Data;
-import data.Saver;
+import entity.EntityEditorController;
 import enums.EnumsLists;
 import enums.FormulaVariable;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.stage.FileChooser;
 import ru.rdude.fxlib.boxes.SearchComboBox;
 import ru.rdude.fxlib.containers.*;
 import ru.rdude.fxlib.textfields.AutocomplitionTextField;
@@ -31,19 +30,19 @@ import ru.rdude.rpg.game.logic.gameStates.Camp;
 import ru.rdude.rpg.game.logic.gameStates.Map;
 import ru.rdude.rpg.game.logic.stats.Stat;
 import ru.rdude.rpg.game.utils.Functions;
-import settings.Settings;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SkillMainViewController implements HasSaveButton {
+public class SkillMainViewController implements EntityEditorController {
 
 
     private String fileName;
     private Long insideModule;
     private SkillData skill;
+    private boolean wasChanged;
+    private SaveButtons saveButtons;
 
     private Tab mainTab;
 
@@ -181,15 +180,70 @@ public class SkillMainViewController implements HasSaveButton {
 
     @FXML
     public void initialize() throws IOException {
+        wasChanged = false;
         loadSimpleComboBoxes();
         loadMultipleChoiceContainers();
         configAutoComplitionTextFields();
         configSaveButtons();
+        configWasChangedListeners();
+    }
+
+    private void configWasChangedListeners() {
+        setWasChangedListenerToNode(insideFx, insideModuleOrFileFx, nameFx, nameInEditorFx,
+                attackType, skillTypeFx, requiredStaminaFx, requiredConcentrationFx,
+                damageFx, mainTargetFx, targetsFx, damageElementCoefficientsFx, damageBeingTypesCoefficientsFx,
+                damageSizeCoefficientsFx, elementsFx, effectFx, canBeUsedInBattleFx, canBeUsedInCampFx,
+                canBeUsedInMapFx, canBeBlockedFx, canBeResistedFx, canBeDodgedFx, durationTurnsFx,
+                durationMinutesFx, permanentFx, actsEveryMinuteFx, actsEveryTurnFx, forcedCancelAmountFx,
+                forcedCancelHitsOrDamage, forcedCancelReceivedOrDeal, recalculateEveryIterationFx,
+                onDuplicatingFx, buffTypeFx, statsFx, transformationBeingTypesFx, transformationElementsFx,
+                transformationSizeFx, transformationOverrideFx, statsRequirementsFx, itemsRequirementsFx,
+                skillsCanCastFx, skillsMustCastFx, skillsOnBeingActionFx, onBeingActionCastToEnemyFx,
+                onBeingActionCastToSelfFx, summonFx, receiveItemsFx, keepItemsFx, takeItemsFx,
+                buffAttackTypeAtkFx, buffAttackTypeDefFx, buffBeingTypeAtkFx, buffBeingTypeDefFx,
+                buffElementAtkFx, buffElementDefFx, buffSizeAtkFx, buffSizeDefFx);
+    }
+
+    private void setWasChangedListenerToNode(Node... nodes) {
+        for (Node node : nodes) {
+            if (node instanceof ComboBox) {
+                ((ComboBox<?>) node).valueProperty().addListener((observableValue, oldV, newV) -> {
+                    if (oldV != newV) {
+                        wasChanged = true;
+                    }
+                });
+            } else if (node instanceof TextField) {
+                ((TextField) node).textProperty().addListener((observableValue, oldV, newV) -> {
+                    if (!oldV.equals(newV)) {
+                        wasChanged = true;
+                    }
+                });
+            } else if (node instanceof MultipleChoiceContainer) {
+                ((MultipleChoiceContainer) node).getElementsObservable().addListener((ListChangeListener<?>) change -> {
+                    while (change.next()) {
+                        if (change.wasUpdated()) {
+                            wasChanged = true;
+                        }
+                    }
+                });
+            }
+            else if (node instanceof CheckBox) {
+                ((CheckBox) node).selectedProperty().addListener((observableValue, oldV, newV) -> {
+                    wasChanged = true;
+                });
+            }
+            else if (node instanceof RadioButton) {
+                ((RadioButton) node).selectedProperty().addListener((observableValue, oldV, newV) -> {
+                    wasChanged = true;
+                });
+            }
+        }
     }
 
     private void configSaveButtons() {
         // buttons creation
-        saveTab.setGraphic(new SaveButtons(this));
+        this.saveButtons = new SaveButtons(this);
+        saveTab.setGraphic(saveButtons);
         saveTab.setDisable(true);
         saveTab.setStyle("-fx-opacity: 1; -fx-background-color: transparent");
     }
@@ -546,6 +600,7 @@ public class SkillMainViewController implements HasSaveButton {
                         .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
             }
         });
+        wasChanged = false;
     }
 
     private void loadBuffFieldIfPossible(SkillData data, String fieldParsedName, Class<? extends Stat> statClass, TextField fieldFx) {
@@ -814,6 +869,7 @@ public class SkillMainViewController implements HasSaveButton {
                         skill.getBuffCoefficients().def().size().set(selectedElement, coefficient);
                     }
                 });
+        wasChanged = false;
         return true;
     }
 
@@ -1046,5 +1102,15 @@ public class SkillMainViewController implements HasSaveButton {
     @Override
     public Tab getMainTab() {
         return mainTab;
+    }
+
+    @Override
+    public boolean isWasChanged() {
+        return wasChanged;
+    }
+
+    @Override
+    public SaveButtons getSaveButtons() {
+        return saveButtons;
     }
 }
