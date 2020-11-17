@@ -1,12 +1,20 @@
 package entity;
 
+import data.Data;
 import data.Saver;
+import data.io.packer.Packer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+import ru.rdude.fxlib.containers.SearchDialog;
+import ru.rdude.rpg.game.logic.data.EntityData;
+import ru.rdude.rpg.game.logic.data.SkillData;
+import skill.view.SkillSearchConfigurator;
+
+import java.io.File;
+import java.io.IOException;
 
 public class EntityEditorCreator {
-
-
 
     public static void createNew(TabPane entityTabsHolder, EntityEditorController.Type type) {
         try {
@@ -25,6 +33,58 @@ public class EntityEditorCreator {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong. New " + type.name().toLowerCase() +" can not be created", ButtonType.OK);
             alert.showAndWait();
         }
+    }
+
+    public static void loadFromModule(TabPane entityTabsHolder, EntityEditorController.Type type) {
+        try {
+            SearchDialog<? extends EntityData> searchDialog = new SearchDialog<>(type.getDataList());
+
+
+
+
+            SearchDialog<SkillData> searchDialog = new SearchDialog<>(Data.getSkills());
+            SkillSearchConfigurator.configure(searchDialog);
+            SkillData skillData = searchDialog.showAndWait().orElse(null);
+
+
+
+            if (skillData != null) {
+                FXMLLoader loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPath()));
+                Tab entityTab = new Tab();
+                TabPane entityNode = loader.load();
+                EntityEditorController controller = loader.getController();
+                controller.setMainTab(entityTab);
+                entityTab.setContent(entityNode);
+                entityTab.setText(skillData.getNameInEditor());
+                setTabOnCloseRequest(entityTab, controller);
+                entityTabsHolder.getTabs().add(entityTabsHolder.getTabs().size() - 1, entityTab);
+                entityTabsHolder.getSelectionModel().select(entityTab);
+            }
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong, " + type.name() + " can not be loaded", ButtonType.OK);
+            alert.showAndWait();
+        }
+    }
+
+    public static void loadFromFile(TabPane entityTabsHolder, EntityEditorController.Type type) {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setSelectedExtensionFilter(createExtensionFilter(type));
+            File file = fileChooser.showOpenDialog(entityTabsHolder.getScene().getWindow());
+            if (file != null) {
+                Packer packer = new Packer();
+                EntityData unpack = packer.unpack(file.getPath());
+
+            }
+        }
+        catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong, " + type.name() + " can not be loaded", ButtonType.OK);
+            alert.showAndWait();
+        }
+    }
+
+    private void createEntityNode(TabPane entityTabsHolder, EntityEditorController.Type type) throws IOException {
+
     }
 
     private static void setTabOnCloseRequest(Tab tab, EntityEditorController controller) {
@@ -65,26 +125,25 @@ public class EntityEditorCreator {
         });
     }
 
-    /*
-        private void loadSkill() {
-        try {
-            SearchDialog<SkillData> searchDialog = new SearchDialog<>(Data.getSkills());
-            SkillSearchConfigurator.configure(searchDialog);
-            SkillData skillData = searchDialog.showAndWait().orElse(null);
-            if (skillData != null) {
-                FXMLLoader skillMainViewLoader = new FXMLLoader(Main.class.getResource("/fxml/skill/view/SkillMainView.fxml"));
-                Tab skillTab = new Tab();
-                TabPane skillTabPane = skillMainViewLoader.load();
-                ((SkillMainViewController) skillMainViewLoader.getController()).setMainTab(skillTab);
-                skillTab.setContent(skillTabPane);
-                skillTab.setText(skillData.getNameInEditor());
-                skillsTabPane.getTabs().add(skillsTabPane.getTabs().size() - 1, skillTab);
-            }
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong. Skill can not be loaded", ButtonType.OK);
-            alert.showAndWait();
+    private static FileChooser.ExtensionFilter createExtensionFilter(EntityEditorController.Type type) {
+        FileChooser.ExtensionFilter extensionFilter;
+        switch (type) {
+            case SKILL:
+                extensionFilter = new FileChooser.ExtensionFilter("Skill", "*.skill");
+                break;
+            case ITEM:
+                extensionFilter = new FileChooser.ExtensionFilter("Item", "*.item");
+                break;
+            case MONSTER:
+                extensionFilter = new FileChooser.ExtensionFilter("Monster", "*.monster");
+                break;
+            case MODULE:
+                extensionFilter = new FileChooser.ExtensionFilter("Module", "*.module");
+                break;
+            default:
+                extensionFilter = new FileChooser.ExtensionFilter("Any", "*.*");
+                break;
         }
-
+        return extensionFilter;
     }
-     */
 }
