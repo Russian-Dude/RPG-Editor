@@ -1,5 +1,6 @@
 package skill.view;
 
+import entity.EntitySearchController;
 import enums.EnumsLists;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class SkillSearchController {
+public class SkillSearchController implements EntitySearchController<SkillData> {
 
     @FXML
     private ComboBox<String> skillType;
@@ -134,6 +135,7 @@ public class SkillSearchController {
 
     private static Map<Function<SkillSearchController, Control>, Function<SkillData, ?>> functionMap;
 
+    @Override
     public Map<Control, Function<SkillData, ?>> getControlFunctionMap() {
         if (controlFunctionMap == null) {
             controlFunctionMap = new HashMap<>();

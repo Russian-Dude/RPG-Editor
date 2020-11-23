@@ -43,4 +43,12 @@ public class Settings {
     public static void setAutosaveModulesWhenEntityAdded(boolean autosaveModulesWhenEntityAdded) {
         getInstance().autosaveModulesWhenEntityAdded = autosaveModulesWhenEntityAdded;
     }
+
+    public static Path getModulesFolder() {
+        return getInstance().modulesFolder;
+    }
+
+    public static void setModulesFolder(Path modulesFolder) {
+        getInstance().modulesFolder = modulesFolder;
+    }
 }

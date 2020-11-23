@@ -19,9 +19,40 @@ public class Packer {
         jsonSerializer = new GameJsonSerializer();
     }
 
-    public void pack(Module module) {
 
+    public void pack(Module module) {
+        pack(module, Settings.getModulesFolder() + module.getNameInEditor());
     }
+
+    public void pack(Module module, String path) {
+        try {
+            String pathToFile = path.endsWith(".module") ? path : path + ".module";
+
+            try (// zip out
+                 ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(pathToFile));
+                 BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(zipOutputStream);
+                 // json reader
+                 BufferedReader jsonReader = new BufferedReader(new StringReader(jsonSerializer.serialize(module)))) {
+
+                // write images:
+                zipOutputStream.putNextEntry(new ZipEntry("images/"));
+
+                // write sounds:
+                zipOutputStream.putNextEntry(new ZipEntry("sounds/"));
+
+                // write main data
+                zipOutputStream.putNextEntry(new ZipEntry("moduledata"));
+                int b;
+                while ((b = jsonReader.read()) >= 0) {
+                    bufferedOutputStream.write(b);
+                }
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void pack(SkillData skillData) {
         pack(skillData, Settings.getSkillsFolder() + skillData.getName());
@@ -65,6 +96,9 @@ public class Packer {
                     if (entry.getName().equals("skilldata")) {
                         result = unpackSkillData(zipInputStream);
                     }
+                    else if (entry.getName().equals("moduledata")) {
+                        result = unpackModule(zipInputStream);
+                    }
                 }
             }
         }
@@ -78,5 +112,11 @@ public class Packer {
         BufferedInputStream bufferedInputStream = new BufferedInputStream(zipInputStream);
         String jsonString = new String(bufferedInputStream.readAllBytes());
         return jsonSerializer.deSerializeSkillData(jsonString);
+    }
+
+    private Module unpackModule(ZipInputStream zipInputStream) throws IOException {
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(zipInputStream);
+        String jsonString = new String(bufferedInputStream.readAllBytes());
+        return jsonSerializer.deSerializeModule(jsonString);
     }
 }

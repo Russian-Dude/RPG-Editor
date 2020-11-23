@@ -2,22 +2,22 @@ package data;
 
 import javafx.collections.*;
 import javafx.scene.image.Image;
-import ru.rdude.rpg.game.logic.data.ItemData;
+import monster.MonsterPopupConfigurator;
+import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.Module;
-import ru.rdude.rpg.game.logic.data.MonsterData;
-import ru.rdude.rpg.game.logic.data.SkillData;
 
 public class Data {
 
     private static Data instance;
 
-    private ObservableList<Module> modules;
-    private ObservableMap<Long, SkillData> skillsMap;
-    private ObservableList<SkillData> skills;
-    private ObservableMap<Long, ItemData> itemsMap;
-    private ObservableList<ItemData> items;
-    private ObservableMap<Long, MonsterData> monstersMap;
-    private ObservableList<MonsterData> monsters;
+    private final ObservableList<Module> modules;
+    private final ObservableMap<Long, SkillData> skillsMap;
+    private final ObservableList<SkillData> skills;
+    private final ObservableMap<Long, ItemData> itemsMap;
+    private final ObservableList<ItemData> items;
+    private final ObservableMap<Long, MonsterData> monstersMap;
+    private final ObservableList<MonsterData> monsters;
+    private final ObservableMap<Long, Module> entityInsideModule;
 
     private ObservableList<Image> images;
 
@@ -30,20 +30,30 @@ public class Data {
         skills = FXCollections.observableArrayList();
         items = FXCollections.observableArrayList();
         monsters = FXCollections.observableArrayList();
+        entityInsideModule = FXCollections.observableHashMap();
 
         // link maps to modules:
         modules.addListener((ListChangeListener<Module>) change -> {
-            // when new modules added:
-            if (change.wasAdded()) {
-                change.getAddedSubList().forEach(module -> module.getSkillData().forEach(skillData -> skillsMap.putIfAbsent(skillData.getGuid(), skillData)));
-                change.getAddedSubList().forEach(module -> module.getItemData().forEach(itemData -> itemsMap.putIfAbsent(itemData.getGuid(), itemData)));
-                change.getAddedSubList().forEach(module -> module.getMonsterData().forEach(monsterData -> monstersMap.putIfAbsent(monsterData.getGuid(), monsterData)));
-            }
-            // when modules removed:
-            else if (change.wasRemoved()) {
-                change.getRemoved().forEach(module -> module.getSkillData().forEach(skillData -> skillsMap.remove(skillData.getGuid())));
-                change.getRemoved().forEach(module -> module.getItemData().forEach(itemData -> itemsMap.remove(itemData.getGuid())));
-                change.getRemoved().forEach(module -> module.getMonsterData().forEach(monsterData -> monstersMap.remove(monsterData.getGuid())));
+            while (change.next()) {
+                // when new modules added:
+                if (change.wasAdded()) {
+                    change.getAddedSubList().forEach(module -> module.getSkillData().forEach(skillData -> skillsMap.putIfAbsent(skillData.getGuid(), skillData)));
+                    change.getAddedSubList().forEach(module -> module.getSkillData().forEach(skillData -> entityInsideModule.putIfAbsent(skillData.getGuid(), module)));
+                    change.getAddedSubList().forEach(module -> module.getItemData().forEach(itemData -> itemsMap.putIfAbsent(itemData.getGuid(), itemData)));
+                    change.getAddedSubList().forEach(module -> module.getItemData().forEach(itemData -> entityInsideModule.putIfAbsent(itemData.getGuid(), module)));
+                    change.getAddedSubList().forEach(module -> module.getMonsterData().forEach(monsterData -> monstersMap.putIfAbsent(monsterData.getGuid(), monsterData)));
+                    change.getAddedSubList().forEach(module -> module.getMonsterData().forEach(monsterData -> entityInsideModule.putIfAbsent(monsterData.getGuid(), module)));
+                }
+                // when modules removed:
+                else if (change.wasRemoved()) {
+                    change.getRemoved().forEach(module -> module.getSkillData().forEach(skillData -> skillsMap.remove(skillData.getGuid())));
+                    change.getRemoved().forEach(module -> module.getSkillData().forEach(skillData -> entityInsideModule.remove(skillData.getGuid())));
+                    change.getRemoved().forEach(module -> module.getItemData().forEach(itemData -> itemsMap.remove(itemData.getGuid())));
+                    change.getRemoved().forEach(module -> module.getItemData().forEach(itemData -> entityInsideModule.remove(itemData.getGuid())));
+                    change.getRemoved().forEach(module -> module.getMonsterData().forEach(monsterData -> monstersMap.remove(monsterData.getGuid())));
+                    change.getRemoved().forEach(module -> module.getMonsterData().forEach(monsterData -> entityInsideModule.remove(monsterData.getGuid())));
+
+                }
             }
         });
 
@@ -112,12 +122,39 @@ public class Data {
         return getInstance().monstersMap.get(guid);
     }
 
+    public static Module getInsideModule(EntityData entityData) {
+        return getInstance().entityInsideModule.get(entityData.getGuid());
+    }
+
     public ObservableList<Image> getImages() {
         return images;
     }
 
+    public static void addEntityData(EntityData entityData) {
+        addEntityData(entityData, null);
+    }
+
+    public static void addEntityData(EntityData entityData, Module module) {
+        if (module != null) {
+            getInstance().entityInsideModule.putIfAbsent(entityData.getGuid(), module);
+        }
+        if (entityData instanceof SkillData) {
+            addSkillData((SkillData) entityData);
+        }
+        else if (entityData instanceof ItemData) {
+            addItemData((ItemData) entityData);
+        }
+        else if (entityData instanceof MonsterData) {
+            addMonsterData((MonsterData) entityData);
+        }
+        else if (entityData instanceof Module) {
+            addModule((Module) entityData);
+        }
+        else throw new IllegalArgumentException(entityData.getClass() + " not implemented");
+    }
+
     public static void addSkillData(SkillData skillData) {
-        getInstance().skillsMap.put(skillData.getGuid(), skillData);
+        getInstance().skillsMap.putIfAbsent(skillData.getGuid(), skillData);
     }
 
     public static void removeSkillData(SkillData skillData) {
@@ -125,7 +162,7 @@ public class Data {
     }
 
     public static void addItemData(ItemData itemData) {
-        getInstance().itemsMap.put(itemData.getGuid(), itemData);
+        getInstance().itemsMap.putIfAbsent(itemData.getGuid(), itemData);
     }
 
     public static void removeItemData(ItemData itemData) {
@@ -133,7 +170,7 @@ public class Data {
     }
 
     public static void addMonsterData(MonsterData monsterData) {
-        getInstance().monstersMap.put(monsterData.getGuid(), monsterData);
+        getInstance().monstersMap.putIfAbsent(monsterData.getGuid(), monsterData);
     }
 
     public static void removeMonsterData(MonsterData monsterData) {

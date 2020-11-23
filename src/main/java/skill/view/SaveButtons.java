@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SaveButtons extends HBox {
 
-    private EntityEditorController node;
+    protected EntityEditorController node;
 
     private Button saveButton;
     private Button saveToButton;
@@ -30,6 +30,8 @@ public class SaveButtons extends HBox {
     private MenuItem toModule;
 
     private SearchDialog<Module> searchDialogModule;
+
+    public SaveButtons() {}
 
     public SaveButtons(EntityEditorController node) {
         this.node = node;
@@ -52,16 +54,16 @@ public class SaveButtons extends HBox {
 
     private void saveToFileExtensionFilterConfig(FileChooser fileChooser) {
         if (node.getEntityData() instanceof SkillData) {
-            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Skill", "*.skill"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Skill", "*.skill"));
         }
         else if (node.getEntityData() instanceof ItemData) {
-            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Item", "*.item"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Item", "*.item"));
         }
         else if (node.getEntityData() instanceof MonsterData) {
-            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Monster", "*.monster"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Monster", "*.monster"));
         }
         else if (node.getEntityData() instanceof Module) {
-            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Module", "*.module"));
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Module", "*.module"));
         }
     }
 
@@ -99,6 +101,7 @@ public class SaveButtons extends HBox {
                 node.setInsideFile(null);
                 node.setInsideModuleGuid(result.getGuid());
                 node.getMainTab().setText(node.getEntityData().getNameInEditor());
+                Data.addEntityData(node.getEntityData(), result);
                 isSaved.set(true);
             }
         });

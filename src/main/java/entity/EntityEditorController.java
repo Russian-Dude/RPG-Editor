@@ -1,26 +1,69 @@
 package entity;
 
+import data.Data;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import ru.rdude.rpg.game.logic.data.EntityData;
+import ru.rdude.rpg.game.logic.data.ItemData;
+import ru.rdude.rpg.game.logic.data.Module;
+import ru.rdude.rpg.game.logic.data.MonsterData;
+import ru.rdude.rpg.game.logic.data.SkillData;
 import skill.view.SaveButtons;
+
+import java.io.IOException;
 
 // skills / monsters / items etc
 public interface EntityEditorController {
 
     enum Type {
-        SKILL ("/fxml/skill/view/SkillMainView.fxml"),
-        ITEM ("/fxml/skill/view/ItemMainView.fxml"),
-        MONSTER ("/fxml/skill/view/MonsterMainView.fxml");
+        SKILL ("/fxml/skill/SkillMainView.fxml",
+                Data.getSkills(),
+                SkillData.class,
+                "/fxml/skill/SkillSearch.fxml"),
+
+        ITEM ("/fxml/skill/view/ItemMainView.fxml",
+                Data.getItems(),
+                ItemData.class,
+                "/fxml/skill/view/ItemSearch.fxml"),
+
+        MONSTER ("/fxml/skill/view/MonsterMainView.fxml",
+                Data.getMonsters(),
+                MonsterData.class,
+                "/fxml/skill/view/MonsterSearch.fxml"),
+
+        MODULE("/fxml/module/ModuleMainView.fxml",
+                Data.getModules(),
+                Module.class,
+                "/fxml/module/ModuleSearch.fxml");
 
         private String fxmlPath;
+        private ObservableList<? extends EntityData> dataList;
+        private Class<? extends EntityData> cl;
+        private String fxmlPathToSearchController;
+        private PopupConfigurator<?> popupConfigurator;
 
-        Type(String fxmlPath) {
+        Type(String fxmlPath, ObservableList<? extends EntityData> dataList, Class<? extends EntityData> cl, String fxmlPathToSearchController) {
             this.fxmlPath = fxmlPath;
+            this.dataList = dataList;
+            this.cl = cl;
+            this.fxmlPathToSearchController = fxmlPathToSearchController;
         }
 
         public String getFxmlPath() {
             return fxmlPath;
+        }
+
+        public ObservableList<? extends EntityData> getDataList() {
+            return dataList;
+        }
+
+        public Class<? extends EntityData> getCl() {
+            return cl;
+        }
+
+        public String getFxmlPathToSearchController() {
+            return fxmlPathToSearchController;
         }
     }
 
@@ -32,6 +75,7 @@ public interface EntityEditorController {
     void setInsideFile(String path);
     EntityData getEntityData();
     boolean save();
+    void load(EntityData entityData) throws IOException;
     void setMainTab(Tab tab);
     Tab getMainTab();
     boolean isWasChanged();

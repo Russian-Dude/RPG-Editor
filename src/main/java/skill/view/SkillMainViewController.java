@@ -3,6 +3,7 @@ package skill.view;
 
 import data.Data;
 import entity.EntityEditorController;
+import entity.SearchConfigurator;
 import enums.EnumsLists;
 import enums.FormulaVariable;
 import javafx.collections.FXCollections;
@@ -226,13 +227,11 @@ public class SkillMainViewController implements EntityEditorController {
                         }
                     }
                 });
-            }
-            else if (node instanceof CheckBox) {
+            } else if (node instanceof CheckBox) {
                 ((CheckBox) node).selectedProperty().addListener((observableValue, oldV, newV) -> {
                     wasChanged = true;
                 });
-            }
-            else if (node instanceof RadioButton) {
+            } else if (node instanceof RadioButton) {
                 ((RadioButton) node).selectedProperty().addListener((observableValue, oldV, newV) -> {
                     wasChanged = true;
                 });
@@ -296,8 +295,8 @@ public class SkillMainViewController implements EntityEditorController {
         skillsCanCastFx.setElements(Data.getSkills());
         skillsCanCastFx.setNameBy(SkillData::getNameInEditor);
         skillsCanCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
-        skillsMustCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
-        SkillPopupConfigurator.configure(skillsCanCastFx);
+        skillsMustCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
+        SearchConfigurator.skillPopupConfigurator.configure(skillsCanCastFx);
 
         // skills must cast:
         skillsMustCastFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.PERCENT_TEXT_FIELD);
@@ -305,8 +304,8 @@ public class SkillMainViewController implements EntityEditorController {
         skillsMustCastFx.setElements(Data.getSkills());
         skillsMustCastFx.setNameBy(SkillData::getNameInEditor);
         skillsMustCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
-        skillsMustCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
-        SkillPopupConfigurator.configure(skillsMustCastFx);
+        skillsMustCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
+        SearchConfigurator.skillPopupConfigurator.configure(skillsMustCastFx);
 
         // skills on being action:
         skillsOnBeingActionFx.setVisualElementType(MultipleChoiceContainer.VisualElementType.WITH_TWO_VALUES_AND_PERCENTS);
@@ -316,7 +315,7 @@ public class SkillMainViewController implements EntityEditorController {
         onBeingActionBuilder.setCollection(Data.getSkills())
                 .setNameByFunction(SkillData::getNameInEditor)
                 .setSearchByFunction(SkillData::getName)
-                .setExtendedSearchNode(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml")))
+                .setExtendedSearchNode(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/SkillSearch.fxml")))
                 .setExtendedSearchFunctions(SkillSearchController.getFunctionMap());
         skillsOnBeingActionFx.setExtendedOptions(onBeingActionBuilder);
 
@@ -403,6 +402,15 @@ public class SkillMainViewController implements EntityEditorController {
     private void showNameInEditorSameAsName() {
         if (nameInEditorFx.getText().isEmpty())
             nameInEditorFx.setPromptText(nameFx.getText());
+    }
+
+    @Override
+    public void load(EntityData entityData) throws IOException {
+        if (entityData instanceof SkillData) {
+            loadSkill((SkillData) entityData);
+        } else {
+            throw new IllegalArgumentException("Load skill with not SkillData object");
+        }
     }
 
     private void loadSkill(SkillData skillData) throws IOException {
@@ -511,9 +519,12 @@ public class SkillMainViewController implements EntityEditorController {
 
         // requirements:
         // stats requirements:
-        skillData.getRequirements().getStats().forEachWithNestedStats(stat ->
+        skillData.getRequirements().getStats().forEachWithNestedStats(stat -> {
+            if (stat.value() != 0d) {
                 ((MultipleChoiceContainerElementWithTextField<StatName>) statsRequirementsFx.addElement(StatName.get(stat.getClass())))
-                        .setTextFieldValue(String.valueOf(stat.value())));
+                        .setTextFieldValue(String.valueOf(stat.value()).replaceFirst("\\.0+\\b", ""));
+            }
+        });
         // items requirements:
         skillData.getRequirements().getItems().forEach((guid, amount) ->
                 ((MultipleChoiceContainerElementWithTextField<ItemData>) itemsRequirementsFx.addElement(Data.getItemData(guid)))
@@ -544,62 +555,64 @@ public class SkillMainViewController implements EntityEditorController {
         });
 
         // buff coefficients:
-        // attack type atk
-        skillData.getCoefficients().atk().attackType().getCoefficientsMap().forEach((type, value) -> {
-            if (value != 1d) {
-                ((MultipleChoiceContainerElementWithPercents<AttackType>) buffAttackTypeAtkFx.addElement(type))
-                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
-            }
-        });
-        // attack type def
-        skillData.getCoefficients().def().attackType().getCoefficientsMap().forEach((type, value) -> {
-            if (value != 1d) {
-                ((MultipleChoiceContainerElementWithPercents<AttackType>) buffAttackTypeDefFx.addElement(type))
-                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
-            }
-        });
-        // being type atk
-        skillData.getCoefficients().atk().beingType().getCoefficientsMap().forEach((type, value) -> {
-            if (value != 1d) {
-                ((MultipleChoiceContainerElementWithPercents<BeingType>) buffBeingTypeAtkFx.addElement(type))
-                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
-            }
-        });
-        // being type def
-        skillData.getCoefficients().def().beingType().getCoefficientsMap().forEach((type, value) -> {
-            if (value != 1d) {
-                ((MultipleChoiceContainerElementWithPercents<BeingType>) buffBeingTypeDefFx.addElement(type))
-                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
-            }
-        });
-        // elements type atk
-        skillData.getCoefficients().atk().element().getCoefficientsMap().forEach((type, value) -> {
-            if (value != 1d) {
-                ((MultipleChoiceContainerElementWithPercents<Element>) buffElementAtkFx.addElement(type))
-                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
-            }
-        });
-        // elements type def
-        skillData.getCoefficients().def().element().getCoefficientsMap().forEach((type, value) -> {
-            if (value != 1d) {
-                ((MultipleChoiceContainerElementWithPercents<Element>) buffElementDefFx.addElement(type))
-                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
-            }
-        });
-        // size atk
-        skillData.getCoefficients().atk().size().getCoefficientsMap().forEach((type, value) -> {
-            if (value != 1d) {
-                ((MultipleChoiceContainerElementWithPercents<Size>) buffSizeAtkFx.addElement(type))
-                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
-            }
-        });
-        // size def
-        skillData.getCoefficients().def().size().getCoefficientsMap().forEach((type, value) -> {
-            if (value != 1d) {
-                ((MultipleChoiceContainerElementWithPercents<Size>) buffSizeDefFx.addElement(type))
-                        .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
-            }
-        });
+        if (skillData.getBuffCoefficients() != null) {
+            // attack type atk
+            skillData.getBuffCoefficients().atk().attackType().getCoefficientsMap().forEach((type, value) -> {
+                if (value != 1d) {
+                    ((MultipleChoiceContainerElementWithPercents<AttackType>) buffAttackTypeAtkFx.addElement(type))
+                            .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+                }
+            });
+            // attack type def
+            skillData.getBuffCoefficients().def().attackType().getCoefficientsMap().forEach((type, value) -> {
+                if (value != 1d) {
+                    ((MultipleChoiceContainerElementWithPercents<AttackType>) buffAttackTypeDefFx.addElement(type))
+                            .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+                }
+            });
+            // being type atk
+            skillData.getBuffCoefficients().atk().beingType().getCoefficientsMap().forEach((type, value) -> {
+                if (value != 1d) {
+                    ((MultipleChoiceContainerElementWithPercents<BeingType>) buffBeingTypeAtkFx.addElement(type))
+                            .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+                }
+            });
+            // being type def
+            skillData.getBuffCoefficients().def().beingType().getCoefficientsMap().forEach((type, value) -> {
+                if (value != 1d) {
+                    ((MultipleChoiceContainerElementWithPercents<BeingType>) buffBeingTypeDefFx.addElement(type))
+                            .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+                }
+            });
+            // elements type atk
+            skillData.getBuffCoefficients().atk().element().getCoefficientsMap().forEach((type, value) -> {
+                if (value != 1d) {
+                    ((MultipleChoiceContainerElementWithPercents<Element>) buffElementAtkFx.addElement(type))
+                            .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+                }
+            });
+            // elements type def
+            skillData.getBuffCoefficients().def().element().getCoefficientsMap().forEach((type, value) -> {
+                if (value != 1d) {
+                    ((MultipleChoiceContainerElementWithPercents<Element>) buffElementDefFx.addElement(type))
+                            .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+                }
+            });
+            // size atk
+            skillData.getBuffCoefficients().atk().size().getCoefficientsMap().forEach((type, value) -> {
+                if (value != 1d) {
+                    ((MultipleChoiceContainerElementWithPercents<Size>) buffSizeAtkFx.addElement(type))
+                            .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+                }
+            });
+            // size def
+            skillData.getBuffCoefficients().def().size().getCoefficientsMap().forEach((type, value) -> {
+                if (value != 1d) {
+                    ((MultipleChoiceContainerElementWithPercents<Size>) buffSizeDefFx.addElement(type))
+                            .setTextFieldValue(String.valueOf(value * 100d).replaceFirst("\\.0+\\b", ""));
+                }
+            });
+        }
         wasChanged = false;
     }
 

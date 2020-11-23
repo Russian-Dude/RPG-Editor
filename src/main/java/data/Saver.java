@@ -60,6 +60,9 @@ public class Saver {
         if (entityData instanceof SkillData) {
             packer.pack((SkillData) entityData, path);
         }
+        else if (entityData instanceof Module) {
+            packer.pack((Module) entityData, path);
+        }
     }
 
     private void savePr(EntityData entityData, Module module) {

@@ -1,16 +1,20 @@
 package skill.view;
 
 import data.Data;
+import entity.PopupConfigurator;
 import ru.rdude.fxlib.containers.MultipleChoiceContainerExtended;
 import ru.rdude.fxlib.containers.SearchDialog;
+import ru.rdude.rpg.game.logic.data.EntityData;
 import ru.rdude.rpg.game.logic.data.SkillData;
 
-import java.util.HashMap;
 import java.util.stream.Stream;
 
-public class SkillPopupConfigurator {
+public class SkillPopupConfigurator implements PopupConfigurator<SkillData> {
 
-    public static void configure(MultipleChoiceContainerExtended<SkillData, ?> container) {
+
+
+    @Override
+    public void configure(MultipleChoiceContainerExtended<SkillData, ?> container) {
         container.extendedSearchPopupBuilder()
                 .addText(SkillData::getDescription)
                 .addText(skillData -> "In game name: " + skillData.getName())
@@ -92,7 +96,8 @@ public class SkillPopupConfigurator {
                 .apply();
     }
 
-    public static void configure(SearchDialog<SkillData> searchDialog) {
+    @Override
+    public void configure(SearchDialog<SkillData> searchDialog) {
         searchDialog.getSearchPane().popupBuilder()
                 .addText(SkillData::getDescription)
                 .addText(skillData -> "In game name: " + skillData.getName())
