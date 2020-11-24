@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
+import module.view.ModuleMainViewController;
 import ru.rdude.fxlib.boxes.SearchComboBox;
 import ru.rdude.fxlib.containers.*;
 import ru.rdude.fxlib.textfields.AutocomplitionTextField;

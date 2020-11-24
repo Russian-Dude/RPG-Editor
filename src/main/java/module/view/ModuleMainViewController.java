@@ -2,17 +2,12 @@ package module.view;
 
 import data.Data;
 import entity.EntityEditorController;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.MapChangeListener;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import ru.rdude.fxlib.panes.SearchPane;
 import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.Module;
@@ -20,10 +15,9 @@ import ru.rdude.rpg.game.utils.Functions;
 import skill.view.SaveButtons;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,7 +62,7 @@ public class ModuleMainViewController implements EntityEditorController {
 
         // main search panes
         skillDataSearchPane.setCollection(skills);
-        skillDataSearchPane.setNameBy(SkillData::getNameInEditor);
+        skillDataSearchPane.setNameBy(EntityData::getNameInEditor);
         skillDataSearchPane.setTextFieldSearchBy(EntityData::getNameInEditor, EntityData::getName);
         itemDataSearchPane.setCollection(items);
         itemDataSearchPane.setNameBy(EntityData::getNameInEditor);
@@ -82,6 +76,7 @@ public class ModuleMainViewController implements EntityEditorController {
         saveTab.setDisable(true);
         saveTab.setStyle("-fx-opacity: 1; -fx-background-color: transparent");
     }
+
 
     @Override
     public Label getInsideModule() {
@@ -164,5 +159,4 @@ public class ModuleMainViewController implements EntityEditorController {
     public SaveButtons getSaveButtons() {
         return this.saveButtons;
     }
-
 }

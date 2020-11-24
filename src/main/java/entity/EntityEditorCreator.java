@@ -5,6 +5,7 @@ import data.io.packer.Packer;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.Background;
 import javafx.scene.text.Font;
@@ -47,12 +48,20 @@ public class EntityEditorCreator {
             SearchConfigurator.configure(searchDialog, type);
             EntityData entityData = searchDialog.showAndWait().orElse(null);
             if (entityData != null) {
-                EntityEditorController controller = createEntityNodeAndAdd(entityData, entityTabsHolder, type);
-                controller.getInsideModuleOrFile().setText("Inside module");
-                Module insideModule = Data.getInsideModule(entityData);
-                controller.getInsideModule().setText(insideModule.getNameInEditor());
-                controller.setInsideFile(null);
-                controller.setInsideModuleGuid(insideModule.getGuid());
+                // if this entity already opened
+                if (EntityEditorController.openEntities.containsKey(entityData)) {
+                    entityTabsHolder.getSelectionModel().select(EntityEditorController.openEntities.get(entityData).getMainTab());
+                }
+                // if this entity is not already opened
+                else {
+                    EntityEditorController controller = createEntityNodeAndAdd(entityData, entityTabsHolder, type);
+                    controller.getInsideModuleOrFile().setText("Inside module");
+                    Module insideModule = Data.getInsideModule(entityData);
+                    controller.getInsideModule().setText(insideModule.getNameInEditor());
+                    controller.setInsideFile(null);
+                    controller.setInsideModuleGuid(insideModule.getGuid());
+                    EntityEditorController.openEntities.putIfAbsent(entityData, controller);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -70,12 +79,19 @@ public class EntityEditorCreator {
                 Packer packer = new Packer();
                 EntityData entityData = packer.unpack(file.getPath());
                 if (entityData != null) {
-                    EntityEditorController controller = createEntityNodeAndAdd(entityData, entityTabsHolder, type);
-                    controller.getInsideModuleOrFile().setText("Inside file");
-                    controller.getInsideModule().setText(file.getAbsolutePath());
-                    controller.setInsideFile(file.getAbsolutePath());
-                    controller.setInsideModuleGuid(null);
-                    Data.addEntityData(entityData);
+                    // if this entity already opened
+                    if (EntityEditorController.openEntities.containsKey(entityData)) {
+                        entityTabsHolder.getSelectionModel().select(EntityEditorController.openEntities.get(entityData).getMainTab());
+                    }
+                    // if this entity is not already opened
+                    else {
+                        EntityEditorController controller = createEntityNodeAndAdd(entityData, entityTabsHolder, type);
+                        controller.getInsideModuleOrFile().setText("Inside file");
+                        controller.getInsideModule().setText(file.getAbsolutePath());
+                        controller.setInsideFile(file.getAbsolutePath());
+                        controller.setInsideModuleGuid(null);
+                        Data.addEntityData(entityData);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -127,6 +143,14 @@ public class EntityEditorCreator {
                                 event.consume();
                             }
                         } else {
+                            event.consume();
+                        }
+                    } else if (controller.getInsideFile() != null) {
+                        if (!controller.getSaveButtons().saveToFile()) {
+                            event.consume();
+                        }
+                    } else if (controller.getInsideModule() != null) {
+                        if (!controller.getSaveButtons().saveToModule()) {
                             event.consume();
                         }
                     }

@@ -12,9 +12,13 @@ import ru.rdude.rpg.game.logic.data.SkillData;
 import skill.view.SaveButtons;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 // skills / monsters / items etc
 public interface EntityEditorController {
+
+    Map<EntityData, EntityEditorController> openEntities = new HashMap<>();
 
     enum Type {
         SKILL ("/fxml/skill/SkillMainView.fxml",

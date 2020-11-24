@@ -9,6 +9,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import module.view.ModuleMainViewController;
 import ru.rdude.fxlib.containers.SearchDialog;
 import ru.rdude.rpg.game.logic.data.ItemData;
 import ru.rdude.rpg.game.logic.data.Module;
@@ -101,7 +102,9 @@ public class SaveButtons extends HBox {
                 node.setInsideFile(null);
                 node.setInsideModuleGuid(result.getGuid());
                 node.getMainTab().setText(node.getEntityData().getNameInEditor());
+
                 Data.addEntityData(node.getEntityData(), result);
+
                 isSaved.set(true);
             }
         });
