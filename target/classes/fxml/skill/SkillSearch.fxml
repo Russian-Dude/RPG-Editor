@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import ru.rdude.fxlib.containers.MultipleChoiceContainer?>
 
-<Pane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skill.view.SkillSearchController">
+<Pane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rdude.editor.view.SkillSearchController">
    <children>
       <HBox spacing="20.0">
          <children>

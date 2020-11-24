@@ -25,7 +25,7 @@
 <?import ru.rdude.fxlib.containers.MultipleChoiceContainerExtended?>
 <?import ru.rdude.fxlib.textfields.AutocomplitionTextField?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="skill.view.SkillMainViewController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rdude.editor.view.SkillMainViewController">
   <tabs>
     <Tab closable="false" text="Logic">
       <content>

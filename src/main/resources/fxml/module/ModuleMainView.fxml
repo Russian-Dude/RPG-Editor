@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import ru.rdude.fxlib.panes.SearchPane?>
 
-<TabPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="module.view.ModuleMainViewController">
+<TabPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rdude.editor.module.view.ModuleMainViewController">
    <tabs>
       <Tab closable="false" text="Entities">
          <content>
