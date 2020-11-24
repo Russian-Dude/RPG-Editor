@@ -2,16 +2,9 @@ package entity;
 
 import data.Data;
 import data.io.packer.Packer;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.Background;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.StageStyle;
 import ru.rdude.fxlib.containers.SearchDialog;
 import ru.rdude.rpg.game.logic.data.EntityData;
 import ru.rdude.rpg.game.logic.data.Module;
@@ -20,8 +13,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class EntityEditorCreator {
-
-    private static Alert loadingAlert;
 
     public static void createNew(TabPane entityTabsHolder, EntityEditorController.Type type) {
         try {
@@ -91,6 +82,7 @@ public class EntityEditorCreator {
                         controller.setInsideFile(file.getAbsolutePath());
                         controller.setInsideModuleGuid(null);
                         Data.addEntityData(entityData);
+                        EntityEditorController.openEntities.putIfAbsent(entityData, controller);
                     }
                 }
             }
@@ -138,9 +130,15 @@ public class EntityEditorCreator {
                             if (!controller.getSaveButtons().saveToFile()) {
                                 event.consume();
                             }
+                            else {
+                                EntityEditorController.openEntities.remove(controller.getEntityData());
+                            }
                         } else if (whereSaveResult.equals(toModule)) {
                             if (!controller.getSaveButtons().saveToModule()) {
                                 event.consume();
+                            }
+                            else {
+                                EntityEditorController.openEntities.remove(controller.getEntityData());
                             }
                         } else {
                             event.consume();
@@ -149,9 +147,15 @@ public class EntityEditorCreator {
                         if (!controller.getSaveButtons().saveToFile()) {
                             event.consume();
                         }
+                        else {
+                            EntityEditorController.openEntities.remove(controller.getEntityData());
+                        }
                     } else if (controller.getInsideModule() != null) {
                         if (!controller.getSaveButtons().saveToModule()) {
                             event.consume();
+                        }
+                        else {
+                            EntityEditorController.openEntities.remove(controller.getEntityData());
                         }
                     }
                 }
