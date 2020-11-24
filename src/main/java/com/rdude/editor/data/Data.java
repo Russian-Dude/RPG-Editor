@@ -176,6 +176,24 @@ public class Data {
         getInstance().monstersMap.remove(monsterData.getGuid());
     }
 
+    public static void removeEntityData(EntityData entityData) {
+        if (entityData instanceof SkillData) {
+            removeSkillData((SkillData) entityData);
+        }
+        else if (entityData instanceof ItemData) {
+            removeItemData((ItemData) entityData);
+        }
+        else if (entityData instanceof MonsterData) {
+            removeMonsterData((MonsterData) entityData);
+        }
+        else if (entityData instanceof Module) {
+            removeModule((Module) entityData);
+        }
+        else {
+            throw new IllegalArgumentException("not implemented");
+        }
+    }
+
     public static void addModule(Module module) {
         if (!getInstance().modules.contains(module)) {
             getInstance().modules.add(module);

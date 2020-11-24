@@ -22,9 +22,9 @@ public class CreateAndLoadMenu extends VBox {
         getChildren().add(loadFromModuleButton);
         getChildren().add(loadFromFileButton);
         // buttons on action:
-        createNewButton.setOnAction(event -> EntityEditorCreator.createNew(entityTabsHolder, type));
-        loadFromModuleButton.setOnAction(event -> EntityEditorCreator.loadFromModule(entityTabsHolder, type));
-        loadFromFileButton.setOnAction(event -> EntityEditorCreator.loadFromFile(entityTabsHolder, type));
+        createNewButton.setOnAction(event -> EntityEditorCreator.createNew(type));
+        loadFromModuleButton.setOnAction(event -> EntityEditorCreator.loadFromModule(type));
+        loadFromFileButton.setOnAction(event -> EntityEditorCreator.loadFromFile(type));
     }
 
     private void configButtonSize(Button... buttons) {

@@ -50,20 +50,34 @@ public class ModuleMainViewController implements EntityEditorController {
     @FXML
     public void initialize() throws IOException {
         // entities list
-        skills = new FilteredList<>(Data.getSkills(), skillData -> module != null && module.equals(Data.getInsideModule(skillData)));
+        skills = new FilteredList<>(Data.getSkills(), skillData -> {
+            System.out.println("skill data: " + skillData);
+            System.out.println("this module: " + module);
+            System.out.println("map module: " + Data.getInsideModule(skillData));
+            System.out.println("=".repeat(15));
+            return module != null && module.equals(Data.getInsideModule(skillData));
+        });
         items = new FilteredList<>(Data.getItems(), itemData -> module != null && module.equals(Data.getInsideModule(itemData)));
         monsters = new FilteredList<>(Data.getMonsters(), monsterData -> module != null && module.equals(Data.getInsideModule(monsterData)));
         // listen to changes
-        skills.addListener((ListChangeListener<SkillData>) change -> { while (change.next()) wasChanged = true; });
-        items.addListener((ListChangeListener<ItemData>) change -> { while (change.next()) wasChanged = true; });
-        monsters.addListener((ListChangeListener<MonsterData>) change -> { while (change.next()) wasChanged = true; });
+        skills.addListener((ListChangeListener<SkillData>) change -> {
+            while (change.next()) wasChanged = true;
+        });
+        items.addListener((ListChangeListener<ItemData>) change -> {
+            while (change.next()) wasChanged = true;
+        });
+        monsters.addListener((ListChangeListener<MonsterData>) change -> {
+            while (change.next()) wasChanged = true;
+        });
         // link
 
         // main search panes
         skillDataSearchPane.setCollection(skills);
         itemDataSearchPane.setCollection(items);
         monsterDataSearchPane.setCollection(monsters);
-        configSearchPane(skillDataSearchPane, itemDataSearchPane, monsterDataSearchPane);
+        configSearchPane(skillDataSearchPane, Type.SKILL);
+        configSearchPane(itemDataSearchPane, Type.ITEM);
+        configSearchPane(monsterDataSearchPane, Type.MONSTER);
 
         saveButtons = new ModuleSaveButtons(this);
         saveTab.setGraphic(saveButtons);
@@ -71,16 +85,22 @@ public class ModuleMainViewController implements EntityEditorController {
         saveTab.setStyle("-fx-opacity: 1; -fx-background-color: transparent");
     }
 
-    @SafeVarargs
-    private void configSearchPane(SearchPane<? extends EntityData>... searchPanes) {
-        for (SearchPane<? extends EntityData> searchPane : searchPanes) {
-            searchPane.setNameBy(EntityData::getNameInEditor);
-            searchPane.setTextFieldSearchBy(EntityData::getNameInEditor, EntityData::getName);
-            // context menu:
-            searchPane.addContextMenuItem("open", entityData -> {
-                //EntityEditorCreator.loadFromModule()
-            });
-        }
+    private void configSearchPane(SearchPane<? extends EntityData> searchPane, Type type) {
+        searchPane.setNameBy(EntityData::getNameInEditor);
+        searchPane.setTextFieldSearchBy(EntityData::getNameInEditor, EntityData::getName);
+        // context menu:
+        searchPane.addContextMenuItem("open", entityData -> EntityEditorCreator.loadFromModule(type, entityData));
+        searchPane.addContextMenuItem("delete", entityData -> {
+            // remove from data:
+            Data.removeEntityData(entityData);
+            // if entity data open:
+            EntityEditorController entityController = EntityEditorController.openEntities.get(entityData);
+            if (entityController != null) {
+                entityController.setWasChanged(true);
+                entityController.getInsideModuleOrFile().setText("");
+                entityController.getInsideModule().setText("not saved");
+            }
+        });
     }
 
     @Override
@@ -143,6 +163,7 @@ public class ModuleMainViewController implements EntityEditorController {
         module.getSkillData().forEach(skillData -> Data.addEntityData(skillData, module));
         module.getItemData().forEach(itemData -> Data.addEntityData(itemData, module));
         module.getMonsterData().forEach(monsterData -> Data.addEntityData(monsterData, module));
+        wasChanged = false;
     }
 
     @Override
@@ -156,8 +177,13 @@ public class ModuleMainViewController implements EntityEditorController {
     }
 
     @Override
-    public boolean isWasChanged() {
+    public boolean wasChanged() {
         return wasChanged;
+    }
+
+    @Override
+    public void setWasChanged(boolean value) {
+        wasChanged = value;
     }
 
     @Override

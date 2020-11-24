@@ -8,6 +8,11 @@ import java.io.IOException;
 
 public class MainViewController {
 
+    private static MainViewController mainInstance;
+
+    @FXML
+    private TabPane mainPane;
+
     @FXML
     private TabPane skillsTabPane;
     @FXML
@@ -26,6 +31,7 @@ public class MainViewController {
 
     @FXML
     public void initialize() throws IOException {
+        mainInstance = this;
         // skills:
         skillsTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
         CreateAndLoadMenu skillsCreateAndLoadMenu = new CreateAndLoadMenu(skillsTabPane, EntityEditorController.Type.SKILL);
@@ -38,19 +44,23 @@ public class MainViewController {
         moduleCreationTab.setContent(modulesCreateAndLoadMenu);
     }
 
-    public TabPane getSkillsTabPane() {
-        return skillsTabPane;
+    public static TabPane getMainPane() {
+        return mainInstance.mainPane;
     }
 
-    public TabPane getItemsTabPane() {
-        return itemsTabPane;
+    public static TabPane getSkillsTabPane() {
+        return mainInstance.skillsTabPane;
     }
 
-    public TabPane getMonstersTabPane() {
-        return monstersTabPane;
+    public static TabPane getItemsTabPane() {
+        return mainInstance.itemsTabPane;
     }
 
-    public TabPane getModulesTabPane() {
-        return modulesTabPane;
+    public static TabPane getMonstersTabPane() {
+        return mainInstance.monstersTabPane;
+    }
+
+    public static TabPane getModulesTabPane() {
+        return mainInstance.modulesTabPane;
     }
 }

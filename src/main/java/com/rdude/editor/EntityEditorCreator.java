@@ -4,6 +4,7 @@ import com.rdude.editor.data.Data;
 import com.rdude.editor.packer.Packer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import ru.rdude.fxlib.containers.SearchDialog;
 import ru.rdude.rpg.game.logic.data.EntityData;
@@ -14,7 +15,7 @@ import java.io.IOException;
 
 public class EntityEditorCreator {
 
-    public static void createNew(TabPane entityTabsHolder, EntityEditorController.Type type) {
+    public static void createNew(EntityEditorController.Type type) {
         try {
             FXMLLoader loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPath()));
             TabPane entityNode = loader.load();
@@ -24,8 +25,8 @@ public class EntityEditorCreator {
             EntityEditorController controller = loader.getController();
             controller.setMainTab(entityTab);
             setTabOnCloseRequest(entityTab, controller);
-            entityTabsHolder.getTabs().add(entityTabsHolder.getTabs().size() - 1, entityTab);
-            entityTabsHolder.getSelectionModel().select(entityTab);
+            type.getEntityTabsHolder().getTabs().add(type.getEntityTabsHolder().getTabs().size() - 1, entityTab);
+            type.getEntityTabsHolder().getSelectionModel().select(entityTab);
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong. New " + type.name().toLowerCase() + " can not be created", ButtonType.OK);
@@ -33,12 +34,12 @@ public class EntityEditorCreator {
         }
     }
 
-    public static void loadFromModule(TabPane entityTabsHolder, EntityEditorController.Type type) {
+    public static void loadFromModule(EntityEditorController.Type type) {
         try {
             SearchDialog<? extends EntityData> searchDialog = new SearchDialog<>(type.getDataList());
             SearchConfigurator.configure(searchDialog, type);
             EntityData entityData = searchDialog.showAndWait().orElse(null);
-            loadFromModule(entityTabsHolder, type, entityData);
+            loadFromModule(type, entityData);
         } catch (IOException e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong, " + type.name() + " can not be loaded", ButtonType.OK);
@@ -46,16 +47,28 @@ public class EntityEditorCreator {
         }
     }
 
-    public static void loadFromModule(TabPane entityTabsHolder, EntityEditorController.Type type, EntityData entityData) {
+    public static void loadFromModule(EntityEditorController.Type type, EntityData entityData) {
         try {
             if (entityData != null) {
                 // if this entity already opened
                 if (EntityEditorController.openEntities.containsKey(entityData)) {
-                    entityTabsHolder.getSelectionModel().select(EntityEditorController.openEntities.get(entityData).getMainTab());
+                    MainViewController.getMainPane().getSelectionModel().select(
+                            MainViewController.getMainPane().getTabs().stream()
+                                    .filter(tab -> {
+                                        if (tab.getContent() instanceof AnchorPane) {
+                                            return type.getEntityTabsHolder().equals(((AnchorPane) tab.getContent()).getChildren().get(0));
+                                        }
+                                        else {
+                                            return false;
+                                        }
+                                    })
+                                    .findFirst()
+                                    .orElse(null));
+                    type.getEntityTabsHolder().getSelectionModel().select(EntityEditorController.openEntities.get(entityData).getMainTab());
                 }
                 // if this entity is not already opened
                 else {
-                    EntityEditorController controller = createEntityNodeAndAdd(entityData, entityTabsHolder, type);
+                    EntityEditorController controller = createEntityNodeAndAdd(entityData, type.getEntityTabsHolder(), type);
                     controller.getInsideModuleOrFile().setText("Inside module");
                     Module insideModule = Data.getInsideModule(entityData);
                     controller.getInsideModule().setText(insideModule.getNameInEditor());
@@ -72,22 +85,34 @@ public class EntityEditorCreator {
         }
     }
 
-    public static void loadFromFile(TabPane entityTabsHolder, EntityEditorController.Type type) {
+    public static void loadFromFile(EntityEditorController.Type type) {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(createExtensionFilter(type));
-            File file = fileChooser.showOpenDialog(entityTabsHolder.getScene().getWindow());
+            File file = fileChooser.showOpenDialog(type.getEntityTabsHolder().getScene().getWindow());
             if (file != null) {
                 Packer packer = new Packer();
                 EntityData entityData = packer.unpack(file.getPath());
                 if (entityData != null) {
                     // if this entity already opened
                     if (EntityEditorController.openEntities.containsKey(entityData)) {
-                        entityTabsHolder.getSelectionModel().select(EntityEditorController.openEntities.get(entityData).getMainTab());
+                        MainViewController.getMainPane().getSelectionModel().select(
+                                MainViewController.getMainPane().getTabs().stream()
+                                        .filter(tab -> {
+                                            if (tab.getContent() instanceof AnchorPane) {
+                                                return type.getEntityTabsHolder().equals(((AnchorPane) tab.getContent()).getChildren().get(0));
+                                            }
+                                            else {
+                                                return false;
+                                            }
+                                        })
+                                        .findFirst()
+                                        .orElse(null));
+                        type.getEntityTabsHolder().getSelectionModel().select(EntityEditorController.openEntities.get(entityData).getMainTab());
                     }
                     // if this entity is not already opened
                     else {
-                        EntityEditorController controller = createEntityNodeAndAdd(entityData, entityTabsHolder, type);
+                        EntityEditorController controller = createEntityNodeAndAdd(entityData, type.getEntityTabsHolder(), type);
                         controller.getInsideModuleOrFile().setText("Inside file");
                         controller.getInsideModule().setText(file.getAbsolutePath());
                         controller.setInsideFile(file.getAbsolutePath());
@@ -115,13 +140,25 @@ public class EntityEditorCreator {
         controller.load(entityData);
         setTabOnCloseRequest(entityTab, controller);
         entityTabsHolder.getTabs().add(entityTabsHolder.getTabs().size() - 1, entityTab);
+        MainViewController.getMainPane().getSelectionModel().select(
+                MainViewController.getMainPane().getTabs().stream()
+                        .filter(tab -> {
+                            if (tab.getContent() instanceof AnchorPane) {
+                                return type.getEntityTabsHolder().equals(((AnchorPane) tab.getContent()).getChildren().get(0));
+                            }
+                            else {
+                                return false;
+                            }
+                        })
+                        .findFirst()
+                        .orElse(null));
         entityTabsHolder.getSelectionModel().select(entityTab);
         return controller;
     }
 
     private static void setTabOnCloseRequest(Tab tab, EntityEditorController controller) {
         tab.setOnCloseRequest(event -> {
-            if (controller.isWasChanged()) {
+            if (controller.wasChanged()) {
                 Alert closeRequestAlert = new Alert(Alert.AlertType.CONFIRMATION, "", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
                 closeRequestAlert.setHeaderText("There are unsaved changes in " + tab.getText() + ". Save before close?");
                 ButtonType result = closeRequestAlert.showAndWait().orElse(ButtonType.CANCEL);
@@ -170,6 +207,12 @@ public class EntityEditorCreator {
                         }
                     }
                 }
+                else {
+                    EntityEditorController.openEntities.remove(controller.getEntityData());
+                }
+            }
+            else {
+                EntityEditorController.openEntities.remove(controller.getEntityData());
             }
         });
     }

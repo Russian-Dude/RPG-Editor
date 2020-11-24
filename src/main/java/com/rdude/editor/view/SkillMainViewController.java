@@ -1120,8 +1120,13 @@ public class SkillMainViewController implements EntityEditorController {
     }
 
     @Override
-    public boolean isWasChanged() {
+    public boolean wasChanged() {
         return wasChanged;
+    }
+
+    @Override
+    public void setWasChanged(boolean value) {
+        wasChanged = value;
     }
 
     @Override

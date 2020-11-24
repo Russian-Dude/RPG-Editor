@@ -4,18 +4,15 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<TabPane prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/11.0.1"
-         xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rdude.editor.MainViewController">
+<TabPane fx:id="mainPane" prefHeight="900.0" prefWidth="1600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rdude.editor.MainViewController">
     <tabs>
         <Tab closable="false" text="Skills">
             <content>
                 <AnchorPane prefHeight="400.0" prefWidth="600.0">
                     <children>
-                        <TabPane fx:id="skillsTabPane" prefHeight="871.0" prefWidth="1600.0"
-                                 tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
-                                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <TabPane fx:id="skillsTabPane" prefHeight="871.0" prefWidth="1600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <tabs>
-                                <Tab fx:id="skillCreationTab" closable="false" text="  +  "/>
+                                <Tab fx:id="skillCreationTab" closable="false" text="  +  " />
                             </tabs>
                         </TabPane>
                     </children>
@@ -23,25 +20,50 @@
             </content>
         </Tab>
         <Tab closable="false" text="Items">
+            <content>
+            <AnchorPane>
+               <children>
+                      <TabPane fx:id="itemsTabPane" />
+               </children>
+            </AnchorPane>
+            </content>
         </Tab>
-        <Tab closable="false" text="Monsters"/>
-        <Tab closable="false" text="Events"/>
-        <Tab closable="false" text="Quests"/>
+        <Tab closable="false" text="Monsters">
+            <content>
+            <AnchorPane>
+               <children>
+                      <TabPane fx:id="monstersTabPane" />
+               </children>
+            </AnchorPane>
+            </content>
+        </Tab>
+        <Tab closable="false" text="Events">
+            <content>
+            <AnchorPane>
+               <children>
+                      <TabPane />
+               </children>
+            </AnchorPane>
+            </content>
+        </Tab>
+        <Tab closable="false" text="Quests">
+            <content>
+                <TabPane />
+            </content>
+        </Tab>
         <Tab closable="false" text="Modules">
             <content>
                 <AnchorPane prefHeight="400.0" prefWidth="600.0">
                     <children>
-                        <TabPane fx:id="modulesTabPane" prefHeight="871.0" prefWidth="1600.0"
-                                 tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
-                                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <TabPane fx:id="modulesTabPane" prefHeight="871.0" prefWidth="1600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <tabs>
-                                <Tab fx:id="moduleCreationTab" closable="false" text="  +  "/>
+                                <Tab fx:id="moduleCreationTab" closable="false" text="  +  " />
                             </tabs>
                         </TabPane>
                     </children>
                 </AnchorPane>
             </content>
         </Tab>
-        <Tab closable="false" text="Resources"/>
+        <Tab closable="false" text="Resources" />
     </tabs>
 </TabPane>
