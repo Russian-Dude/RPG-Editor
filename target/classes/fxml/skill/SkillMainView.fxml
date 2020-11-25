@@ -48,7 +48,7 @@
                                              <children>
                                                 <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="20.0">
                                                    <children>
-                                                      <Label fx:id="insideModuleOrFileFx" text="From module">
+                                                      <Label fx:id="insideModuleOrFileFx" text="Not saved">
                                                          <padding>
                                                             <Insets left="15.0" />
                                                          </padding>
@@ -56,7 +56,7 @@
                                                             <Font name="System Italic" size="12.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="insideFx" text="-">
+                                                      <Label fx:id="insideFx">
                                                          <font>
                                                             <Font name="System Italic" size="12.0" />
                                                          </font>

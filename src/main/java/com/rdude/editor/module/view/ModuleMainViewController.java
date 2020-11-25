@@ -49,14 +49,15 @@ public class ModuleMainViewController implements EntityEditorController {
 
     @FXML
     public void initialize() throws IOException {
+        saveButtons = new ModuleSaveButtons(this);
+        saveTab.setGraphic(saveButtons);
+        saveTab.setDisable(true);
+        saveTab.setStyle("-fx-opacity: 1; -fx-background-color: transparent");
+    }
+
+    private void init() {
         // entities list
-        skills = new FilteredList<>(Data.getSkills(), skillData -> {
-            System.out.println("skill data: " + skillData);
-            System.out.println("this module: " + module);
-            System.out.println("map module: " + Data.getInsideModule(skillData));
-            System.out.println("=".repeat(15));
-            return module != null && module.equals(Data.getInsideModule(skillData));
-        });
+        skills = new FilteredList<>(Data.getSkills(), skillData -> module != null && module.equals(Data.getInsideModule(skillData)));
         items = new FilteredList<>(Data.getItems(), itemData -> module != null && module.equals(Data.getInsideModule(itemData)));
         monsters = new FilteredList<>(Data.getMonsters(), monsterData -> module != null && module.equals(Data.getInsideModule(monsterData)));
         // listen to changes
@@ -69,8 +70,6 @@ public class ModuleMainViewController implements EntityEditorController {
         monsters.addListener((ListChangeListener<MonsterData>) change -> {
             while (change.next()) wasChanged = true;
         });
-        // link
-
         // main search panes
         skillDataSearchPane.setCollection(skills);
         itemDataSearchPane.setCollection(items);
@@ -78,11 +77,6 @@ public class ModuleMainViewController implements EntityEditorController {
         configSearchPane(skillDataSearchPane, Type.SKILL);
         configSearchPane(itemDataSearchPane, Type.ITEM);
         configSearchPane(monsterDataSearchPane, Type.MONSTER);
-
-        saveButtons = new ModuleSaveButtons(this);
-        saveTab.setGraphic(saveButtons);
-        saveTab.setDisable(true);
-        saveTab.setStyle("-fx-opacity: 1; -fx-background-color: transparent");
     }
 
     private void configSearchPane(SearchPane<? extends EntityData> searchPane, Type type) {
@@ -97,6 +91,7 @@ public class ModuleMainViewController implements EntityEditorController {
             EntityEditorController entityController = EntityEditorController.openEntities.get(entityData);
             if (entityController != null) {
                 entityController.setWasChanged(true);
+                entityController.setInsideModuleGuid(null);
                 entityController.getInsideModuleOrFile().setText("");
                 entityController.getInsideModule().setText("not saved");
             }
@@ -159,11 +154,17 @@ public class ModuleMainViewController implements EntityEditorController {
             throw new IllegalArgumentException();
         }
         module = (Module) entityData;
+        init();
         nameFx.setText(module.getName());
         module.getSkillData().forEach(skillData -> Data.addEntityData(skillData, module));
         module.getItemData().forEach(itemData -> Data.addEntityData(itemData, module));
         module.getMonsterData().forEach(monsterData -> Data.addEntityData(monsterData, module));
         wasChanged = false;
+    }
+
+    @Override
+    public void initNew() {
+        init();
     }
 
     @Override

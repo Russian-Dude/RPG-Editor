@@ -96,5 +96,6 @@ public interface EntityEditorController {
     SaveButtons getSaveButtons();
     boolean wasChanged();
     void setWasChanged(boolean value);
+    void initNew();
 
 }

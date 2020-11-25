@@ -1070,6 +1070,10 @@ public class SkillMainViewController implements EntityEditorController {
     }
 
     @Override
+    public void initNew() {
+    }
+
+    @Override
     public Label getInsideModule() {
         return insideFx;
     }

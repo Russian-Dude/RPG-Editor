@@ -1,9 +1,12 @@
 package com.rdude.editor.data;
 
+import com.rdude.editor.EntityEditorController;
 import javafx.collections.*;
 import javafx.scene.image.Image;
 import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.Module;
+
+import java.util.List;
 
 public class Data {
 
