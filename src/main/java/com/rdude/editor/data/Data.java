@@ -6,7 +6,11 @@ import javafx.scene.image.Image;
 import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.Module;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Stream;
 
 public class Data {
 
@@ -122,6 +126,16 @@ public class Data {
 
     public static MonsterData getMonsterData(long guid) {
         return getInstance().monstersMap.get(guid);
+    }
+
+    public static <T extends EntityData> T getEntityData(long guid) {
+        return (T) Stream.of(getInstance().skillsMap, getInstance().itemsMap, getInstance().monstersMap)
+                .map(Map::entrySet)
+                .flatMap(Collection::stream)
+                .filter(entry -> entry.getKey().equals(guid))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElse(null);
     }
 
     public static Module getInsideModule(EntityData entityData) {

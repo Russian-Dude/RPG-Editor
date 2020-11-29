@@ -74,7 +74,6 @@ public class EntityEditorCreator {
                     Module insideModule = Data.getInsideModule(entityData);
                     controller.getInsideModule().setText(insideModule.getNameInEditor());
                     controller.setInsideFile(null);
-                    controller.setInsideModuleGuid(insideModule.getGuid());
                     EntityEditorController.openEntities.putIfAbsent(entityData, controller);
                 }
             }
@@ -124,7 +123,6 @@ public class EntityEditorCreator {
                         controller.getInsideModuleOrFile().setText("Inside file");
                         controller.getInsideModule().setText(file.getAbsolutePath());
                         controller.setInsideFile(file.getAbsolutePath());
-                        controller.setInsideModuleGuid(null);
                         Data.addEntityData(entityData);
                         EntityEditorController.openEntities.putIfAbsent(entityData, controller);
                     }
@@ -173,7 +171,7 @@ public class EntityEditorCreator {
                 if (result.equals(ButtonType.CANCEL)) {
                     event.consume();
                 } else if (result.equals(ButtonType.YES)) {
-                    if (controller.getInsideFile() == null && controller.getInsideModuleGuid() == null) {
+                    if (controller.getInsideFile() == null && Data.getInsideModule(controller.getEntityData()) == null) {
                         ButtonType toFile = new ButtonType("File");
                         ButtonType toModule = new ButtonType("Module");
                         Dialog<ButtonType> whereSave = new Dialog<>();

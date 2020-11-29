@@ -123,15 +123,15 @@
                                           </VBox>
                                           <VBox prefHeight="200.0" prefWidth="100.0">
                                              <children>
-                                                <VBox alignment="TOP_CENTER" prefHeight="260.0" prefWidth="100.0">
+                                                <VBox alignment="TOP_CENTER" prefHeight="335.0" prefWidth="100.0">
                                                    <children>
                                                       <Label text="Damage Coefficients:" />
                                                       <Label text="Elements" />
-                                                      <MultipleChoiceContainer fx:id="damageElementCoefficientsFx" maxWidth="200.0" minWidth="170.0" prefHeight="75.0" visualElementType="PERCENT_TEXT_FIELD" />
+                                                      <MultipleChoiceContainer fx:id="damageElementCoefficientsFx" maxWidth="200.0" minWidth="170.0" prefHeight="90.0" visualElementType="PERCENT_TEXT_FIELD" />
                                                       <Label text="Being types" />
-                                                      <MultipleChoiceContainer fx:id="damageBeingTypesCoefficientsFx" maxWidth="200.0" prefHeight="75.0" visualElementType="PERCENT_TEXT_FIELD" />
+                                                      <MultipleChoiceContainer fx:id="damageBeingTypesCoefficientsFx" maxWidth="200.0" prefHeight="90.0" visualElementType="PERCENT_TEXT_FIELD" />
                                                       <Label text="Sizes" />
-                                                      <MultipleChoiceContainer fx:id="damageSizeCoefficientsFx" maxWidth="200.0" prefHeight="75.0" visualElementType="PERCENT_TEXT_FIELD" />
+                                                      <MultipleChoiceContainer fx:id="damageSizeCoefficientsFx" maxWidth="200.0" prefHeight="90.0" visualElementType="PERCENT_TEXT_FIELD" />
                                                    </children>
                                                 </VBox>
                                                 <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">

@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import ru.rdude.fxlib.containers.MultipleChoiceContainerElement;
 import ru.rdude.rpg.game.logic.data.EntityData;
 import ru.rdude.rpg.game.logic.data.ItemData;
 import ru.rdude.rpg.game.logic.data.Module;
@@ -14,13 +15,14 @@ import ru.rdude.rpg.game.logic.data.SkillData;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 // skills / monsters / items etc
-public interface EntityEditorController {
+public interface EntityEditorController<T extends EntityData> {
 
-    Map<EntityData, EntityEditorController> openEntities = new HashMap<>();
+    Map<EntityData, EntityEditorController<?>> openEntities = new HashMap<>();
 
     enum Type {
         SKILL ("/fxml/skill/SkillMainView.fxml",
@@ -84,18 +86,19 @@ public interface EntityEditorController {
 
     Label getInsideModule();
     Label getInsideModuleOrFile();
-    Long getInsideModuleGuid();
-    void setInsideModuleGuid(Long guid);
     String getInsideFile();
     void setInsideFile(String path);
-    EntityData getEntityData();
+    T getEntityData();
+    void setEntityData(T entityData);
+    T saveToNewData();
     boolean save();
-    void load(EntityData entityData) throws IOException;
+    void load(T entityData) throws IOException;
     void setMainTab(Tab tab);
     Tab getMainTab();
-    SaveButtons getSaveButtons();
     boolean wasChanged();
     void setWasChanged(boolean value);
     void initNew();
-
+    void replaceEntityDataDependencies(long oldValue, long newValue);
+    boolean hasEntityDataDependency(long value);
+    SaveButtons<T> getSaveButtons();
 }

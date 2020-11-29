@@ -16,11 +16,12 @@ import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.utils.Functions;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ModuleMainViewController implements EntityEditorController {
+public class ModuleMainViewController implements EntityEditorController<Module> {
 
     private static final Label dummyLabel = new Label();
 
@@ -40,7 +41,7 @@ public class ModuleMainViewController implements EntityEditorController {
     @FXML
     private Tab saveTab;
     @FXML
-    private SaveButtons saveButtons;
+    private SaveButtons<Module> saveButtons;
 
 
     private FilteredList<SkillData> skills;
@@ -91,7 +92,6 @@ public class ModuleMainViewController implements EntityEditorController {
             EntityEditorController entityController = EntityEditorController.openEntities.get(entityData);
             if (entityController != null) {
                 entityController.setWasChanged(true);
-                entityController.setInsideModuleGuid(null);
                 entityController.getInsideModuleOrFile().setText("");
                 entityController.getInsideModule().setText("not saved");
             }
@@ -109,15 +109,6 @@ public class ModuleMainViewController implements EntityEditorController {
     }
 
     @Override
-    public Long getInsideModuleGuid() {
-        return null;
-    }
-
-    @Override
-    public void setInsideModuleGuid(Long guid) {
-    }
-
-    @Override
     public String getInsideFile() {
         return insideFile;
     }
@@ -128,7 +119,7 @@ public class ModuleMainViewController implements EntityEditorController {
     }
 
     @Override
-    public EntityData getEntityData() {
+    public Module getEntityData() {
         return module;
     }
 
@@ -143,17 +134,14 @@ public class ModuleMainViewController implements EntityEditorController {
         module.setItemData(new HashSet<>(items));
         module.setMonsterData(new HashSet<>(monsters));
         Stream<EntityData> dataStream = Stream.concat(skills.stream(), Stream.concat(items.stream(), monsters.stream()));
-        module.setDependencies(dataStream.flatMap(entityData -> entityData.getDependencies().stream()).collect(Collectors.toSet()));
+        module.setModuleDependencies(dataStream.flatMap(entityData -> entityData.getModuleDependencies().stream()).collect(Collectors.toSet()));
         wasChanged = false;
         return true;
     }
 
     @Override
-    public void load(EntityData entityData) {
-        if (!(entityData instanceof Module)) {
-            throw new IllegalArgumentException();
-        }
-        module = (Module) entityData;
+    public void load(Module entityData) {
+        module = entityData;
         init();
         nameFx.setText(module.getName());
         module.getSkillData().forEach(skillData -> Data.addEntityData(skillData, module));
@@ -188,7 +176,36 @@ public class ModuleMainViewController implements EntityEditorController {
     }
 
     @Override
-    public SaveButtons getSaveButtons() {
+    public void setEntityData(Module entityData) {
+        this.module = entityData;
+    }
+
+    @Override
+    public Module saveToNewData() {
+        return new Module(Functions.generateGuid());
+    }
+
+    @Override
+    public SaveButtons<Module> getSaveButtons() {
         return this.saveButtons;
+    }
+
+    @Override
+    public void replaceEntityDataDependencies(long oldValue, long newValue) {
+        Stream.of(skills, items, monsters)
+                .flatMap(Collection::stream)
+                .forEach(entityData -> {
+                    entityData.replaceEntityDependency(oldValue, newValue);
+                    if (EntityEditorController.openEntities.containsKey(entityData)) {
+                        EntityEditorController.openEntities.get(entityData).replaceEntityDataDependencies(oldValue, newValue);
+                    }
+                });
+    }
+
+    @Override
+    public boolean hasEntityDataDependency(long value) {
+        return skills.stream().anyMatch(skillData -> skillData.hasEntityDependency(value))
+                || items.stream().anyMatch(itemData -> itemData.hasEntityDependency(value))
+                || monsters.stream().anyMatch(monsterData -> monsterData.hasEntityDependency(value));
     }
 }

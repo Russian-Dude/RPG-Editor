@@ -10,17 +10,16 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import ru.rdude.fxlib.containers.SearchDialog;
-import ru.rdude.rpg.game.logic.data.ItemData;
+import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.Module;
-import ru.rdude.rpg.game.logic.data.MonsterData;
-import ru.rdude.rpg.game.logic.data.SkillData;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SaveButtons extends HBox {
+public class SaveButtons<T extends EntityData> extends HBox {
 
-    protected EntityEditorController node;
+    protected EntityEditorController<T> node;
+    private Saver<T> saver;
 
     private Button saveButton;
     private Button saveToButton;
@@ -31,10 +30,13 @@ public class SaveButtons extends HBox {
 
     private SearchDialog<Module> searchDialogModule;
 
-    public SaveButtons() {}
+    public SaveButtons() {
+        saver = new Saver<>();
+    }
 
-    public SaveButtons(EntityEditorController node) {
+    public SaveButtons(EntityEditorController<T> node) {
         this.node = node;
+        this.saver = new Saver<>();
         // create nodes
         saveButton = new Button("Save");
         saveToButton = new Button("Save to");
@@ -78,9 +80,8 @@ public class SaveButtons extends HBox {
         saveToFileExtensionFilterConfig(fileChooser);
         File file = fileChooser.showSaveDialog(this.getScene().getWindow());
         if (file != null && node.save()) {
-            Saver.save(node.getEntityData(), file.getPath());
+            saver.save(node.getEntityData(), file.getPath());
             node.setInsideFile(file.getPath());
-            node.setInsideModuleGuid(null);
             node.getInsideModuleOrFile().setText("Inside file");
             node.getInsideModule().setText(file.getPath());
             node.getMainTab().setText(node.getEntityData().getNameInEditor());
@@ -92,38 +93,29 @@ public class SaveButtons extends HBox {
     }
 
     public boolean saveToModule() {
-        AtomicBoolean isSaved = new AtomicBoolean(false);
+        AtomicBoolean saveResult = new AtomicBoolean(false);
         searchDialogModule.showAndWait().ifPresent(result -> {
             if (node.save()) {
-                Saver.save(node.getEntityData(), result);
+                saver.save(node.getEntityData(), result);
                 node.getInsideModuleOrFile().setText("Inside module");
                 node.getInsideModule().setText(result.getNameInEditor());
-                node.setInsideFile(null);
-                node.setInsideModuleGuid(result.getGuid());
-                node.getMainTab().setText(node.getEntityData().getNameInEditor());
-
-                Data.addEntityData(node.getEntityData(), result);
-
-                isSaved.set(true);
+                saveResult.set(true);
             }
         });
-        return isSaved.get();
+        return saveResult.get();
     }
 
     public boolean save() {
-        if (node.getInsideFile() == null && node.getInsideModuleGuid() != null) {
+        if (node.getInsideFile() == null && Data.getInsideModule(node.getEntityData()) != null) {
             if (node.save()) {
-                Data.getModules().stream()
-                        .filter(module -> module.getGuid() == node.getInsideModuleGuid())
-                        .findFirst()
-                        .ifPresent(module -> Saver.save(node.getEntityData(), module));
+                saver.save(node.getEntityData(), Data.getInsideModule(node.getEntityData()));
                 node.getMainTab().setText(node.getEntityData().getNameInEditor());
                 return true;
             }
         }
-        else if (node.getInsideFile() != null && node.getInsideModuleGuid() == null) {
+        else if (node.getInsideFile() != null && Data.getInsideModule(node.getEntityData()) == null) {
             if (node.save()) {
-                Saver.save(node.getEntityData(), node.getInsideFile());
+                saver.save(node.getEntityData(), node.getInsideFile());
                 node.getMainTab().setText(node.getEntityData().getNameInEditor());
             }
             return true;
@@ -133,7 +125,7 @@ public class SaveButtons extends HBox {
 
     private void configSaveButton() {
         saveButton.setOnAction(event -> {
-            if (node.getInsideFile() == null && node.getInsideModuleGuid() == null) {
+            if (node.getInsideFile() == null && (node.getEntityData() == null || Data.getInsideModule(node.getEntityData()) == null)) {
                 saveToMenu.show(saveButton, Side.BOTTOM, 0, 0);
             }
             else {

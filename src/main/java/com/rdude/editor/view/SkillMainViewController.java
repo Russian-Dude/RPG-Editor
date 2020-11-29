@@ -6,8 +6,6 @@ import com.rdude.editor.SearchConfigurator;
 import com.rdude.editor.data.Data;
 import com.rdude.editor.enums.EnumsLists;
 import com.rdude.editor.enums.FormulaVariable;
-import com.rdude.editor.view.ItemSearchController;
-import com.rdude.editor.view.SaveButtons;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
@@ -38,14 +36,14 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class SkillMainViewController implements EntityEditorController {
+public class SkillMainViewController implements EntityEditorController<SkillData> {
 
 
     private String fileName;
     private Long insideModule;
     private SkillData skill;
     private boolean wasChanged;
-    private SaveButtons saveButtons;
+    private SaveButtons<SkillData> saveButtons;
 
     private Tab mainTab;
 
@@ -407,11 +405,9 @@ public class SkillMainViewController implements EntityEditorController {
     }
 
     @Override
-    public void load(EntityData entityData) throws IOException {
-        if (entityData instanceof SkillData) {
-            loadSkill((SkillData) entityData);
-        } else {
-            throw new IllegalArgumentException("Load skill with not SkillData object");
+    public void load(SkillData entityData) throws IOException {
+        if (entityData != null) {
+            loadSkill(entityData);
         }
     }
 
@@ -650,8 +646,7 @@ public class SkillMainViewController implements EntityEditorController {
             return field.toUpperCase();
     }
 
-    private boolean saveSkill() {
-        if (skill == null) skill = new SkillData(Functions.generateGuid());
+    private boolean saveFieldsToData(SkillData skill) {
         ArrayList<String> reasonsWhyCantSave = isFieldsCorrect();
         if (reasonsWhyCantSave.size() > 0) {
             showUnableToSaveMessage(reasonsWhyCantSave);
@@ -1084,16 +1079,6 @@ public class SkillMainViewController implements EntityEditorController {
     }
 
     @Override
-    public Long getInsideModuleGuid() {
-        return insideModule;
-    }
-
-    @Override
-    public void setInsideModuleGuid(Long guid) {
-        insideModule = guid;
-    }
-
-    @Override
     public String getInsideFile() {
         return fileName;
     }
@@ -1104,13 +1089,23 @@ public class SkillMainViewController implements EntityEditorController {
     }
 
     @Override
-    public EntityData getEntityData() {
+    public SkillData getEntityData() {
         return skill;
     }
 
     @Override
     public boolean save() {
-        return saveSkill();
+        if (skill == null) skill = new SkillData(Functions.generateGuid());
+        return saveFieldsToData(skill);
+    }
+
+    @Override
+    public SkillData saveToNewData() {
+        SkillData skillData = new SkillData(Functions.generateGuid());
+        if (saveFieldsToData(skillData)) {
+            return skillData;
+        }
+        else return null;
     }
 
     @Override
@@ -1134,7 +1129,42 @@ public class SkillMainViewController implements EntityEditorController {
     }
 
     @Override
-    public SaveButtons getSaveButtons() {
-        return saveButtons;
+    public void setEntityData(SkillData entityData) {
+        this.skill = entityData;
+    }
+
+    @Override
+    public SaveButtons<SkillData> getSaveButtons() {
+        return this.saveButtons;
+    }
+
+    private List<MultipleChoiceContainerElement<? extends EntityData>> getAllEntityElementsInsideContainers() {
+        List<MultipleChoiceContainerElement<? extends EntityData>> result = new ArrayList<>();
+        result.addAll(itemsRequirementsFx.getNodesElements());
+        result.addAll(skillsCanCastFx.getNodesElements());
+        result.addAll(skillsMustCastFx.getNodesElements());
+        result.addAll(summonFx.getNodesElements());
+        result.addAll(receiveItemsFx.getNodesElements());
+        return result;
+    }
+
+    @Override
+    public boolean hasEntityDataDependency(long value) {
+        return getAllEntityElementsInsideContainers().stream().anyMatch(element -> element.getSelectedElement().getGuid() == value)
+                        || skillsOnBeingActionFx.getNodesElements().stream()
+                        .anyMatch(element -> ((MultipleChoiceContainerElementTwoChoiceWithPercents<BeingAction.Action, SkillData>) element).getSecondValue().getGuid() == value);
+    }
+
+    @Override
+    public void replaceEntityDataDependencies(long oldValue, long newValue) {
+        // simple containers
+        getAllEntityElementsInsideContainers().stream()
+                .filter(element -> element.getSelectedElement().getGuid() == oldValue)
+                .forEach(element -> element.setSelectedElement(Data.getEntityData(newValue)));
+        // complex container (skills cast on being action)
+        skillsOnBeingActionFx.getNodesElements().stream()
+                .map(element -> ((MultipleChoiceContainerElementTwoChoiceWithPercents<BeingAction.Action, SkillData>) element))
+                .filter(element -> element.getSecondValue().getGuid() == oldValue)
+                .forEach(element -> element.setSecondValue(Data.getSkillData(newValue)));
     }
 }
