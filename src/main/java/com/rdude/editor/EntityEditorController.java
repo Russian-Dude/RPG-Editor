@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import ru.rdude.fxlib.containers.MultipleChoiceContainerElement;
 import ru.rdude.rpg.game.logic.data.EntityData;
 import ru.rdude.rpg.game.logic.data.ItemData;
 import ru.rdude.rpg.game.logic.data.Module;
@@ -15,7 +14,6 @@ import ru.rdude.rpg.game.logic.data.SkillData;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -28,7 +26,7 @@ public interface EntityEditorController<T extends EntityData> {
         SKILL ("/fxml/skill/SkillMainView.fxml",
                 Data.getSkills(),
                 SkillData.class,
-                "/fxml/skill/SkillSearch.fxml",
+                "/fxml/skill/view/SkillSearch.fxml",
                 MainViewController::getSkillsTabPane),
 
         ITEM ("/fxml/skill/view/ItemMainView.fxml",

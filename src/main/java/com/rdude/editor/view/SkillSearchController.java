@@ -7,6 +7,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.RadioButton;
+import javafx.util.Pair;
 import javafx.util.StringConverter;
 import ru.rdude.fxlib.containers.MultipleChoiceContainer;
 import ru.rdude.fxlib.containers.MultipleChoiceContainerElement;
@@ -15,7 +16,9 @@ import ru.rdude.rpg.game.logic.enums.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class SkillSearchController implements EntitySearchController<SkillData> {
 
@@ -28,17 +31,41 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
     @FXML
     private MultipleChoiceContainer<Element> elements;
     @FXML
-    private CheckBox canBeUsedInBattle;
+    private RadioButton canBeUsedInBattleAny;
     @FXML
-    private CheckBox canBeUsedInCamp;
+    private RadioButton canBeUsedInBattleYes;
     @FXML
-    private CheckBox canBeUsedInMap;
+    private RadioButton canBeUsedInBattleNo;
     @FXML
-    private CheckBox canBeBlocked;
+    private RadioButton canBeUsedInCampAny;
     @FXML
-    private CheckBox canBeResisted;
+    private RadioButton canBeUsedInCampYes;
     @FXML
-    private CheckBox canBeDodged;
+    private RadioButton canBeUsedInCampNo;
+    @FXML
+    private RadioButton canBeUsedInMapAny;
+    @FXML
+    private RadioButton canBeUsedInMapYes;
+    @FXML
+    private RadioButton canBeUsedInMapNo;
+    @FXML
+    private RadioButton canBeBlockedAny;
+    @FXML
+    private RadioButton canBeBlockedYes;
+    @FXML
+    private RadioButton canBeBlockedNo;
+    @FXML
+    private RadioButton canBeResistedAny;
+    @FXML
+    private RadioButton canBeResistedYes;
+    @FXML
+    private RadioButton canBeResistedNo;
+    @FXML
+    private RadioButton canBeDodgedAny;
+    @FXML
+    private RadioButton canBeDodgedYes;
+    @FXML
+    private RadioButton canBeDodgedNo;
     @FXML
     private RadioButton dealDamageAny;
     @FXML
@@ -111,12 +138,12 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
         attackType.setValue(null);
         effect.setValue(null);
         elements.getNodesElements().forEach(MultipleChoiceContainerElement::removeFromParent);
-        canBeUsedInBattle.setSelected(true);
-        canBeUsedInCamp.setSelected(true);
-        canBeUsedInMap.setSelected(true);
-        canBeBlocked.setSelected(true);
-        canBeResisted.setSelected(true);
-        canBeDodged.setSelected(true);
+        canBeBlockedAny.setSelected(true);
+        canBeDodgedAny.setSelected(true);
+        canBeResistedAny.setSelected(true);
+        canBeUsedInBattleAny.setSelected(true);
+        canBeUsedInCampAny.setSelected(true);
+        canBeUsedInMapAny.setSelected(true);
         dealDamageAny.setSelected(true);
         changeStatsAny.setSelected(true);
         receiveItemsAny.setSelected(true);
@@ -134,30 +161,50 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
     public Map<Control, Function<SkillData, ?>> getControlFunctionMap() {
         if (controlFunctionMap == null) {
             controlFunctionMap = new HashMap<>();
+            // comboBoxes & MultipleChoiceContainers
             controlFunctionMap.put(getSkillType(), skillData -> skillData.getType().name());
             controlFunctionMap.put(getAttackType(), skillData -> skillData.getAttackType().name());
             controlFunctionMap.put(getEffect(), skillData -> skillData.getEffect().name());
             controlFunctionMap.put(getElements(), SkillData::getElements);
-            controlFunctionMap.put(getCanBeUsedInBattle(), skillData -> skillData.getUsableInGameStates().get(GameState.BATTLE));
-            controlFunctionMap.put(getCanBeUsedInCamp(), skillData -> skillData.getUsableInGameStates().get(GameState.CAMP));
-            controlFunctionMap.put(getCanBeUsedInMap(), skillData -> skillData.getUsableInGameStates().get(GameState.MAP));
-            controlFunctionMap.put(getCanBeBlocked(), SkillData::isCanBeBlocked);
-            controlFunctionMap.put(getCanBeResisted(), SkillData::isCanBeResisted);
-            controlFunctionMap.put(getCanBeDodged(), SkillData::isCanBeDodged);
+            // use in battle
+            controlFunctionMap.put(getCanBeUsedInBattleAny(), skillData -> true);
+            controlFunctionMap.put(getCanBeUsedInBattleYes(), skillData -> skillData.getUsableInGameStates().get(GameState.BATTLE));
+            controlFunctionMap.put(getCanBeUsedInBattleNo(), skillData -> !skillData.getUsableInGameStates().get(GameState.BATTLE));
+            controlFunctionMap.put(getCanBeUsedInCampAny(), skillData -> true);
+            controlFunctionMap.put(getCanBeUsedInCampYes(), skillData -> skillData.getUsableInGameStates().get(GameState.CAMP));
+            controlFunctionMap.put(getCanBeUsedInCampNo(), skillData -> !skillData.getUsableInGameStates().get(GameState.CAMP));
+            controlFunctionMap.put(getCanBeUsedInMapAny(), skillData -> true);
+            controlFunctionMap.put(getCanBeUsedInMapYes(), skillData -> skillData.getUsableInGameStates().get(GameState.MAP));
+            controlFunctionMap.put(getCanBeUsedInMapNo(), skillData -> !skillData.getUsableInGameStates().get(GameState.MAP));
+            // can be avoided
+            controlFunctionMap.put(getCanBeBlockedAny(), skillData -> true);
+            controlFunctionMap.put(getCanBeBlockedYes(), SkillData::isCanBeBlocked);
+            controlFunctionMap.put(getCanBeBlockedNo(), skillData -> !skillData.isCanBeBlocked());
+            controlFunctionMap.put(getCanBeResistedAny(), skillData -> true);
+            controlFunctionMap.put(getCanBeResistedYes(), SkillData::isCanBeResisted);
+            controlFunctionMap.put(getCanBeResistedNo(), skillData -> !skillData.isCanBeResisted());
+            controlFunctionMap.put(getCanBeDodgedAny(), skillData -> true);
+            controlFunctionMap.put(getCanBeDodgedYes(), SkillData::isCanBeDodged);
+            controlFunctionMap.put(getCanBeDodgedNo(), skillData -> !skillData.isCanBeDodged());
+            // deal damage
             controlFunctionMap.put(getDealDamageAny(), skillData -> true);
             controlFunctionMap.put(getDealDamageYes(), skillData -> skillData.getDamage() != null && !skillData.getDamage().isEmpty());
             controlFunctionMap.put(getDealDamageNo(), skillData -> skillData.getDamage() == null || skillData.getDamage().isEmpty());
+            // change stats
             controlFunctionMap.put(getChangeStatsAny(), skillData -> true);
             controlFunctionMap.put(getChangeStatsYes(), skillData -> skillData.getStats().entrySet().stream()
                     .anyMatch(entry -> entry.getValue() == null || !entry.getValue().isEmpty()));
             controlFunctionMap.put(getChangeStatsNo(), skillData -> skillData.getStats().entrySet().stream()
                     .allMatch(entry -> entry.getValue() != null && entry.getValue().isEmpty()));
+            // receive items
             controlFunctionMap.put(getReceiveItemsAny(), skillData -> true);
             controlFunctionMap.put(getReceiveItemsYes(), skillData -> !skillData.getReceiveItems().isEmpty());
             controlFunctionMap.put(getReceiveItemsNo(), skillData -> skillData.getReceiveItems().isEmpty());
+            // require items
             controlFunctionMap.put(getRequireItemsAny(), skillData -> true);
             controlFunctionMap.put(getRequireItemsYes(), skillData -> !skillData.getRequirements().getItems().isEmpty());
             controlFunctionMap.put(getRequireItemsNo(), skillData -> skillData.getRequirements().getItems().isEmpty());
+            // duration
             controlFunctionMap.put(getHasDurationAny(), skillData -> true);
             controlFunctionMap.put(getHasDurationYes(),
                     skillData -> (skillData.getDurationInMinutes() != null && !skillData.getDurationInMinutes().isEmpty())
@@ -165,6 +212,7 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
             controlFunctionMap.put(getHasDurationNo(),
                     skillData -> (skillData.getDurationInMinutes() == null || skillData.getDurationInMinutes().isEmpty())
                             && (skillData.getDurationInTurns() == null || skillData.getDurationInTurns().isEmpty()));
+            // transformation
             controlFunctionMap.put(getApplyTransformationAny(), skillData -> true);
             controlFunctionMap.put(getApplyTransformationYes(),
                     skillData -> !skillData.getTransformation().getElements().isEmpty()
@@ -174,6 +222,7 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
                     skillData -> skillData.getTransformation().getElements().isEmpty()
                             && skillData.getTransformation().getSize() == null
                             && skillData.getTransformation().getBeingTypes().isEmpty());
+            // summon
             controlFunctionMap.put(getSummonAny(), skillData -> true);
             controlFunctionMap.put(getSummonYes(), skillData -> !skillData.getSummon().isEmpty());
             controlFunctionMap.put(getSummonNo(), skillData -> skillData.getSummon().isEmpty());
@@ -184,30 +233,50 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
     public static Map<Function<SkillSearchController, Control>, Function<SkillData, ?>> getFunctionMap() {
         if (functionMap == null) {
             functionMap = new HashMap<>();
+            // comboBoxes and MultipleChoiceContainers
             functionMap.put(SkillSearchController::getSkillType, skillData -> skillData.getType().name());
             functionMap.put(SkillSearchController::getAttackType, skillData -> skillData.getAttackType().name());
             functionMap.put(SkillSearchController::getEffect, skillData -> skillData.getEffect().name());
             functionMap.put(SkillSearchController::getElements, SkillData::getElements);
-            functionMap.put(SkillSearchController::getCanBeUsedInBattle, skillData -> skillData.getUsableInGameStates().get(GameState.BATTLE));
-            functionMap.put(SkillSearchController::getCanBeUsedInCamp, skillData -> skillData.getUsableInGameStates().get(GameState.CAMP));
-            functionMap.put(SkillSearchController::getCanBeUsedInMap, skillData -> skillData.getUsableInGameStates().get(GameState.MAP));
-            functionMap.put(SkillSearchController::getCanBeBlocked, SkillData::isCanBeBlocked);
-            functionMap.put(SkillSearchController::getCanBeResisted, SkillData::isCanBeResisted);
-            functionMap.put(SkillSearchController::getCanBeDodged, SkillData::isCanBeDodged);
+            // can be used in
+            functionMap.put(SkillSearchController::getCanBeUsedInBattleAny, skillData -> true);
+            functionMap.put(SkillSearchController::getCanBeUsedInBattleYes, skillData -> skillData.getUsableInGameStates().get(GameState.BATTLE));
+            functionMap.put(SkillSearchController::getCanBeUsedInBattleNo, skillData -> !skillData.getUsableInGameStates().get(GameState.BATTLE));
+            functionMap.put(SkillSearchController::getCanBeUsedInCampAny, skillData -> true);
+            functionMap.put(SkillSearchController::getCanBeUsedInCampYes, skillData -> skillData.getUsableInGameStates().get(GameState.CAMP));
+            functionMap.put(SkillSearchController::getCanBeUsedInCampNo, skillData -> !skillData.getUsableInGameStates().get(GameState.CAMP));
+            functionMap.put(SkillSearchController::getCanBeUsedInMapAny, skillData -> true);
+            functionMap.put(SkillSearchController::getCanBeUsedInMapYes, skillData -> skillData.getUsableInGameStates().get(GameState.MAP));
+            functionMap.put(SkillSearchController::getCanBeUsedInMapNo, skillData -> !skillData.getUsableInGameStates().get(GameState.MAP));
+            // can be avoided
+            functionMap.put(SkillSearchController::getCanBeBlockedAny, skillData -> true);
+            functionMap.put(SkillSearchController::getCanBeBlockedYes, SkillData::isCanBeBlocked);
+            functionMap.put(SkillSearchController::getCanBeBlockedNo, skillData -> !skillData.isCanBeBlocked());
+            functionMap.put(SkillSearchController::getCanBeResistedAny, skillData -> true);
+            functionMap.put(SkillSearchController::getCanBeResistedYes, SkillData::isCanBeResisted);
+            functionMap.put(SkillSearchController::getCanBeResistedNo, skillData -> !skillData.isCanBeResisted());
+            functionMap.put(SkillSearchController::getCanBeDodgedAny, skillData -> true);
+            functionMap.put(SkillSearchController::getCanBeDodgedYes, SkillData::isCanBeDodged);
+            functionMap.put(SkillSearchController::getCanBeDodgedNo, skillData -> !skillData.isCanBeDodged());
+            // damage
             functionMap.put(SkillSearchController::getDealDamageAny, skillData -> true);
             functionMap.put(SkillSearchController::getDealDamageYes, skillData -> skillData.getDamage() != null && !skillData.getDamage().isEmpty());
             functionMap.put(SkillSearchController::getDealDamageNo, skillData -> skillData.getDamage() == null || skillData.getDamage().isEmpty());
+            // change stats
             functionMap.put(SkillSearchController::getChangeStatsAny, skillData -> true);
             functionMap.put(SkillSearchController::getChangeStatsYes, skillData -> skillData.getStats().entrySet().stream()
                     .anyMatch(entry -> entry.getValue() == null || !entry.getValue().isEmpty()));
             functionMap.put(SkillSearchController::getChangeStatsNo, skillData -> skillData.getStats().entrySet().stream()
                     .allMatch(entry -> entry.getValue() != null && entry.getValue().isEmpty()));
+            // receive items
             functionMap.put(SkillSearchController::getReceiveItemsAny, skillData -> true);
             functionMap.put(SkillSearchController::getReceiveItemsYes, skillData -> !skillData.getReceiveItems().isEmpty());
             functionMap.put(SkillSearchController::getReceiveItemsNo, skillData -> skillData.getReceiveItems().isEmpty());
+            // require items
             functionMap.put(SkillSearchController::getRequireItemsAny, skillData -> true);
             functionMap.put(SkillSearchController::getRequireItemsYes, skillData -> !skillData.getRequirements().getItems().isEmpty());
             functionMap.put(SkillSearchController::getRequireItemsNo, skillData -> skillData.getRequirements().getItems().isEmpty());
+            // duration
             functionMap.put(SkillSearchController::getHasDurationAny, skillData -> true);
             functionMap.put(SkillSearchController::getHasDurationYes,
                     skillData -> (skillData.getDurationInMinutes() != null && !skillData.getDurationInMinutes().isEmpty())
@@ -215,6 +284,7 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
             functionMap.put(SkillSearchController::getHasDurationNo,
                     skillData -> (skillData.getDurationInMinutes() == null || skillData.getDurationInMinutes().isEmpty())
                             && (skillData.getDurationInTurns() == null || skillData.getDurationInTurns().isEmpty()));
+            // transformation
             functionMap.put(SkillSearchController::getApplyTransformationAny, skillData -> true);
             functionMap.put(SkillSearchController::getApplyTransformationYes,
                     skillData -> !skillData.getTransformation().getElements().isEmpty()
@@ -224,6 +294,7 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
                     skillData -> skillData.getTransformation().getElements().isEmpty()
                             && skillData.getTransformation().getSize() == null
                             && skillData.getTransformation().getBeingTypes().isEmpty());
+            // summon
             functionMap.put(SkillSearchController::getSummonAny, skillData -> true);
             functionMap.put(SkillSearchController::getSummonYes, skillData -> !skillData.getSummon().isEmpty());
             functionMap.put(SkillSearchController::getSummonNo, skillData -> skillData.getSummon().isEmpty());
@@ -248,28 +319,76 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
         return elements;
     }
 
-    public CheckBox getCanBeUsedInBattle() {
-        return canBeUsedInBattle;
+    public RadioButton getCanBeUsedInBattleAny() {
+        return canBeUsedInBattleAny;
     }
 
-    public CheckBox getCanBeUsedInCamp() {
-        return canBeUsedInCamp;
+    public RadioButton getCanBeUsedInBattleYes() {
+        return canBeUsedInBattleYes;
     }
 
-    public CheckBox getCanBeUsedInMap() {
-        return canBeUsedInMap;
+    public RadioButton getCanBeUsedInBattleNo() {
+        return canBeUsedInBattleNo;
     }
 
-    public CheckBox getCanBeBlocked() {
-        return canBeBlocked;
+    public RadioButton getCanBeUsedInCampAny() {
+        return canBeUsedInCampAny;
     }
 
-    public CheckBox getCanBeResisted() {
-        return canBeResisted;
+    public RadioButton getCanBeUsedInCampYes() {
+        return canBeUsedInCampYes;
     }
 
-    public CheckBox getCanBeDodged() {
-        return canBeDodged;
+    public RadioButton getCanBeUsedInCampNo() {
+        return canBeUsedInCampNo;
+    }
+
+    public RadioButton getCanBeUsedInMapAny() {
+        return canBeUsedInMapAny;
+    }
+
+    public RadioButton getCanBeUsedInMapYes() {
+        return canBeUsedInMapYes;
+    }
+
+    public RadioButton getCanBeUsedInMapNo() {
+        return canBeUsedInMapNo;
+    }
+
+    public RadioButton getCanBeBlockedAny() {
+        return canBeBlockedAny;
+    }
+
+    public RadioButton getCanBeBlockedYes() {
+        return canBeBlockedYes;
+    }
+
+    public RadioButton getCanBeBlockedNo() {
+        return canBeBlockedNo;
+    }
+
+    public RadioButton getCanBeResistedAny() {
+        return canBeResistedAny;
+    }
+
+    public RadioButton getCanBeResistedYes() {
+        return canBeResistedYes;
+    }
+
+    public RadioButton getCanBeResistedNo() {
+        return canBeResistedNo;
+    }
+
+    public RadioButton getCanBeDodgedAny() {
+        return canBeDodgedAny;
+    }
+
+    public RadioButton getCanBeDodgedYes() {
+        return canBeDodgedYes;
+    }
+
+    public RadioButton getCanBeDodgedNo() {
+        return canBeDodgedNo;
     }
 
     public RadioButton getDealDamageAny() {

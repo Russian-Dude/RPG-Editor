@@ -295,7 +295,7 @@ public class SkillMainViewController implements EntityEditorController<SkillData
         skillsCanCastFx.setElements(Data.getSkills());
         skillsCanCastFx.setNameBy(SkillData::getNameInEditor);
         skillsCanCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
-        skillsMustCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
+        skillsCanCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
         SearchConfigurator.skillPopupConfigurator.configure(skillsCanCastFx);
 
         // skills must cast:
@@ -304,7 +304,7 @@ public class SkillMainViewController implements EntityEditorController<SkillData
         skillsMustCastFx.setElements(Data.getSkills());
         skillsMustCastFx.setNameBy(SkillData::getNameInEditor);
         skillsMustCastFx.setSearchBy(SkillData::getName, SkillData::getNameInEditor);
-        skillsMustCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
+        skillsMustCastFx.setExtendedSearchOptions(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml")), SkillSearchController.getFunctionMap());
         SearchConfigurator.skillPopupConfigurator.configure(skillsMustCastFx);
 
         // skills on being action:
@@ -315,7 +315,7 @@ public class SkillMainViewController implements EntityEditorController<SkillData
         onBeingActionBuilder.setCollection(Data.getSkills())
                 .setNameByFunction(SkillData::getNameInEditor)
                 .setSearchByFunction(SkillData::getName)
-                .setExtendedSearchNode(new FXMLLoader(SkillMainViewController.class.getResource("/fxml/skill/SkillSearch.fxml")))
+                .setExtendedSearchNode(SkillMainViewController.class.getResource("/fxml/skill/view/SkillSearch.fxml"))
                 .setExtendedSearchFunctions(SkillSearchController.getFunctionMap());
         skillsOnBeingActionFx.setExtendedOptions(onBeingActionBuilder);
 
