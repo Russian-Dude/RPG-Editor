@@ -2,6 +2,7 @@ package com.rdude.editor.view;
 
 import com.rdude.editor.entity.EntitySearchController;
 import com.rdude.editor.enums.EnumsLists;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -14,7 +15,9 @@ import ru.rdude.fxlib.containers.MultipleChoiceContainerElement;
 import ru.rdude.rpg.game.logic.data.SkillData;
 import ru.rdude.rpg.game.logic.enums.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -22,6 +25,8 @@ import java.util.function.Supplier;
 
 public class SkillSearchController implements EntitySearchController<SkillData> {
 
+    @FXML
+    private ComboBox<String> isDescriber;
     @FXML
     private ComboBox<String> skillType;
     @FXML
@@ -123,6 +128,13 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
                 return s.equals("ANY") ? null : s;
             }
         };
+        List<String> isDescriberOptions = new ArrayList<>();
+        isDescriberOptions.add(null);
+        isDescriberOptions.add("AVERAGE SKILL");
+        isDescriberOptions.add("DESCRIBER");
+        isDescriber.setItems(FXCollections.observableList(isDescriberOptions));
+        isDescriber.setValue(null);
+        isDescriber.setConverter(stringConverter);
         skillType.setItems(EnumsLists.skillTypesStringWithNull);
         skillType.setConverter(stringConverter);
         attackType.setItems(EnumsLists.attackTypesStringWithNull);
@@ -134,6 +146,7 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
 
     @FXML
     private void resetSearch() {
+        isDescriber.setValue(null);
         skillType.setValue(null);
         attackType.setValue(null);
         effect.setValue(null);
@@ -161,6 +174,7 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
     public Map<Control, Function<SkillData, ?>> getControlFunctionMap() {
         if (controlFunctionMap == null) {
             controlFunctionMap = new HashMap<>();
+            controlFunctionMap.put(getIsDescriber(), skillData -> skillData.isDescriber() ? "DESCRIBER" : "AVERAGE SKILL");
             // comboBoxes & MultipleChoiceContainers
             controlFunctionMap.put(getSkillType(), skillData -> skillData.getType().name());
             controlFunctionMap.put(getAttackType(), skillData -> skillData.getAttackType().name());
@@ -168,14 +182,16 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
             controlFunctionMap.put(getElements(), SkillData::getElements);
             // use in battle
             controlFunctionMap.put(getCanBeUsedInBattleAny(), skillData -> true);
-            controlFunctionMap.put(getCanBeUsedInBattleYes(), skillData -> skillData.getUsableInGameStates().get(GameState.BATTLE));
-            controlFunctionMap.put(getCanBeUsedInBattleNo(), skillData -> !skillData.getUsableInGameStates().get(GameState.BATTLE));
+            controlFunctionMap.put(getCanBeUsedInBattleYes(), skillData -> skillData.getUsableInGameStates().containsKey(GameState.BATTLE) && skillData.getUsableInGameStates().get(GameState.BATTLE));
+            controlFunctionMap.put(getCanBeUsedInBattleNo(), skillData -> !skillData.getUsableInGameStates().containsKey(GameState.BATTLE) || !skillData.getUsableInGameStates().get(GameState.BATTLE));
+            // use in camp
             controlFunctionMap.put(getCanBeUsedInCampAny(), skillData -> true);
-            controlFunctionMap.put(getCanBeUsedInCampYes(), skillData -> skillData.getUsableInGameStates().get(GameState.CAMP));
-            controlFunctionMap.put(getCanBeUsedInCampNo(), skillData -> !skillData.getUsableInGameStates().get(GameState.CAMP));
+            controlFunctionMap.put(getCanBeUsedInCampYes(), skillData -> skillData.getUsableInGameStates().containsKey(GameState.CAMP) && skillData.getUsableInGameStates().get(GameState.CAMP));
+            controlFunctionMap.put(getCanBeUsedInCampNo(), skillData -> !skillData.getUsableInGameStates().containsKey(GameState.CAMP) || !skillData.getUsableInGameStates().get(GameState.CAMP));
+            // use in map
             controlFunctionMap.put(getCanBeUsedInMapAny(), skillData -> true);
-            controlFunctionMap.put(getCanBeUsedInMapYes(), skillData -> skillData.getUsableInGameStates().get(GameState.MAP));
-            controlFunctionMap.put(getCanBeUsedInMapNo(), skillData -> !skillData.getUsableInGameStates().get(GameState.MAP));
+            controlFunctionMap.put(getCanBeUsedInMapYes(), skillData -> skillData.getUsableInGameStates().containsKey(GameState.MAP) && skillData.getUsableInGameStates().get(GameState.MAP));
+            controlFunctionMap.put(getCanBeUsedInMapNo(), skillData -> !skillData.getUsableInGameStates().containsKey(GameState.MAP) || !skillData.getUsableInGameStates().get(GameState.MAP));
             // can be avoided
             controlFunctionMap.put(getCanBeBlockedAny(), skillData -> true);
             controlFunctionMap.put(getCanBeBlockedYes(), SkillData::isCanBeBlocked);
@@ -233,6 +249,7 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
     public static Map<Function<SkillSearchController, Control>, Function<SkillData, ?>> getFunctionMap() {
         if (functionMap == null) {
             functionMap = new HashMap<>();
+            functionMap.put(SkillSearchController::getIsDescriber, skillData -> skillData.isDescriber() ? "DESCRIBER" : "AVERAGE SKILL");
             // comboBoxes and MultipleChoiceContainers
             functionMap.put(SkillSearchController::getSkillType, skillData -> skillData.getType().name());
             functionMap.put(SkillSearchController::getAttackType, skillData -> skillData.getAttackType().name());
@@ -240,14 +257,14 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
             functionMap.put(SkillSearchController::getElements, SkillData::getElements);
             // can be used in
             functionMap.put(SkillSearchController::getCanBeUsedInBattleAny, skillData -> true);
-            functionMap.put(SkillSearchController::getCanBeUsedInBattleYes, skillData -> skillData.getUsableInGameStates().get(GameState.BATTLE));
-            functionMap.put(SkillSearchController::getCanBeUsedInBattleNo, skillData -> !skillData.getUsableInGameStates().get(GameState.BATTLE));
+            functionMap.put(SkillSearchController::getCanBeUsedInBattleYes, skillData -> skillData.getUsableInGameStates().containsKey(GameState.BATTLE) && skillData.getUsableInGameStates().get(GameState.BATTLE));
+            functionMap.put(SkillSearchController::getCanBeUsedInBattleNo, skillData -> !skillData.getUsableInGameStates().containsKey(GameState.BATTLE) || !skillData.getUsableInGameStates().get(GameState.BATTLE));
             functionMap.put(SkillSearchController::getCanBeUsedInCampAny, skillData -> true);
-            functionMap.put(SkillSearchController::getCanBeUsedInCampYes, skillData -> skillData.getUsableInGameStates().get(GameState.CAMP));
-            functionMap.put(SkillSearchController::getCanBeUsedInCampNo, skillData -> !skillData.getUsableInGameStates().get(GameState.CAMP));
+            functionMap.put(SkillSearchController::getCanBeUsedInCampYes, skillData -> skillData.getUsableInGameStates().containsKey(GameState.CAMP) && skillData.getUsableInGameStates().get(GameState.CAMP));
+            functionMap.put(SkillSearchController::getCanBeUsedInCampNo, skillData -> !skillData.getUsableInGameStates().containsKey(GameState.CAMP) || !skillData.getUsableInGameStates().get(GameState.CAMP));
             functionMap.put(SkillSearchController::getCanBeUsedInMapAny, skillData -> true);
-            functionMap.put(SkillSearchController::getCanBeUsedInMapYes, skillData -> skillData.getUsableInGameStates().get(GameState.MAP));
-            functionMap.put(SkillSearchController::getCanBeUsedInMapNo, skillData -> !skillData.getUsableInGameStates().get(GameState.MAP));
+            functionMap.put(SkillSearchController::getCanBeUsedInMapYes, skillData -> skillData.getUsableInGameStates().containsKey(GameState.MAP) && skillData.getUsableInGameStates().get(GameState.MAP));
+            functionMap.put(SkillSearchController::getCanBeUsedInMapNo, skillData -> !skillData.getUsableInGameStates().containsKey(GameState.MAP) || !skillData.getUsableInGameStates().get(GameState.MAP));
             // can be avoided
             functionMap.put(SkillSearchController::getCanBeBlockedAny, skillData -> true);
             functionMap.put(SkillSearchController::getCanBeBlockedYes, SkillData::isCanBeBlocked);
@@ -473,5 +490,9 @@ public class SkillSearchController implements EntitySearchController<SkillData> 
 
     public RadioButton getSummonNo() {
         return summonNo;
+    }
+
+    public ComboBox<String> getIsDescriber() {
+        return isDescriber;
     }
 }

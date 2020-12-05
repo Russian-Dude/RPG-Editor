@@ -40,7 +40,6 @@ public class SkillMainViewController implements EntityEditorController<SkillData
 
 
     private String fileName;
-    private Long insideModule;
     private SkillData skill;
     private boolean wasChanged;
     private SaveButtons<SkillData> saveButtons;
@@ -652,6 +651,7 @@ public class SkillMainViewController implements EntityEditorController<SkillData
             showUnableToSaveMessage(reasonsWhyCantSave);
             return false;
         }
+        skill.setDescriber(false);
         skill.setName(nameFx.getText());
         skill.setAttackType(AttackType.valueOf(attackType.getValue()));
         skill.setType(SkillType.valueOf(skillTypeFx.getValue()));

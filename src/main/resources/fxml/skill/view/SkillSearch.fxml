@@ -24,6 +24,7 @@
                   <VBox spacing="15.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#resetSearch" prefWidth="150.0" text="Reset search" />
+                        <ComboBox fx:id="isDescriber" prefWidth="150.0" promptText="ANY SKILL" />
                         <VBox>
                            <children>
                               <Label text="Type:" />

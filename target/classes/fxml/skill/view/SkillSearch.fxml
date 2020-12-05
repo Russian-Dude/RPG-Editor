@@ -24,6 +24,7 @@
                   <VBox spacing="15.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#resetSearch" prefWidth="150.0" text="Reset search" />
+                        <ComboBox fx:id="isDescriber" prefWidth="150.0" promptText="ANY SKILL" />
                         <VBox>
                            <children>
                               <Label text="Type:" />
@@ -59,10 +60,10 @@
                                     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <Label text="Yes" GridPane.columnIndex="1" />
@@ -104,10 +105,10 @@
                                     <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" />
                                  </columnConstraints>
                                  <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" valignment="CENTER" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
                                     <Label text="Yes" GridPane.columnIndex="1" />

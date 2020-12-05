@@ -24,45 +24,55 @@ public interface EntityEditorController<T extends EntityData> {
 
     enum Type {
         SKILL ("/fxml/skill/SkillMainView.fxml",
+                "/fxml/skill/view/SkillDescriberMainView.fxml",
                 Data.getSkills(),
                 SkillData.class,
                 "/fxml/skill/view/SkillSearch.fxml",
                 MainViewController::getSkillsTabPane),
 
         ITEM ("/fxml/skill/view/ItemMainView.fxml",
+                "/fxml/skill/view/ItemDescriberMainView.fxml",
                 Data.getItems(),
                 ItemData.class,
                 "/fxml/skill/view/ItemSearch.fxml",
                 MainViewController::getItemsTabPane),
 
         MONSTER ("/fxml/skill/view/MonsterMainView.fxml",
+                "/fxml/skill/view/ItemDescriberMainView.fxml",
                 Data.getMonsters(),
                 MonsterData.class,
                 "/fxml/skill/view/MonsterSearch.fxml",
                 MainViewController::getMonstersTabPane),
 
         MODULE("/fxml/module/ModuleMainView.fxml",
+                "not needed",
                 Data.getModules(),
                 Module.class,
                 "/fxml/module/ModuleSearch.fxml",
                 MainViewController::getModulesTabPane);
 
-        private String fxmlPath;
+        private String fxmlPathToMainView;
+        private String fxmlPathToDescriber;
         private ObservableList<? extends EntityData> dataList;
         private Class<? extends EntityData> cl;
         private String fxmlPathToSearchController;
         private Supplier<TabPane> entityTabsHolder;
 
-        Type(String fxmlPath, ObservableList<? extends EntityData> dataList, Class<? extends EntityData> cl, String fxmlPathToSearchController, Supplier<TabPane> entityTabsHolder) {
-            this.fxmlPath = fxmlPath;
+        Type(String fxmlPathToMainView, String fxmlPathToDescriber, ObservableList<? extends EntityData> dataList, Class<? extends EntityData> cl, String fxmlPathToSearchController, Supplier<TabPane> entityTabsHolder) {
+            this.fxmlPathToMainView = fxmlPathToMainView;
+            this.fxmlPathToDescriber = fxmlPathToDescriber;
             this.dataList = dataList;
             this.cl = cl;
             this.fxmlPathToSearchController = fxmlPathToSearchController;
             this.entityTabsHolder = entityTabsHolder;
         }
 
-        public String getFxmlPath() {
-            return fxmlPath;
+        public String getFxmlPathToMainView() {
+            return fxmlPathToMainView;
+        }
+
+        public String getFxmlPathToDescriber() {
+            return fxmlPathToDescriber;
         }
 
         public ObservableList<? extends EntityData> getDataList() {

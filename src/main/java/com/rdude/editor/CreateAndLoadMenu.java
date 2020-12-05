@@ -7,6 +7,7 @@ import javafx.scene.layout.VBox;
 public class CreateAndLoadMenu extends VBox {
 
     private Button createNewButton;
+    private Button createNewDescriptorButton;
     private Button loadFromModuleButton;
     private Button loadFromFileButton;
 
@@ -15,14 +16,21 @@ public class CreateAndLoadMenu extends VBox {
         setSpacing(25);
         // creating buttons:
         createNewButton = new Button("CREATE NEW " + type.name());
+        createNewDescriptorButton = new Button("CREATE " + type.name() + " DESCRIBER");
         loadFromModuleButton = new Button("LOAD " + type.name());
         loadFromFileButton = new Button("LOAD FILE");
-        configButtonSize(createNewButton, loadFromModuleButton, loadFromFileButton);
+        configButtonSize(createNewButton, createNewDescriptorButton, loadFromModuleButton, loadFromFileButton);
         getChildren().add(createNewButton);
+        if (type != EntityEditorController.Type.MODULE) {
+            getChildren().add(createNewDescriptorButton);
+        }
         getChildren().add(loadFromModuleButton);
         getChildren().add(loadFromFileButton);
         // buttons on action:
         createNewButton.setOnAction(event -> EntityEditorCreator.createNew(type));
+        if (type != EntityEditorController.Type.MODULE) {
+            createNewDescriptorButton.setOnAction(event -> EntityEditorCreator.createNewDescriptor(type));
+        }
         loadFromModuleButton.setOnAction(event -> EntityEditorCreator.loadFromModule(type));
         loadFromFileButton.setOnAction(event -> EntityEditorCreator.loadFromFile(type));
     }

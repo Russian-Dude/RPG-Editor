@@ -17,12 +17,12 @@ public class EntityEditorCreator {
 
     public static void createNew(EntityEditorController.Type type) {
         try {
-            FXMLLoader loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPath()));
+            FXMLLoader loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPathToMainView()));
             TabPane entityNode = loader.load();
             Tab entityTab = new Tab();
             entityTab.setContent(entityNode);
             entityTab.setText("Unnamed " + type.name().toLowerCase());
-            EntityEditorController controller = loader.getController();
+            EntityEditorController<?> controller = loader.getController();
             controller.setMainTab(entityTab);
             controller.initNew();
             setTabOnCloseRequest(entityTab, controller);
@@ -31,6 +31,26 @@ public class EntityEditorCreator {
         } catch (Exception e) {
             e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong. New " + type.name().toLowerCase() + " can not be created", ButtonType.OK);
+            alert.showAndWait();
+        }
+    }
+
+    public static void createNewDescriptor(EntityEditorController.Type type) {
+        try {
+            FXMLLoader loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPathToDescriber()));
+            TabPane entityNode = loader.load();
+            Tab entityTab = new Tab();
+            entityTab.setContent(entityNode);
+            entityTab.setText("Unnamed " + type.name().toLowerCase() + " descriptor");
+            EntityEditorController<?> controller = loader.getController();
+            controller.setMainTab(entityTab);
+            controller.initNew();
+            setTabOnCloseRequest(entityTab, controller);
+            type.getEntityTabsHolder().getTabs().add(type.getEntityTabsHolder().getTabs().size() - 1, entityTab);
+            type.getEntityTabsHolder().getSelectionModel().select(entityTab);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong. New " + type.name().toLowerCase() + " descriptor can not be created", ButtonType.OK);
             alert.showAndWait();
         }
     }
@@ -69,7 +89,7 @@ public class EntityEditorCreator {
                 }
                 // if this entity is not already opened
                 else {
-                    EntityEditorController controller = createEntityNodeAndAdd(entityData, type.getEntityTabsHolder(), type);
+                    EntityEditorController<?> controller = createEntityNodeAndAdd(entityData, type.getEntityTabsHolder(), type);
                     controller.getInsideModuleOrFile().setText("Inside module");
                     Module insideModule = Data.getInsideModule(entityData);
                     controller.getInsideModule().setText(insideModule.getNameInEditor());
@@ -136,7 +156,13 @@ public class EntityEditorCreator {
     }
 
     private static EntityEditorController createEntityNodeAndAdd(EntityData entityData, TabPane entityTabsHolder, EntityEditorController.Type type) throws IOException {
-        FXMLLoader loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPath()));
+        FXMLLoader loader;
+        if (entityData.isDescriber()) {
+            loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPathToDescriber()));
+        }
+        else {
+               loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPathToMainView()));
+        }
         Tab entityTab = new Tab();
         TabPane entityNode = loader.load();
         EntityEditorController controller = loader.getController();

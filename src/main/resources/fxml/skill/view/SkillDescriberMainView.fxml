@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import ru.rdude.fxlib.containers.MultipleChoiceContainer?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rdude.editor.view.SkillDescriberMainViewController">
+  <tabs>
+    <Tab closable="false" text="Logic">
+      <content>
+            <HBox spacing="25.0">
+               <children>
+                  <ScrollPane pannable="true">
+                     <content>
+                        <SplitPane>
+                           <items>
+                              <VBox alignment="CENTER">
+                                 <children>
+                                    <Label alignment="CENTER" contentDisplay="CENTER" text="DESCRIPTOR PROPERTIES" textAlignment="CENTER">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox spacing="15.0">
+                                       <children>
+                                          <VBox alignment="TOP_CENTER" spacing="10.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" prefWidth="200.0" spacing="20.0">
+                                                   <children>
+                                                      <Label fx:id="insideModuleOrFileFx" text="From module">
+                                                         <padding>
+                                                            <Insets left="15.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="System Italic" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="insideFx" text="-">
+                                                         <font>
+                                                            <Font name="System Italic" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <GridPane>
+                                                  <columnConstraints>
+                                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                    <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label contentDisplay="CENTER" text="Name" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                                                      <Label text="Name in Editor" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                                                      <TextField fx:id="nameFx" alignment="CENTER" maxWidth="150.0" onKeyReleased="#showNameInEditorSameAsName" GridPane.columnIndex="1" />
+                                                      <TextField fx:id="nameInEditorFx" alignment="CENTER" maxWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                   </children>
+                                                </GridPane>
+                                                <VBox alignment="CENTER">
+                                                   <children>
+                                                      <Label text="Description:" />
+                                                      <TextArea minWidth="340.0" prefHeight="100.0" prefWidth="190.0" wrapText="true" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="10.0" />
+                                                   </padding>
+                                                </VBox>
+                                                <GridPane prefWidth="261.0" vgap="5.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="143.0" minWidth="100.0" prefWidth="100.0" />
+                                                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="199.0" minWidth="10.0" prefWidth="152.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                      <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="75.0" minHeight="75.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints maxHeight="68.0" minHeight="5.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label text="Attack type" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                                                      <ComboBox fx:id="attackType" prefWidth="150.0" promptText="MELEE" visibleRowCount="4" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                                                      <Label text="Effect" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                                                      <ComboBox fx:id="effectFx" prefWidth="150.0" promptText="NO" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <Label text="Elements" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                                                      <Label text="Skill type" />
+                                                      <ComboBox fx:id="skillTypeFx" prefWidth="150.0" GridPane.columnIndex="1" />
+                                                      <MultipleChoiceContainer fx:id="elementsFx" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                         <padding>
+                                                            <Insets left="5.0" right="5.0" />
+                                                         </padding>
+                                                      </MultipleChoiceContainer>
+                                                      <Label text="Buff type" GridPane.rowIndex="2" />
+                                                      <ComboBox fx:id="buffTypeFx" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets right="10.0" />
+                                                   </padding>
+                                                </GridPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                       <padding>
+                                          <Insets right="10.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </items>
+                        </SplitPane>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </HBox>
+      </content>
+    </Tab>
+     <Tab fx:id="saveTab" closable="false" />
+  </tabs>
+</TabPane>
