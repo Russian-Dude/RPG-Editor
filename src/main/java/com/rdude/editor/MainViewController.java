@@ -1,9 +1,12 @@
 package com.rdude.editor;
 
+import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+import com.rdude.editor.settings.Settings;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 
+import java.io.File;
 import java.io.IOException;
 
 public class MainViewController {

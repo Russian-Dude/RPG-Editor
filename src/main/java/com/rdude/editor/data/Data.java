@@ -1,15 +1,12 @@
 package com.rdude.editor.data;
 
-import com.rdude.editor.EntityEditorController;
 import javafx.collections.*;
 import javafx.scene.image.Image;
 import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.Module;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
 public class Data {
@@ -24,8 +21,9 @@ public class Data {
     private final ObservableMap<Long, MonsterData> monstersMap;
     private final ObservableList<MonsterData> monsters;
     private final ObservableMap<Long, Module> entityInsideModule;
+    private final ObservableMap<Module, ModuleState> moduleStates;
 
-    private ObservableList<Image> images;
+    private ObservableMap<Long, Image> images;
 
     private Data() {
         // init fields:
@@ -37,6 +35,8 @@ public class Data {
         items = FXCollections.observableArrayList();
         monsters = FXCollections.observableArrayList();
         entityInsideModule = FXCollections.observableHashMap();
+        moduleStates = FXCollections.observableHashMap();
+        images = FXCollections.observableHashMap();
 
         // link maps to modules:
         modules.addListener((ListChangeListener<Module>) change -> {
@@ -49,6 +49,7 @@ public class Data {
                     change.getAddedSubList().forEach(module -> module.getItemData().forEach(itemData -> entityInsideModule.putIfAbsent(itemData.getGuid(), module)));
                     change.getAddedSubList().forEach(module -> module.getMonsterData().forEach(monsterData -> monstersMap.putIfAbsent(monsterData.getGuid(), monsterData)));
                     change.getAddedSubList().forEach(module -> module.getMonsterData().forEach(monsterData -> entityInsideModule.putIfAbsent(monsterData.getGuid(), module)));
+                    change.getAddedSubList().forEach(module -> moduleStates.putIfAbsent(module, new ModuleState(module)));
                 }
                 // when modules removed:
                 else if (change.wasRemoved()) {
@@ -58,6 +59,7 @@ public class Data {
                     change.getRemoved().forEach(module -> module.getItemData().forEach(itemData -> entityInsideModule.remove(itemData.getGuid())));
                     change.getRemoved().forEach(module -> module.getMonsterData().forEach(monsterData -> monstersMap.remove(monsterData.getGuid())));
                     change.getRemoved().forEach(module -> module.getMonsterData().forEach(monsterData -> entityInsideModule.remove(monsterData.getGuid())));
+                    change.getRemoved().forEach(moduleStates::remove);
 
                 }
             }
@@ -142,8 +144,8 @@ public class Data {
         return getInstance().entityInsideModule.get(entityData.getGuid());
     }
 
-    public ObservableList<Image> getImages() {
-        return images;
+    public static ObservableMap<Long, Image> getImages() {
+        return getInstance().images;
     }
 
     public static void addEntityData(EntityData entityData) {
@@ -221,5 +223,33 @@ public class Data {
         getInstance().modules.remove(module);
     }
 
+    public static ModuleState getModuleState(Module module) {
+        return getInstance().moduleStates.get(module);
+    }
 
+    public class ModuleState {
+        private Module module;
+        private boolean imagesWereUnpacked = false;
+        private boolean imagesWereChanged = false;
+
+        public ModuleState(Module module) {
+            this.module = module;
+        }
+
+        public boolean isImagesWereUnpacked() {
+            return imagesWereUnpacked;
+        }
+
+        public void setImagesWereUnpacked(boolean imagesWereUnpacked) {
+            this.imagesWereUnpacked = imagesWereUnpacked;
+        }
+
+        public boolean isImagesWereChanged() {
+            return imagesWereChanged;
+        }
+
+        public void setImagesWereChanged(boolean imagesWereChanged) {
+            this.imagesWereChanged = imagesWereChanged;
+        }
+    }
 }
