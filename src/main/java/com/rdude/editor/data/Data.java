@@ -70,8 +70,7 @@ public class Data {
         skillsMap.addListener((MapChangeListener<Long, SkillData>) change -> {
             if (change.wasAdded()) {
                 skills.add(change.getValueAdded());
-            }
-            else if (change.wasRemoved()) {
+            } else if (change.wasRemoved()) {
                 skills.remove(change.getValueRemoved());
             }
         });
@@ -79,8 +78,7 @@ public class Data {
         itemsMap.addListener((MapChangeListener<Long, ItemData>) change -> {
             if (change.wasAdded()) {
                 items.add(change.getValueAdded());
-            }
-            else if (change.wasRemoved()) {
+            } else if (change.wasRemoved()) {
                 items.remove(change.getValueRemoved());
             }
         });
@@ -88,8 +86,7 @@ public class Data {
         monstersMap.addListener((MapChangeListener<Long, MonsterData>) change -> {
             if (change.wasAdded()) {
                 monsters.add(change.getValueAdded());
-            }
-            else if (change.wasRemoved()) {
+            } else if (change.wasRemoved()) {
                 monsters.remove(change.getValueRemoved());
             }
         });
@@ -158,17 +155,13 @@ public class Data {
         }
         if (entityData instanceof SkillData) {
             addSkillData((SkillData) entityData);
-        }
-        else if (entityData instanceof ItemData) {
+        } else if (entityData instanceof ItemData) {
             addItemData((ItemData) entityData);
-        }
-        else if (entityData instanceof MonsterData) {
+        } else if (entityData instanceof MonsterData) {
             addMonsterData((MonsterData) entityData);
-        }
-        else if (entityData instanceof Module) {
+        } else if (entityData instanceof Module) {
             addModule((Module) entityData);
-        }
-        else throw new IllegalArgumentException(entityData.getClass() + " not implemented");
+        } else throw new IllegalArgumentException(entityData.getClass() + " not implemented");
     }
 
     public static void addSkillData(SkillData skillData) {
@@ -198,24 +191,28 @@ public class Data {
     public static void removeEntityData(EntityData entityData) {
         if (entityData instanceof SkillData) {
             removeSkillData((SkillData) entityData);
-        }
-        else if (entityData instanceof ItemData) {
+        } else if (entityData instanceof ItemData) {
             removeItemData((ItemData) entityData);
-        }
-        else if (entityData instanceof MonsterData) {
+        } else if (entityData instanceof MonsterData) {
             removeMonsterData((MonsterData) entityData);
-        }
-        else if (entityData instanceof Module) {
+        } else if (entityData instanceof Module) {
             removeModule((Module) entityData);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("not implemented");
         }
+    }
+
+    public static boolean isLoaded(long guid) {
+        return getInstance().skillsMap.containsKey(guid)
+                || getInstance().itemsMap.containsKey(guid)
+                || getInstance().monstersMap.containsKey(guid)
+                || getInstance().modules.stream().map(Module::getGuid).anyMatch(g -> g.equals(guid));
     }
 
     public static void addModule(Module module) {
         if (!getInstance().modules.contains(module)) {
             getInstance().modules.add(module);
+            getInstance().moduleStates.put(module, new ModuleState(module));
         }
     }
 
@@ -227,7 +224,7 @@ public class Data {
         return getInstance().moduleStates.get(module);
     }
 
-    public class ModuleState {
+    public static class ModuleState {
         private Module module;
         private boolean imagesWereUnpacked = false;
         private boolean imagesWereChanged = false;

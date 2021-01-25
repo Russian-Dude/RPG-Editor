@@ -13,14 +13,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import ru.rdude.fxlib.boxes.SearchComboBox;
 import ru.rdude.fxlib.containers.*;
 import ru.rdude.fxlib.textfields.AutocomplitionTextField;
 import ru.rdude.rpg.game.logic.coefficients.Coefficients;
-import ru.rdude.rpg.game.logic.data.EntityData;
-import ru.rdude.rpg.game.logic.data.ItemData;
-import ru.rdude.rpg.game.logic.data.MonsterData;
-import ru.rdude.rpg.game.logic.data.SkillData;
+import ru.rdude.rpg.game.logic.data.*;
+import ru.rdude.rpg.game.logic.data.Module;
+import ru.rdude.rpg.game.logic.data.resources.ModuleResources;
 import ru.rdude.rpg.game.logic.entities.beings.Being;
 import ru.rdude.rpg.game.logic.entities.beings.BeingAction;
 import ru.rdude.rpg.game.logic.entities.beings.Player;
@@ -177,15 +179,34 @@ public class SkillMainViewController implements EntityEditorController<SkillData
     @FXML
     private MultipleChoiceContainer<Size> buffSizeDefFx;
 
+    // visual
+    private ImagePickerController iconPicker;
+    @FXML
+    private AnchorPane iconAnchorPane;
+
 
     @FXML
-    public void initialize() throws IOException {
+    public void initialize() {
         wasChanged = false;
         loadSimpleComboBoxes();
         loadMultipleChoiceContainers();
         configAutoComplitionTextFields();
         configSaveButtons();
         configWasChangedListeners();
+        configVisuals();
+    }
+
+    private void configVisuals() {
+        try {
+            FXMLLoader loader = new FXMLLoader(SkillMainViewController.class.getResource("/fxml/resource/ImagePicker.fxml"));
+            VBox iconPickerNode = loader.load();
+            iconPicker = loader.getController();
+            iconPicker.config(null, 64d, 64d);
+            iconAnchorPane.getChildren().add(iconPickerNode);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void configWasChangedListeners() {
@@ -610,6 +631,13 @@ public class SkillMainViewController implements EntityEditorController<SkillData
                 }
             });
         }
+
+        // visual
+
+        // icon
+        if (skillData.getResources().getSkillIcon() != null) {
+            iconPicker.setImage(skillData.getResources().getSkillIcon());
+        }
         wasChanged = false;
     }
 
@@ -879,6 +907,15 @@ public class SkillMainViewController implements EntityEditorController<SkillData
                         skill.getBuffCoefficients().def().size().set(selectedElement, coefficient);
                     }
                 });
+
+        // visual
+        Module insideModule = Data.getInsideModule(skill);
+        // icon
+        skill.getResources().setSkillIcon(iconPicker.getResource());
+        if (insideModule != null) {
+            ((ModuleResources) insideModule.getResources()).addImageResource(iconPicker.getResource());
+        }
+
         wasChanged = false;
         return true;
     }
@@ -1066,6 +1103,10 @@ public class SkillMainViewController implements EntityEditorController<SkillData
 
     @Override
     public void initNew() {
+        if (skill == null) {
+            skill = new SkillData(Functions.generateGuid());
+            EntityEditorController.openEntities.putIfAbsent(skill, this);
+        }
     }
 
     @Override
@@ -1166,5 +1207,10 @@ public class SkillMainViewController implements EntityEditorController<SkillData
                 .map(element -> ((MultipleChoiceContainerElementTwoChoiceWithPercents<BeingAction.Action, SkillData>) element))
                 .filter(element -> element.getSecondValue().getGuid() == oldValue)
                 .forEach(element -> element.setSecondValue(Data.getSkillData(newValue)));
+    }
+
+    @Override
+    public Set<ImagePickerController> getImagePickers() {
+        return Set.of(iconPicker);
     }
 }

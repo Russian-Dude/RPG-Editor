@@ -1,5 +1,6 @@
 package com.rdude.editor;
 
+import com.rdude.editor.enums.EntityType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
@@ -11,7 +12,7 @@ public class CreateAndLoadMenu extends VBox {
     private Button loadFromModuleButton;
     private Button loadFromFileButton;
 
-    public CreateAndLoadMenu(TabPane entityTabsHolder, EntityEditorController.Type type) {
+    public CreateAndLoadMenu(TabPane entityTabsHolder, EntityType type) {
         super();
         setSpacing(25);
         // creating buttons:
@@ -21,14 +22,14 @@ public class CreateAndLoadMenu extends VBox {
         loadFromFileButton = new Button("LOAD FILE");
         configButtonSize(createNewButton, createNewDescriptorButton, loadFromModuleButton, loadFromFileButton);
         getChildren().add(createNewButton);
-        if (type != EntityEditorController.Type.MODULE) {
+        if (type != EntityType.MODULE) {
             getChildren().add(createNewDescriptorButton);
         }
         getChildren().add(loadFromModuleButton);
         getChildren().add(loadFromFileButton);
         // buttons on action:
         createNewButton.setOnAction(event -> EntityEditorCreator.createNew(type));
-        if (type != EntityEditorController.Type.MODULE) {
+        if (type != EntityType.MODULE) {
             createNewDescriptorButton.setOnAction(event -> EntityEditorCreator.createNewDescriptor(type));
         }
         loadFromModuleButton.setOnAction(event -> EntityEditorCreator.loadFromModule(type));

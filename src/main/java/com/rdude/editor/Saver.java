@@ -1,13 +1,14 @@
 package com.rdude.editor;
 
 import com.rdude.editor.data.Data;
+import com.rdude.editor.module.view.ModuleMainViewController;
 import com.rdude.editor.packer.Packer;
 import com.rdude.editor.settings.Settings;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import ru.rdude.rpg.game.logic.data.EntityData;
+import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.Module;
-import ru.rdude.rpg.game.logic.data.SkillData;
+import ru.rdude.rpg.game.logic.data.resources.ModuleResources;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -58,6 +59,20 @@ public class Saver<T extends EntityData> {
                     EntityEditorController.openEntities.get(newData).getInsideModule().setText(module.getNameInEditor());
                 }
             }
+            // add entity resources to module
+            // images
+            newData.getResources().getImageResources().forEach(imageResource -> {
+                if (imageResource != null && !module.getResources().getImageResources().contains(imageResource)) {
+                    ((ModuleResources) module.getResources()).addImageResource(imageResource);
+                    Data.getModuleState(module).setImagesWereChanged(true);
+                }
+            });
+            // sounds
+            newData.getResources().getSoundResources().forEach(soundResource -> {
+                if (soundResource != null && !module.getResources().getSoundResources().contains(soundResource)) {
+                    ((ModuleResources) module.getResources()).addSoundResource(soundResource);
+                }
+            });
         }
 
         entityData.getModuleDependencies().stream()
@@ -70,10 +85,10 @@ public class Saver<T extends EntityData> {
     }
 
     public void save(T entityData, String path) {
-        if (entityData instanceof SkillData) {
-            packer.pack((SkillData) entityData, path);
-        } else if (entityData instanceof Module) {
-            packer.pack((Module) entityData, path);
+        EntityEditorController<?> controller = EntityEditorController.openEntities.get(entityData);
+        boolean isSaved = controller.save();
+        if (isSaved) {
+            packer.pack(entityData, path);
         }
     }
 }

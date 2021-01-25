@@ -1,12 +1,11 @@
 package com.rdude.editor;
 
-import com.badlogic.gdx.tools.texturepacker.TexturePacker;
-import com.rdude.editor.settings.Settings;
+import com.rdude.editor.enums.EntityType;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 
-import java.io.File;
 import java.io.IOException;
 
 public class MainViewController {
@@ -37,12 +36,12 @@ public class MainViewController {
         mainInstance = this;
         // skills:
         skillsTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-        CreateAndLoadMenu skillsCreateAndLoadMenu = new CreateAndLoadMenu(skillsTabPane, EntityEditorController.Type.SKILL);
+        CreateAndLoadMenu skillsCreateAndLoadMenu = new CreateAndLoadMenu(skillsTabPane, EntityType.SKILL);
         skillsCreateAndLoadMenu.setAlignment(Pos.CENTER);
         skillCreationTab.setContent(skillsCreateAndLoadMenu);
         // modules:
         modulesTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-        CreateAndLoadMenu modulesCreateAndLoadMenu = new CreateAndLoadMenu(modulesTabPane, EntityEditorController.Type.MODULE);
+        CreateAndLoadMenu modulesCreateAndLoadMenu = new CreateAndLoadMenu(modulesTabPane, EntityType.MODULE);
         modulesCreateAndLoadMenu.setAlignment(Pos.CENTER);
         moduleCreationTab.setContent(modulesCreateAndLoadMenu);
     }

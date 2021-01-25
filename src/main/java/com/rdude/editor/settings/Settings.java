@@ -4,6 +4,7 @@ import ru.rdude.rpg.game.logic.data.Module;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Properties;
@@ -27,6 +28,8 @@ public class Settings {
     private File tempImagesFolder;
     private File tempPackedImagesFolder;
 
+    private File loadImageFolder;
+
     private Settings() {
         properties = new Properties();
         try {
@@ -46,6 +49,7 @@ public class Settings {
         tempFolder = new File((String) properties.getOrDefault("temp_folder", "temp\\"));
         tempImagesFolder = new File((String) properties.getOrDefault("temp_images_folder", "temp\\images\\"));
         tempPackedImagesFolder = new File((String) properties.getOrDefault("temp_packed_images_folder", "temp\\packed_images\\"));
+        loadImageFolder = new File((String) properties.getOrDefault("load_image_folder", ""));
     }
 
     private static Settings getInstance() {
@@ -65,6 +69,8 @@ public class Settings {
 
     public static void setAutosaveModulesWhenEntityAdded(boolean autosaveModulesWhenEntityAdded) {
         getInstance().autosaveModulesWhenEntityAdded = autosaveModulesWhenEntityAdded;
+        getInstance().properties.setProperty("autosave_modules", String.valueOf(autosaveModulesWhenEntityAdded));
+        getInstance().storeProperties();
     }
 
     public static File getModulesFolder() {
@@ -73,6 +79,8 @@ public class Settings {
 
     public static void setModulesFolder(File modulesFolder) {
         getInstance().modulesFolder = modulesFolder;
+        getInstance().properties.setProperty("modules_folder", modulesFolder.getPath());
+        getInstance().storeProperties();
     }
 
     public static boolean isAskAutoLoadModules() {
@@ -81,6 +89,8 @@ public class Settings {
 
     public static void setAskAutoLoadModules(boolean askAutoLoadModules) {
         getInstance().askAutoLoadModules = askAutoLoadModules;
+        getInstance().properties.setProperty("ask_auto_load_modules", String.valueOf(askAutoLoadModules));
+        getInstance().storeProperties();
     }
 
     public static boolean isAutoLoadModules() {
@@ -89,10 +99,14 @@ public class Settings {
 
     public static void setAutoLoadModules(boolean autoLoadModules) {
         getInstance().autoLoadModules = autoLoadModules;
+        getInstance().properties.setProperty("auto_load_modules", String.valueOf(autoLoadModules));
+        getInstance().storeProperties();
     }
 
     public static void setSkillsFolder(File skillsFolder) {
         getInstance().skillsFolder = skillsFolder;
+        getInstance().properties.setProperty("skills_folder", skillsFolder.getPath());
+        getInstance().storeProperties();
     }
 
     public static File getItemsFolder() {
@@ -101,6 +115,8 @@ public class Settings {
 
     public static void setItemsFolder(File itemsFolder) {
         getInstance().itemsFolder = itemsFolder;
+        getInstance().properties.setProperty("items_folder", itemsFolder.getPath());
+        getInstance().storeProperties();
     }
 
     public static File getMonstersFolder() {
@@ -109,6 +125,8 @@ public class Settings {
 
     public static void setMonstersFolder(File monstersFolder) {
         getInstance().monstersFolder = monstersFolder;
+        getInstance().properties.setProperty("monsters_folder", monstersFolder.getPath());
+        getInstance().storeProperties();
     }
 
     public static File getTempImagesFolder() {
@@ -117,6 +135,8 @@ public class Settings {
 
     public static void setTempImagesFolder(File tempImagesFolder) {
         getInstance().tempImagesFolder = tempImagesFolder;
+        getInstance().properties.setProperty("temp_images_folder", tempImagesFolder.getPath());
+        getInstance().storeProperties();
     }
 
     public static File getTempPackedImagesFolder() {
@@ -125,6 +145,8 @@ public class Settings {
 
     public static void setTempPackedImagesFolder(File tempPackedImagesFolder) {
         getInstance().tempPackedImagesFolder = tempPackedImagesFolder;
+        getInstance().properties.setProperty("temp_packed_images_folder", tempPackedImagesFolder.getPath());
+        getInstance().storeProperties();
     }
 
     public static File getTempFolder() {
@@ -133,5 +155,26 @@ public class Settings {
 
     public static void setTempFolder(File tempFolder) {
         getInstance().tempFolder = tempFolder;
+        getInstance().properties.setProperty("temp_folder", tempFolder.getPath());
+        getInstance().storeProperties();
+    }
+
+    public static File getLoadImageFolder() {
+        return getInstance().loadImageFolder;
+    }
+
+    public static void setLoadImageFolder(File loadImageFolder) {
+        getInstance().loadImageFolder = loadImageFolder;
+        getInstance().properties.setProperty("load_image_folder", loadImageFolder.getPath());
+        getInstance().storeProperties();
+    }
+
+    private void storeProperties() {
+        try (FileWriter fileWriter = new FileWriter(new File("properties.properties"))) {
+            getInstance().properties.store(fileWriter, "");
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -26,13 +26,16 @@ public class ImageResourcePacker {
     }
 
     /**
-     * Pack images to atlas
+     * Pack images to atlas. If module did not changed don't pack
      *
      * @return folder with atlas files
      */
     public File pack(Module module) {
         // output is a directory with module guid name
         File outputDir = new File(pathToPackedImageFolder + module.getGuid());
+        if (!Data.getModuleState(module).isImagesWereChanged()) {
+            return outputDir;
+        }
         if (!outputDir.exists()) {
             outputDir.mkdirs();
             outputDir.deleteOnExit();
@@ -46,13 +49,11 @@ public class ImageResourcePacker {
         }
         // add unpacked images to texture packer
         TexturePacker texturePacker = new TexturePacker(Settings.getTempImagesFolder(), new TexturePacker.Settings());
-        module.getAllEntities().forEach(entityData -> {
-            entityData.getResources().getAllImageResources().forEach(resource -> {
-                File file = new File(pathToUnpackedImageFolder + resource.getGuid() + ".png");
-                if (file.exists()) {
-                    texturePacker.addImage(file);
-                }
-            });
+        module.getResources().getImageResources().forEach(resource -> {
+            File file = new File(pathToUnpackedImageFolder + resource.getGuid() + ".png");
+            if (file.exists()) {
+                texturePacker.addImage(file);
+            }
         });
         // pack
         texturePacker.pack(outputDir, String.valueOf(module.getGuid()));
@@ -86,8 +87,7 @@ public class ImageResourcePacker {
                 try {
                     Files.move(file.toPath(), moved.toPath());
                     Data.getImages().putIfAbsent(guid, new Image(moved.getAbsolutePath()));
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

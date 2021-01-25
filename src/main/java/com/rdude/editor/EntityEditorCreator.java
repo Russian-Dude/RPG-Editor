@@ -1,6 +1,7 @@
 package com.rdude.editor;
 
 import com.rdude.editor.data.Data;
+import com.rdude.editor.enums.EntityType;
 import com.rdude.editor.packer.Packer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
@@ -15,7 +16,7 @@ import java.io.IOException;
 
 public class EntityEditorCreator {
 
-    public static void createNew(EntityEditorController.Type type) {
+    public static void createNew(EntityType type) {
         try {
             FXMLLoader loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPathToMainView()));
             TabPane entityNode = loader.load();
@@ -35,7 +36,7 @@ public class EntityEditorCreator {
         }
     }
 
-    public static void createNewDescriptor(EntityEditorController.Type type) {
+    public static void createNewDescriptor(EntityType type) {
         try {
             FXMLLoader loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPathToDescriber()));
             TabPane entityNode = loader.load();
@@ -55,7 +56,7 @@ public class EntityEditorCreator {
         }
     }
 
-    public static void loadFromModule(EntityEditorController.Type type) {
+    public static void loadFromModule(EntityType type) {
         try {
             SearchDialog<? extends EntityData> searchDialog = new SearchDialog<>(type.getDataList());
             SearchConfigurator.configure(searchDialog, type);
@@ -68,7 +69,7 @@ public class EntityEditorCreator {
         }
     }
 
-    public static void loadFromModule(EntityEditorController.Type type, EntityData entityData) {
+    public static void loadFromModule(EntityType type, EntityData entityData) {
         try {
             if (entityData != null) {
                 // if this entity already opened
@@ -105,10 +106,11 @@ public class EntityEditorCreator {
         }
     }
 
-    public static void loadFromFile(EntityEditorController.Type type) {
+    public static void loadFromFile(EntityType type) {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.getExtensionFilters().add(createExtensionFilter(type));
+            fileChooser.setInitialDirectory(type.getInitialLoadDirectory());
             File file = fileChooser.showOpenDialog(type.getEntityTabsHolder().getScene().getWindow());
             if (file != null) {
                 Packer packer = new Packer();
@@ -155,7 +157,7 @@ public class EntityEditorCreator {
         }
     }
 
-    private static EntityEditorController createEntityNodeAndAdd(EntityData entityData, TabPane entityTabsHolder, EntityEditorController.Type type) throws IOException {
+    private static EntityEditorController createEntityNodeAndAdd(EntityData entityData, TabPane entityTabsHolder, EntityType type) throws IOException {
         FXMLLoader loader;
         if (entityData.isDescriber()) {
             loader = new FXMLLoader(EntityEditorCreator.class.getResource(type.getFxmlPathToDescriber()));
@@ -249,7 +251,7 @@ public class EntityEditorCreator {
         });
     }
 
-    private static FileChooser.ExtensionFilter createExtensionFilter(EntityEditorController.Type type) {
+    private static FileChooser.ExtensionFilter createExtensionFilter(EntityType type) {
         FileChooser.ExtensionFilter extensionFilter;
         switch (type) {
             case SKILL:

@@ -15,10 +15,7 @@ import ru.rdude.rpg.game.logic.enums.*;
 import ru.rdude.rpg.game.utils.Functions;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class SkillDescriberMainViewController implements EntityEditorController<SkillData> {
 
@@ -211,6 +208,11 @@ public class SkillDescriberMainViewController implements EntityEditorController<
 
     @Override
     public void initNew() {
+        if (skill == null) {
+            skill = new SkillData(Functions.generateGuid());
+            EntityEditorController.openEntities.putIfAbsent(skill, this);
+            skill.setDescriber(true);
+        }
     }
 
     @Override
@@ -291,5 +293,10 @@ public class SkillDescriberMainViewController implements EntityEditorController<
     @Override
     public void replaceEntityDataDependencies(long oldValue, long newValue) {
         // descriptor do not has such dependencies
+    }
+
+    @Override
+    public Set<ImagePickerController> getImagePickers() {
+        return new HashSet<>();
     }
 }

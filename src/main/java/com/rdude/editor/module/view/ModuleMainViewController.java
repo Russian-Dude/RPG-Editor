@@ -3,6 +3,8 @@ package com.rdude.editor.module.view;
 import com.rdude.editor.EntityEditorController;
 import com.rdude.editor.EntityEditorCreator;
 import com.rdude.editor.data.Data;
+import com.rdude.editor.enums.EntityType;
+import com.rdude.editor.view.ImagePickerController;
 import com.rdude.editor.view.SaveButtons;
 import javafx.collections.ListChangeListener;
 import javafx.collections.transformation.FilteredList;
@@ -18,6 +20,7 @@ import ru.rdude.rpg.game.utils.Functions;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,6 +60,13 @@ public class ModuleMainViewController implements EntityEditorController<Module> 
     }
 
     private void init() {
+        if (module == null) {
+            module = new Module(Functions.generateGuid());
+            EntityEditorController.openEntities.putIfAbsent(module, this);
+        }
+        if (!Data.getModules().contains(module)) {
+            Data.addModule(module);
+        }
         // entities list
         skills = new FilteredList<>(Data.getSkills(), skillData -> module != null && module.equals(Data.getInsideModule(skillData)));
         items = new FilteredList<>(Data.getItems(), itemData -> module != null && module.equals(Data.getInsideModule(itemData)));
@@ -75,12 +85,12 @@ public class ModuleMainViewController implements EntityEditorController<Module> 
         skillDataSearchPane.setCollection(skills);
         itemDataSearchPane.setCollection(items);
         monsterDataSearchPane.setCollection(monsters);
-        configSearchPane(skillDataSearchPane, Type.SKILL);
-        configSearchPane(itemDataSearchPane, Type.ITEM);
-        configSearchPane(monsterDataSearchPane, Type.MONSTER);
+        configSearchPane(skillDataSearchPane, EntityType.SKILL);
+        configSearchPane(itemDataSearchPane, EntityType.ITEM);
+        configSearchPane(monsterDataSearchPane, EntityType.MONSTER);
     }
 
-    private void configSearchPane(SearchPane<? extends EntityData> searchPane, Type type) {
+    private void configSearchPane(SearchPane<? extends EntityData> searchPane, EntityType type) {
         searchPane.setNameBy(EntityData::getNameInEditor);
         searchPane.setTextFieldSearchBy(EntityData::getNameInEditor, EntityData::getName);
         // context menu:
@@ -128,6 +138,9 @@ public class ModuleMainViewController implements EntityEditorController<Module> 
         if (module == null) {
             module = new Module(Functions.generateGuid());
         }
+/*        if (!Data.getModules().contains(module)) {
+            Data.addModule(module);
+        }*/
         module.setName(nameFx.getText());
         module.setNameInEditor(nameFx.getText());
         module.setSkillData(new HashSet<>(skills));
@@ -207,5 +220,10 @@ public class ModuleMainViewController implements EntityEditorController<Module> 
         return skills.stream().anyMatch(skillData -> skillData.hasEntityDependency(value))
                 || items.stream().anyMatch(itemData -> itemData.hasEntityDependency(value))
                 || monsters.stream().anyMatch(monsterData -> monsterData.hasEntityDependency(value));
+    }
+
+    @Override
+    public Set<ImagePickerController> getImagePickers() {
+        return new HashSet<>();
     }
 }

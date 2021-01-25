@@ -1,6 +1,7 @@
 package com.rdude.editor;
 
 import com.rdude.editor.entity.EntitySearchController;
+import com.rdude.editor.enums.EntityType;
 import com.rdude.editor.item.ItemPopupConfigurator;
 import com.rdude.editor.module.ModulePopupConfigurator;
 import com.rdude.editor.monster.MonsterPopupConfigurator;
@@ -19,7 +20,7 @@ public class SearchConfigurator {
     public static ModulePopupConfigurator modulePopupConfigurator = new ModulePopupConfigurator();
     public static MonsterPopupConfigurator monsterPopupConfigurator = new MonsterPopupConfigurator();
 
-    public static void configure(SearchDialog<? extends EntityData> searchDialog, EntityEditorController.Type type) throws IOException {
+    public static void configure(SearchDialog<? extends EntityData> searchDialog, EntityType type) throws IOException {
         searchDialog.getSearchPane().setTextFieldSearchBy(EntityData::getName, EntityData::getNameInEditor);
         searchDialog.getSearchPane().setNameBy(EntityData::getNameInEditor);
         FXMLLoader entitySearchLoader = new FXMLLoader(SearchConfigurator.class.getResource(type.getFxmlPathToSearchController()));

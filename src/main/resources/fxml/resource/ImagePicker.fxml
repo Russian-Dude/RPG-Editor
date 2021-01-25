@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.rdude.editor.view.ImagePickerController">
+   <children>
+      <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="loadFromResources" mnemonicParsing="false" text="Load from resources" />
+      <Button fx:id="loadFromFile" mnemonicParsing="false" text="Load from file" />
+   </children>
+   <padding>
+      <Insets left="2.0" right="2.0" />
+   </padding>
+</VBox>
