@@ -1,5 +1,6 @@
 package com.rdude.editor.view;
 
+import com.rdude.editor.EntityEditorController;
 import com.rdude.editor.MainViewController;
 import com.rdude.editor.data.Data;
 import com.rdude.editor.settings.Settings;
@@ -24,6 +25,8 @@ public class ImagePickerController extends VBox {
     private double requiredImageWidth;
     private double requiredImageHeight;
 
+    private EntityEditorController<?> entityEditorController;
+
     @FXML
     private ImageView imageView;
     @FXML
@@ -35,8 +38,8 @@ public class ImagePickerController extends VBox {
         super();
     }
 
-    public ImagePickerController(Resource resource, double width, double height) {
-        config(resource, width, height);
+    public ImagePickerController(EntityEditorController<?> parent, Resource resource, double width, double height) {
+        config(parent, resource, width, height);
     }
 
     @FXML
@@ -44,7 +47,8 @@ public class ImagePickerController extends VBox {
 
     }
 
-    public void config(Resource resource, double width, double height) {
+    public void config(EntityEditorController<?> parent, Resource resource, double width, double height) {
+        this.entityEditorController = parent;
         this.resource = resource;
         this.requiredImageWidth = width;
         this.requiredImageHeight = height;
@@ -103,9 +107,13 @@ public class ImagePickerController extends VBox {
                 Data.getImages().put(resource.getGuid(), image);
                 this.resource = resource;
                 try {
-                    Files.copy(file.toPath(),
-                            new File(Functions.addSlashToString(Settings.getTempImagesFolder().getPath())
-                                    + resource.getGuid() + ".png").toPath());
+                    File copiedFile = new File(Functions.addSlashToString(Settings.getTempImagesFolder().getPath())
+                            + resource.getGuid() + ".png");
+                    Files.copy(file.toPath(), copiedFile.toPath());
+                    copiedFile.deleteOnExit();
+                    if (entityEditorController != null) {
+                        entityEditorController.setWasChanged(true);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

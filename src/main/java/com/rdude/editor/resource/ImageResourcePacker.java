@@ -1,6 +1,7 @@
 package com.rdude.editor.resource;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.badlogic.gdx.tools.texturepacker.TextureUnpacker;
@@ -12,6 +13,7 @@ import ru.rdude.rpg.game.utils.Functions;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 
 
@@ -69,13 +71,13 @@ public class ImageResourcePacker {
 
     public void unpack(File packFile) {
         // unpack
-        var textureAtlasData = new TextureAtlas.TextureAtlasData(Gdx.files.absolute(packFile.getAbsolutePath()),
-                Gdx.files.absolute(Settings.getTempImagesFolder().getAbsolutePath()), false);
+        FileHandle atlasFile = new LwjglFiles().absolute(packFile.getAbsolutePath());
+        var textureAtlasData = new TextureAtlas.TextureAtlasData(atlasFile, atlasFile.parent(), false);
         TextureUnpacker textureUnpacker = new TextureUnpacker();
 
         File metaTempFolder = new File(pathToUnpackedImageFolder + Functions.generateGuid());
         metaTempFolder.mkdir();
-        textureUnpacker.splitAtlas(textureAtlasData, Functions.addSlashToString(metaTempFolder.getAbsolutePath()));
+        textureUnpacker.splitAtlas(textureAtlasData, metaTempFolder.getAbsolutePath());
         // add created unpacked files to data map and make them be deleted on exit
         File[] tempImagesFiles = metaTempFolder.listFiles();
         if (tempImagesFiles != null) {
@@ -86,7 +88,8 @@ public class ImageResourcePacker {
                 File moved = new File(pathToUnpackedImageFolder + file.getName());
                 try {
                     Files.move(file.toPath(), moved.toPath());
-                    Data.getImages().putIfAbsent(guid, new Image(moved.getAbsolutePath()));
+                    Data.getImages().putIfAbsent(guid, new Image(moved.toURI().toString()));
+                    moved.deleteOnExit();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

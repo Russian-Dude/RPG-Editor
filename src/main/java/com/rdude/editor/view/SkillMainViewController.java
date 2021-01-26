@@ -201,7 +201,7 @@ public class SkillMainViewController implements EntityEditorController<SkillData
             FXMLLoader loader = new FXMLLoader(SkillMainViewController.class.getResource("/fxml/resource/ImagePicker.fxml"));
             VBox iconPickerNode = loader.load();
             iconPicker = loader.getController();
-            iconPicker.config(null, 64d, 64d);
+            iconPicker.config(this, null, 64d, 64d);
             iconAnchorPane.getChildren().add(iconPickerNode);
         }
         catch (IOException e) {

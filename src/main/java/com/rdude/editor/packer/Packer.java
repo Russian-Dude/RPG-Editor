@@ -97,7 +97,7 @@ public class Packer {
         try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(path));
              BufferedInputStream bufferedInputStream = new BufferedInputStream(zipInputStream)) {
             ZipEntry entry;
-            while (zipInputStream.available() > 0 && (entry = zipInputStream.getNextEntry()) != null) {
+            while ((entry = zipInputStream.getNextEntry()) != null) {
                 if (!entry.isDirectory()) {
                     // skill
                     if (entry.getName().equals(EntityType.SKILL.getMainDataFileName())) {
@@ -123,17 +123,22 @@ public class Packer {
         // move unpacked images from this temp folder to actual temp folder
         // if entity is already loaded do not move files
         if (result != null && !Data.isLoaded(result.getGuid())) {
-            File targetFolder = isModule ?
-                    new File(Functions.addSlashToString(Settings.getTempPackedImagesFolder().getPath()) + result.getGuid() + "\\")
-                    : Settings.getTempImagesFolder();
+            File packedImagesFromThisModule = new File(Functions.addSlashToString(Settings.getTempPackedImagesFolder().getPath()) + result.getGuid() + "\\");
+            packedImagesFromThisModule.deleteOnExit();
+            File targetFolder = isModule ? packedImagesFromThisModule : Settings.getTempImagesFolder();
             File[] files = metaTempDirectory.listFiles();
             if (files != null) {
                 for (File file : files) {
                     try {
-                        if (isModule && !file.getName().endsWith(".png")) {
+                        if (!file.isDirectory() && isModule && !file.getName().endsWith(".png")) {
                             imageResourcePacker.unpack(file);
+                            if (!targetFolder.exists()) {
+                                targetFolder.mkdirs();
+                            }
                         }
-                        Files.move(file.toPath(), new File(Functions.addSlashToString(targetFolder.getPath()) + file.getName()).toPath());
+                        File endPacked = new File(Functions.addSlashToString(targetFolder.getPath()) + file.getName());
+                        endPacked.deleteOnExit();
+                        Files.move(file.toPath(), endPacked.toPath());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
