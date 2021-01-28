@@ -1,26 +1,21 @@
 package com.rdude.editor;
 
 import com.rdude.editor.data.Data;
-import com.rdude.editor.module.view.ModuleMainViewController;
 import com.rdude.editor.packer.Packer;
 import com.rdude.editor.settings.Settings;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import ru.rdude.rpg.game.logic.data.*;
+import ru.rdude.rpg.game.logic.data.EntityData;
 import ru.rdude.rpg.game.logic.data.Module;
-import ru.rdude.rpg.game.logic.data.resources.ModuleResources;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Saver<T extends EntityData> {
 
-    private static Saver instance;
     private Packer packer = new Packer();
 
 
     public void save(T entityData, Module module) {
-        AtomicBoolean isSaved = new AtomicBoolean();
 
         // if entity data is already inside module
         if (module.equals(Data.getInsideModule(entityData))) {
@@ -28,6 +23,7 @@ public class Saver<T extends EntityData> {
             if (controller != null) {
                 controller.save();
                 controller.setWasChanged(false);
+                controller.setImagesWereChanged(false);
             }
         }
 
@@ -63,14 +59,14 @@ public class Saver<T extends EntityData> {
             // images
             newData.getResources().getImageResources().forEach(imageResource -> {
                 if (imageResource != null && !module.getResources().getImageResources().contains(imageResource)) {
-                    ((ModuleResources) module.getResources()).addImageResource(imageResource);
+                    module.getResources().addImageResource(imageResource);
                     Data.getModuleState(module).setImagesWereChanged(true);
                 }
             });
             // sounds
             newData.getResources().getSoundResources().forEach(soundResource -> {
                 if (soundResource != null && !module.getResources().getSoundResources().contains(soundResource)) {
-                    ((ModuleResources) module.getResources()).addSoundResource(soundResource);
+                    module.getResources().addSoundResource(soundResource);
                 }
             });
         }
@@ -80,6 +76,7 @@ public class Saver<T extends EntityData> {
                 .forEach(module::addModuleDependency);
 
         if (Settings.isAutosaveModulesWhenEntityAdded()) {
+            module.addEntity(entityData);
             packer.pack(module);
         }
     }

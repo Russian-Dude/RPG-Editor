@@ -3,6 +3,7 @@ package com.rdude.editor.view;
 import com.rdude.editor.EntityEditorController;
 import com.rdude.editor.MainViewController;
 import com.rdude.editor.data.Data;
+import com.rdude.editor.resource.ImageResourceNode;
 import com.rdude.editor.settings.Settings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -12,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import ru.rdude.fxlib.containers.SearchDialog;
 import ru.rdude.rpg.game.logic.data.resources.Resource;
 import ru.rdude.rpg.game.utils.Functions;
 
@@ -92,7 +94,8 @@ public class ImagePickerController extends VBox {
     }
 
     private void configLoadFromResourcesButton() {
-
+        SearchDialog<ImageResourceNode> dialog = Data.getImageResourceNodeSearchDialog();
+        loadFromResources.setOnAction(event -> dialog.showAndWait());
     }
 
     private void configLoadFromFileButton() {
@@ -105,6 +108,7 @@ public class ImagePickerController extends VBox {
             Resource resource = new Resource(file.getName().replace(".png", ""));
             if (setImage(image)) {
                 Data.getImages().put(resource.getGuid(), image);
+                Data.getImageResourceNodes().add(new ImageResourceNode(resource));
                 this.resource = resource;
                 try {
                     File copiedFile = new File(Functions.addSlashToString(Settings.getTempImagesFolder().getPath())
@@ -113,6 +117,7 @@ public class ImagePickerController extends VBox {
                     copiedFile.deleteOnExit();
                     if (entityEditorController != null) {
                         entityEditorController.setWasChanged(true);
+                        entityEditorController.setImagesWereChanged(true);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

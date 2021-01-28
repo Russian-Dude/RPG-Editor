@@ -226,4 +226,14 @@ public class ModuleMainViewController implements EntityEditorController<Module> 
     public Set<ImagePickerController> getImagePickers() {
         return new HashSet<>();
     }
+
+    @Override
+    public boolean isImagesWereChanged() {
+        return Data.getModuleState(module).isImagesWereChanged();
+    }
+
+    @Override
+    public void setImagesWereChanged(boolean value) {
+        Data.getModuleState(module).setImagesWereChanged(value);
+    }
 }

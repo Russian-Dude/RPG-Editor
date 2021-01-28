@@ -299,4 +299,14 @@ public class SkillDescriberMainViewController implements EntityEditorController<
     public Set<ImagePickerController> getImagePickers() {
         return new HashSet<>();
     }
+
+    @Override
+    public boolean isImagesWereChanged() {
+        return false;
+    }
+
+    @Override
+    public void setImagesWereChanged(boolean value) {
+
+    }
 }

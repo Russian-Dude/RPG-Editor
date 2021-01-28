@@ -34,4 +34,6 @@ public interface EntityEditorController<T extends EntityData> {
     boolean hasEntityDataDependency(long value);
     SaveButtons<T> getSaveButtons();
     Set<ImagePickerController> getImagePickers();
+    boolean isImagesWereChanged();
+    void setImagesWereChanged(boolean value);
 }

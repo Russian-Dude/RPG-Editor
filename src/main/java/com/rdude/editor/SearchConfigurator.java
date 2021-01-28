@@ -21,11 +21,14 @@ public class SearchConfigurator {
     public static MonsterPopupConfigurator monsterPopupConfigurator = new MonsterPopupConfigurator();
 
     public static void configure(SearchDialog<? extends EntityData> searchDialog, EntityType type) throws IOException {
+        searchDialog.setTitle("Select " + type.name().toLowerCase());
         searchDialog.getSearchPane().setTextFieldSearchBy(EntityData::getName, EntityData::getNameInEditor);
         searchDialog.getSearchPane().setNameBy(EntityData::getNameInEditor);
-        FXMLLoader entitySearchLoader = new FXMLLoader(SearchConfigurator.class.getResource(type.getFxmlPathToSearchController()));
-        searchDialog.getSearchPane().addExtraSearchNode(entitySearchLoader.load());
-        searchDialog.getSearchPane().addSearchOptions(((EntitySearchController) entitySearchLoader.getController()).getControlFunctionMap());
+        if (type != EntityType.MODULE) {
+            FXMLLoader entitySearchLoader = new FXMLLoader(SearchConfigurator.class.getResource(type.getFxmlPathToSearchController()));
+            searchDialog.getSearchPane().addExtraSearchNode(entitySearchLoader.load());
+            searchDialog.getSearchPane().addSearchOptions(((EntitySearchController) entitySearchLoader.getController()).getControlFunctionMap());
+        }
         switch (type) {
             case ITEM:
                 itemPopupConfigurator.configure((SearchDialog<ItemData>) searchDialog);

@@ -3,6 +3,7 @@ package com.rdude.editor.view;
 import com.rdude.editor.EntityEditorController;
 import com.rdude.editor.Saver;
 import com.rdude.editor.data.Data;
+import com.rdude.editor.settings.Settings;
 import javafx.geometry.Side;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -96,24 +97,35 @@ public class SaveButtons<T extends EntityData> extends HBox {
         AtomicBoolean saveResult = new AtomicBoolean(false);
         searchDialogModule.showAndWait().ifPresent(result -> {
             if (node.save()) {
+                if (node.isImagesWereChanged()) {
+                    Data.getModuleState(result).setImagesWereChanged(true);
+                }
                 saver.save(node.getEntityData(), result);
                 node.getInsideModuleOrFile().setText("Inside module");
                 node.getInsideModule().setText(result.getNameInEditor());
                 saveResult.set(true);
             }
         });
+        if (saveResult.get()) {
+            node.setImagesWereChanged(false);
+        }
         return saveResult.get();
     }
 
     public boolean save() {
-        if (node.getInsideFile() == null && Data.getInsideModule(node.getEntityData()) != null) {
+        Module insideModule = Data.getInsideModule(node.getEntityData());
+        if (node.getInsideFile() == null && insideModule != null) {
             if (node.save()) {
-                saver.save(node.getEntityData(), Data.getInsideModule(node.getEntityData()));
+                if (node.isImagesWereChanged()) {
+                    Data.getModuleState(insideModule).setImagesWereChanged(true);
+                }
+                saver.save(node.getEntityData(), insideModule);
                 node.getMainTab().setText(node.getEntityData().getNameInEditor());
+                node.setImagesWereChanged(false);
                 return true;
             }
         }
-        else if (node.getInsideFile() != null && Data.getInsideModule(node.getEntityData()) == null) {
+        else if (node.getInsideFile() != null && insideModule == null) {
             if (node.save()) {
                 saver.save(node.getEntityData(), node.getInsideFile());
                 node.getMainTab().setText(node.getEntityData().getNameInEditor());

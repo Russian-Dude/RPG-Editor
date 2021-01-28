@@ -1,12 +1,16 @@
 package com.rdude.editor.data;
 
+import com.rdude.editor.resource.ImageResourceNode;
 import javafx.collections.*;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.image.Image;
+import ru.rdude.fxlib.containers.SearchDialog;
 import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.Module;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class Data {
@@ -23,7 +27,10 @@ public class Data {
     private final ObservableMap<Long, Module> entityInsideModule;
     private final ObservableMap<Module, ModuleState> moduleStates;
 
+    private final ObservableList<ImageResourceNode> imageResourceNodes;
     private ObservableMap<Long, Image> images;
+    private SearchDialog<ImageResourceNode> imageResourceNodeSearchDialog;
+    private final FilteredList<ImageResourceNode> filteredImageResourceNodes;
 
     private Data() {
         // init fields:
@@ -37,6 +44,9 @@ public class Data {
         entityInsideModule = FXCollections.observableHashMap();
         moduleStates = FXCollections.observableHashMap();
         images = FXCollections.observableHashMap();
+        imageResourceNodes = FXCollections.observableArrayList();
+        filteredImageResourceNodes = new FilteredList<>(imageResourceNodes);
+        configImageResourceNodeSearchDialog();
 
         // link maps to modules:
         modules.addListener((ListChangeListener<Module>) change -> {
@@ -50,6 +60,12 @@ public class Data {
                     change.getAddedSubList().forEach(module -> module.getMonsterData().forEach(monsterData -> monstersMap.putIfAbsent(monsterData.getGuid(), monsterData)));
                     change.getAddedSubList().forEach(module -> module.getMonsterData().forEach(monsterData -> entityInsideModule.putIfAbsent(monsterData.getGuid(), module)));
                     change.getAddedSubList().forEach(module -> moduleStates.putIfAbsent(module, new ModuleState(module)));
+                    change.getAddedSubList().forEach(module -> module.getResources().getImageResources().forEach(resource -> {
+                        ImageResourceNode imageResourceNode = new ImageResourceNode(resource);
+                        if (!imageResourceNodes.contains(imageResourceNode)) {
+                            imageResourceNodes.add(imageResourceNode);
+                        }
+                    }));
                 }
                 // when modules removed:
                 else if (change.wasRemoved()) {
@@ -60,7 +76,6 @@ public class Data {
                     change.getRemoved().forEach(module -> module.getMonsterData().forEach(monsterData -> monstersMap.remove(monsterData.getGuid())));
                     change.getRemoved().forEach(module -> module.getMonsterData().forEach(monsterData -> entityInsideModule.remove(monsterData.getGuid())));
                     change.getRemoved().forEach(moduleStates::remove);
-
                 }
             }
         });
@@ -90,6 +105,8 @@ public class Data {
                 monsters.remove(change.getValueRemoved());
             }
         });
+        // image resource nodes
+
     }
 
     private static Data getInstance() {
@@ -97,6 +114,20 @@ public class Data {
             instance = new Data();
         }
         return instance;
+    }
+
+    private void configImageResourceNodeSearchDialog() {
+        imageResourceNodeSearchDialog = new SearchDialog<>(filteredImageResourceNodes);
+        imageResourceNodeSearchDialog.setTitle("Image resources");
+        imageResourceNodeSearchDialog.getSearchPane().setTextFieldSearchBy(node -> node.getName().getText());
+    }
+
+    public static void setImageResourceNodeDialogFilter(Predicate<? super ImageResourceNode> predicate) {
+        getInstance().filteredImageResourceNodes.setPredicate(predicate);
+    }
+
+    public static SearchDialog<ImageResourceNode> getImageResourceNodeSearchDialog() {
+        return getInstance().imageResourceNodeSearchDialog;
     }
 
     public static ObservableList<Module> getModules() {
@@ -154,10 +185,13 @@ public class Data {
             getInstance().entityInsideModule.putIfAbsent(entityData.getGuid(), module);
         }
         if (entityData instanceof SkillData) {
+            module.getSkillData().add((SkillData) entityData);
             addSkillData((SkillData) entityData);
         } else if (entityData instanceof ItemData) {
+            module.getItemData().add((ItemData) entityData);
             addItemData((ItemData) entityData);
         } else if (entityData instanceof MonsterData) {
+            module.getMonsterData().add((MonsterData) entityData);
             addMonsterData((MonsterData) entityData);
         } else if (entityData instanceof Module) {
             addModule((Module) entityData);
@@ -214,6 +248,10 @@ public class Data {
             getInstance().modules.add(module);
             getInstance().moduleStates.put(module, new ModuleState(module));
         }
+    }
+
+    public static ObservableList<ImageResourceNode> getImageResourceNodes() {
+        return getInstance().imageResourceNodes;
     }
 
     public static void removeModule(Module module) {

@@ -5,6 +5,7 @@ import com.rdude.editor.enums.EntityType;
 import com.rdude.editor.resource.ImageResourcePacker;
 import com.rdude.editor.settings.Settings;
 import ru.rdude.rpg.game.logic.data.EntityData;
+import ru.rdude.rpg.game.logic.data.ItemData;
 import ru.rdude.rpg.game.logic.data.Module;
 import ru.rdude.rpg.game.logic.data.io.GameJsonSerializer;
 import ru.rdude.rpg.game.logic.data.resources.Resource;

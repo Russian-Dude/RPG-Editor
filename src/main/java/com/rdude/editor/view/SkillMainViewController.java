@@ -12,16 +12,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import ru.rdude.fxlib.boxes.SearchComboBox;
 import ru.rdude.fxlib.containers.*;
 import ru.rdude.fxlib.textfields.AutocomplitionTextField;
 import ru.rdude.rpg.game.logic.coefficients.Coefficients;
-import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.Module;
+import ru.rdude.rpg.game.logic.data.*;
 import ru.rdude.rpg.game.logic.data.resources.ModuleResources;
 import ru.rdude.rpg.game.logic.entities.beings.Being;
 import ru.rdude.rpg.game.logic.entities.beings.BeingAction;
@@ -45,6 +43,7 @@ public class SkillMainViewController implements EntityEditorController<SkillData
     private SkillData skill;
     private boolean wasChanged;
     private SaveButtons<SkillData> saveButtons;
+    private boolean imagesChanged;
 
     private Tab mainTab;
 
@@ -190,7 +189,7 @@ public class SkillMainViewController implements EntityEditorController<SkillData
         wasChanged = false;
         loadSimpleComboBoxes();
         loadMultipleChoiceContainers();
-        configAutoComplitionTextFields();
+        configAutoCompletionTextFields();
         configSaveButtons();
         configWasChangedListeners();
         configVisuals();
@@ -261,13 +260,13 @@ public class SkillMainViewController implements EntityEditorController<SkillData
 
     private void configSaveButtons() {
         // buttons creation
-        this.saveButtons = new SaveButtons(this);
+        this.saveButtons = new SaveButtons<>(this);
         saveTab.setGraphic(saveButtons);
         saveTab.setDisable(true);
         saveTab.setStyle("-fx-opacity: 1; -fx-background-color: transparent");
     }
 
-    private void configAutoComplitionTextFields() {
+    private void configAutoCompletionTextFields() {
         AutocomplitionTextFieldConfigurator.configureFormulaTextFields(damageFx);
     }
 
@@ -1212,5 +1211,15 @@ public class SkillMainViewController implements EntityEditorController<SkillData
     @Override
     public Set<ImagePickerController> getImagePickers() {
         return Set.of(iconPicker);
+    }
+
+    @Override
+    public boolean isImagesWereChanged() {
+        return imagesChanged;
+    }
+
+    @Override
+    public void setImagesWereChanged(boolean value) {
+        this.imagesChanged = value;
     }
 }
